@@ -28,6 +28,11 @@
 			<artifactId>resteasy-multipart-provider</artifactId>
 			<version>${resteasy.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-client</artifactId>
+			<version>${resteasy.version}</version>
+		</dependency>
 		<!-- Json lib -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
