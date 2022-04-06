@@ -65,8 +65,11 @@ class YesRequestRunnable implements Runnable {
 	public void run() {
 		System.out.println("Requesting to " + machineTarget.getUri());
 		try {
-			Response response = machineTarget.request().get();
-			if (response.readEntity(String.class) == "yes") {
+			var request = machineTarget.request();
+			request.accept(MediaType.TEXT_HTML);
+			Response response = request.get();
+			String responseString = response.readEntity(String.class);
+			if (responseString.equals("yes")) {
 				System.out.println("They said yes! :D");
 				hasResponded = true;
 			} else {
@@ -74,7 +77,7 @@ class YesRequestRunnable implements Runnable {
 				hasResponded = false;
 			}
 		} catch (Exception e) {
-			System.out.println("Failed: " + e);
+			// Do nothing to avoid exception noise
 		}
 	}
 }
