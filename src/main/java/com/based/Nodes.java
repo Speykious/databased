@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 public final class Nodes {
     private static int[] baseIp = new int[] { 132, 227, 115, 97 };
@@ -47,21 +46,21 @@ public final class Nodes {
         return "http://" + getMachineIp(index) + ":" + port + "/based" + path;
     }
 
-    public static ResteasyWebTarget getMachineTarget(int index, String path) {
+    public static MachineTarget getMachineTarget(int index, String path) {
         System.out.println("Getting target " + index + " with path " + path);
-        return httpClient.target(getMachineUrl(index, path));
+        return new MachineTarget(index, httpClient.target(getMachineUrl(index, path)));
     }
 
-    public static ResteasyWebTarget[] getOtherMachineTargets(String path) {
+    public static MachineTarget[] getOtherMachineTargets(String path) {
         return getOtherMachineTargets(0, count - 1, path);
     }
 
-    public static ResteasyWebTarget[] getOtherMachineTargets(int beg, int end, String path) {
+    public static MachineTarget[] getOtherMachineTargets(int beg, int end, String path) {
         int length = end - beg + 1;
         if (selfIndex >= beg && selfIndex <= end)
             length--;
         
-        ResteasyWebTarget[] targets = new ResteasyWebTarget[length];
+        MachineTarget[] targets = new MachineTarget[length];
         for (int i = 0, targetIndex = 0; i <= end - beg; i++) {
             if (i == selfIndex) continue;
             targets[targetIndex++] = getMachineTarget(i, path);

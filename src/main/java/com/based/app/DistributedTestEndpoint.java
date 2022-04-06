@@ -1,9 +1,11 @@
 package com.based.app;
 
 import javax.ws.rs.*;
+import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.based.MachineTarget;
 import com.based.Nodes;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
@@ -24,7 +26,7 @@ public class DistributedTestEndpoint {
 	@Produces(MediaType.TEXT_HTML)
 	public String broadcast() {
 		int machineResponses = 0;
-		ResteasyWebTarget[] machineTargets = Nodes.getOtherMachineTargets("/ppti/say-yes");
+		MachineTarget[] machineTargets = Nodes.getOtherMachineTargets("/ppti/say-yes");
 
 		YesRequestRunnable[] runnables = new YesRequestRunnable[machineTargets.length];
 		Thread[] requests = new Thread[machineTargets.length];
@@ -49,10 +51,10 @@ public class DistributedTestEndpoint {
 }
 
 class YesRequestRunnable implements Runnable {
-	private ResteasyWebTarget machineTarget;
+	private MachineTarget machineTarget;
 	private boolean hasResponded;
 
-	public YesRequestRunnable(ResteasyWebTarget machineTarget) {
+	public YesRequestRunnable(MachineTarget machineTarget) {
 		this.machineTarget = machineTarget;
 		this.hasResponded = false;
 	}
@@ -64,11 +66,13 @@ class YesRequestRunnable implements Runnable {
 	@Override
 	public void run() {
 		try {
-			var request = machineTarget.request();
-			request.accept(MediaType.TEXT_HTML);
+			ResteasyWebTarget target = machineTarget.getTarget();
+			Builder request = target.request().accept(MediaType.TEXT_HTML);
 			Response response = request.get();
+
 			String responseString = response.readEntity(String.class);
 			if (responseString.equals("yes")) {
+				System.out.println("Machine " + machineTarget + " responded");
 				hasResponded = true;
 			} else {
 				hasResponded = false;
