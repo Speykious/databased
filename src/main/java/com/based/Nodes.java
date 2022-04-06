@@ -62,7 +62,7 @@ public final class Nodes {
             length--;
         
         ResteasyWebTarget[] targets = new ResteasyWebTarget[length];
-        for (int i = 0; i < end - beg; i++) {
+        for (int i = 0; i <= end - beg; i++) {
             if (i == selfIndex) continue;
             targets[i] = getMachineTarget(i, path);
         }
