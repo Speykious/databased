@@ -1,6 +1,7 @@
 package com.based;
 
 import java.security.InvalidParameterException;
+import java.util.concurrent.TimeUnit;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
@@ -11,7 +12,13 @@ public final class Nodes {
     private static int count = 24;
     private static int port = 8080;
     private static int selfIndex = 0;
-    private static ResteasyClient httpClient = new ResteasyClientBuilder().build();
+    private static ResteasyClient httpClient = createHttpClient();
+    
+    public static ResteasyClient createHttpClient() {
+        return new ResteasyClientBuilder()
+            .connectTimeout(200, TimeUnit.MILLISECONDS)
+            .build();
+    }
 
     public static String getMachineIp() {
         return getMachineIp(selfIndex);
@@ -41,6 +48,7 @@ public final class Nodes {
     }
 
     public static ResteasyWebTarget getMachineTarget(int index, String path) {
+        System.out.println("Getting target " + index + " with path " + path);
         return httpClient.target(getMachineUrl(index, path));
     }
 
