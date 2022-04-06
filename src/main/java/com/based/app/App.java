@@ -25,6 +25,7 @@ public class App extends Application {
 		sets.add(new TableEndpoint());
 		sets.add(new DataEndpoint());
 		sets.add(new CsvEndpoint());
+		sets.add(new DistributedTestEndpoint());
 		return sets;
 	}
 
