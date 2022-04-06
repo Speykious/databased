@@ -53,7 +53,7 @@ public final class Nodes {
     }
 
     public static ResteasyWebTarget[] getOtherMachineTargets(String path) {
-        return getOtherMachineTargets(0, count, path);
+        return getOtherMachineTargets(0, count - 1, path);
     }
 
     public static ResteasyWebTarget[] getOtherMachineTargets(int beg, int end, String path) {
