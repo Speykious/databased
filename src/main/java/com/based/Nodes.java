@@ -10,7 +10,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 public final class Nodes {
     private static int[] baseIp = new int[] { 132, 227, 115, 97 };
     private static int count = 24;
-    private static int port = 8080;
+    private static int port = Integer.parseInt(System.getProperty("jetty.port", "8080"));
     private static int selfIndex = 0;
     private static ResteasyClient httpClient = createHttpClient();
     
