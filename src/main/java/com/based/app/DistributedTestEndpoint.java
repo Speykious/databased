@@ -44,7 +44,7 @@ public class DistributedTestEndpoint {
 			}
 		}
 		
-		return "Number of nodes that responded: " + machineResponses;
+		return "Number of nodes that responded: " + machineResponses + "\n";
 	}
 }
 
@@ -63,17 +63,14 @@ class YesRequestRunnable implements Runnable {
 
 	@Override
 	public void run() {
-		System.out.println("Requesting to " + machineTarget.getUri());
 		try {
 			var request = machineTarget.request();
 			request.accept(MediaType.TEXT_HTML);
 			Response response = request.get();
 			String responseString = response.readEntity(String.class);
 			if (responseString.equals("yes")) {
-				System.out.println("They said yes! :D");
 				hasResponded = true;
 			} else {
-				System.out.println("They didn't say yes :(");
 				hasResponded = false;
 			}
 		} catch (Exception e) {
