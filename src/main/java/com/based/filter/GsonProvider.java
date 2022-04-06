@@ -15,7 +15,6 @@ import java.lang.reflect.Type;
 
 @Provider
 public class GsonProvider implements MessageBodyWriter<Object>, MessageBodyReader<Object> {
-
 	private final Gson gson = new GsonBuilder().serializeNulls().create();
 
 	@Override

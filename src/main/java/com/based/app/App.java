@@ -9,9 +9,8 @@ import com.based.filter.GsonProvider;
 import java.util.HashSet;
 import java.util.Set;
 
-@ApplicationPath("")
+@ApplicationPath("/based")
 public class App extends Application {
-
 	@Override
 	public Set<Object> getSingletons() {
 		Set<Object> sets = new HashSet<>(1);

@@ -8,11 +8,10 @@ import com.based.entity.Account;
 
 import java.util.List;
 
-@Path("/based")
+@Path("/test")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class TestEndpoint {
-
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String helloWorld() {
