@@ -15,6 +15,7 @@ public final class Nodes {
     
     public static ResteasyClient createHttpClient() {
         return new ResteasyClientBuilder()
+            .connectionPoolSize(727)
             .connectTimeout(200, TimeUnit.MILLISECONDS)
             .build();
     }
