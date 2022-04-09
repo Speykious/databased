@@ -5,6 +5,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.based.entity.Account;
+import com.based.entity.Table;
 
 import java.util.List;
 
@@ -31,6 +32,14 @@ public class TestEndpoint {
 		System.out.println("Received account " + account);
 		account.setUpdated(System.currentTimeMillis());
 		return account;
+	}
+
+	@POST
+	@Path("/table")
+	public Table createTable(Table table) {
+		Database.put(table);
+		System.out.print(table + " is created");
+		return table;
 	}
 
 	@GET
