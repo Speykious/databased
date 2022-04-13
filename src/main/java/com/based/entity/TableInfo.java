@@ -3,6 +3,8 @@ package com.based.entity;
 import java.io.Serializable;
 import java.util.List;
 
+import com.based.model.Column;
+
 public class TableInfo implements Serializable {
     private String name;
     private List<Column> columns;

@@ -1,15 +1,18 @@
-package com.based.entity;
+package com.based.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.based.entity.TableInfo;
 
 /**
  * Classe de stockage in-memory
  */
 public final class Database {
     private static final Map<String, TableInfo> tables = new HashMap<>();
-    private static final Map<String, Map<String, List<String>>> database = new HashMap<>();
+    private static final Map<String, List<List<String>>> tableValues = new HashMap<>();
 
     // Could send Error?
     public static TableInfo getTableInfo(String tableName) {
@@ -28,7 +31,7 @@ public final class Database {
             throw new IllegalArgumentException("Table '" + table.getName() + "' already exists.");
 
         tables.put(table.getName(), table);
-        database.put(table.getName(), new HashMap<>());
+        tableValues.put(table.getName(), new ArrayList<>());
     }
 
     /**
@@ -37,9 +40,9 @@ public final class Database {
      * @param tableName
      * @return
      */
-    public static Map<String, List<String>> select(String tableName) {
+    public static List<List<String>> select(String tableName) {
         // TODO: add way to specify "where" etc.
-        Map<String, List<String>> lines = database.get(tableName);
+        List<List<String>> lines = tableValues.get(tableName);
         if (lines == null)
             throw new IllegalArgumentException("Table '" + tableName + "' doesn't exist.");
 
@@ -66,9 +69,9 @@ public final class Database {
         if (tableInfo == null)
             throw new IllegalArgumentException("Table '" + tableName + "' doesn't exist.");
 
-        Map<String, List<String>> tableData = database.get(tableName);
+        List<List<String>> tableData = tableValues.get(tableName);
         assertNumValues(tableName, values);
-        if (!tableData.containsKey(values.get(0)))
+        if (!tableData.fil(values.get(0)))
             throw new IllegalArgumentException(
                     "Primary key '" + values.get(0) + "' doesn't exist in table '" + tableName + "'.");
 
@@ -86,7 +89,7 @@ public final class Database {
         if (tableInfo == null)
             throw new IllegalArgumentException("Table '" + tableName + "' doesn't exist.");
 
-        Map<String, List<String>> tableData = database.get(tableName);
+        List<List<String>> tableData = tableValues.get(tableName);
         assertNumValues(tableName, values);
         if (tableData.containsKey(values.get(0)))
             throw new IllegalArgumentException(

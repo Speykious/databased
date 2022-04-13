@@ -3,8 +3,8 @@ package com.based.app;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import com.based.entity.Database;
 import com.based.entity.TableInfo;
+import com.based.model.Database;
 
 @Path("/table")
 @Produces(MediaType.APPLICATION_JSON)
