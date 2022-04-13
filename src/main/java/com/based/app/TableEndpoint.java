@@ -13,4 +13,9 @@ public class TableEndpoint {
 	public String createTable(CreateTableRequest request) {
 		return "Received CreateTableRequest:\n" + request + "\n";
 	}
+
+	@GET
+	public String getTable() {
+		return "Return table metadata here";
+	}
 }
