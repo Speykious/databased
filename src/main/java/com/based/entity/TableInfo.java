@@ -1,6 +1,7 @@
 package com.based.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class TableInfo implements Serializable {
     private String name;
