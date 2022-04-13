@@ -1,11 +1,11 @@
-package com.based.entity;
+package com.based.entity.dto;
 
 import java.io.Serializable;
 import java.util.List;
 
 import com.based.model.Column;
 
-public class TableInfo implements Serializable {
+public class TableDTO implements Serializable {
     private String name;
     private List<Column> columns;
 

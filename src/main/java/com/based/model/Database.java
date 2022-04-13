@@ -4,17 +4,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.based.entity.TableInfo;
+import com.based.entity.dto.TableDTO;
 
 /**
  * Classe de stockage in-memory
  */
 public final class Database {
-    private static final Map<String, TableInfo> tables = new HashMap<>();
+    private static final Map<String, TableDTO> tables = new HashMap<>();
     private static final Map<String, Map<String, List<String>>> database = new HashMap<>();
 
     // Could send Error?
-    public static TableInfo getTableInfo(String tableName) {
+    public static TableDTO getTableInfo(String tableName) {
         return tables.get(tableName);
     }
 
@@ -23,7 +23,7 @@ public final class Database {
      * 
      * @param table
      */
-    public static void createTable(TableInfo table) throws IllegalArgumentException {
+    public static void createTable(TableDTO table) throws IllegalArgumentException {
         if (table.getName() == null)
             throw new IllegalArgumentException("Name of the table cannot be null");
         if (tables.containsKey(table.getName()))
@@ -49,7 +49,7 @@ public final class Database {
     }
 
     private static void assertNumValues(String tableName, List<String> values) throws IllegalArgumentException {
-        TableInfo tableInfo = getTableInfo(tableName);
+        TableDTO tableInfo = getTableInfo(tableName);
         if (tableInfo.getColumns().size() != values.size()) {
             throw new IllegalArgumentException(
                     "Values not allowed. '" + tableName + "' should have values : "
@@ -64,7 +64,7 @@ public final class Database {
      * @param values
      */
     public static void update(String tableName, List<String> values) throws IllegalArgumentException {
-        TableInfo tableInfo = getTableInfo(tableName);
+        TableDTO tableInfo = getTableInfo(tableName);
         if (tableInfo == null)
             throw new IllegalArgumentException("Table '" + tableName + "' doesn't exist.");
 
@@ -84,7 +84,7 @@ public final class Database {
      * @param values
      */
     public static void insert(String tableName, List<String> values) throws IllegalArgumentException {
-        TableInfo tableInfo = getTableInfo(tableName);
+        TableDTO tableInfo = getTableInfo(tableName);
         if (tableInfo == null)
             throw new IllegalArgumentException("Table '" + tableName + "' doesn't exist.");
 

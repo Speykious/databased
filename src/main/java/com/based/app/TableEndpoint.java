@@ -3,7 +3,7 @@ package com.based.app;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import com.based.entity.TableInfo;
+import com.based.entity.dto.TableDTO;
 import com.based.model.Database;
 
 @Path("/table")
@@ -11,14 +11,14 @@ import com.based.model.Database;
 @Consumes(MediaType.APPLICATION_JSON)
 public class TableEndpoint {
 	@POST
-	public String createTable(TableInfo request) {
+	public String createTable(TableDTO request) {
 		Database.createTable(request);
 		return "Created table:\n" + request + "\n";
 	}
 
 	@GET
 	@Path("/{tableName}")
-	public TableInfo getTable(@PathParam("tableName") String tableName) {
+	public TableDTO getTable(@PathParam("tableName") String tableName) {
 		return Database.getTableInfo(tableName);
 	}
 }
