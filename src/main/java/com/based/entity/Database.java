@@ -35,11 +35,12 @@ public class Database {
      * @param tableName
      * @return
      */
-    public static List<List<String>> selectAll(String tableName) {
-        if (!database.containsKey(tableName)) {
+    public static List<List<String>> select(String tableName) {
+        var lines = database.get(tableName);
+        if (lines == null)
             throw new IllegalArgumentException("Table " + tableName + " doesn't exist.");
-        }
-        return database.get(tableName);
+
+        return lines;
     }
 
     /**
