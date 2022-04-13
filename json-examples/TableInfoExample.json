@@ -1,4 +1,5 @@
 {
+    "name": "rien",
     "columns": [
         { "name": "id", "type": "int", "nullable": false, "primary": true },
         { "name": "first_name", "type": "string", "nullable": false, "primary": false },

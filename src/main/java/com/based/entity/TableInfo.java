@@ -31,7 +31,7 @@ public class TableInfo implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("TableInfo {\n");
+        StringBuilder sb = new StringBuilder(name + " {\n");
         for (var column : columns)
             sb.append("  " + column + "\n");
         sb.append("}");
