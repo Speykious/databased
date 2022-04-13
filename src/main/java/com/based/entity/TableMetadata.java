@@ -2,7 +2,7 @@ package com.based.entity;
 
 import java.io.Serializable;
 
-public class CreateTableRequest implements Serializable {
+public class TableMetadata implements Serializable {
     private Column[] columns;
 
     public Column[] getColumns() {
