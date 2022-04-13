@@ -31,6 +31,18 @@ public class Database {
     }
 
     /**
+     * Select all values of a table
+     * @param tableName
+     * @return
+     */
+    public static List<List<String>> selectAll(String tableName){
+        if(!database.containsKey(tableName)){
+            throw new IllegalArgumentException("Table " + tableName + " doesn't exist.");
+        }
+        return database.get(tableName);
+    }
+
+    /**
      * Create the table in the database
      * @param tableName
      * @param values
