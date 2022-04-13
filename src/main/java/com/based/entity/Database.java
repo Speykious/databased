@@ -67,12 +67,11 @@ public final class Database {
             throw new IllegalArgumentException("Table '" + tableName + "' doesn't exist.");
 
         Map<String, List<String>> tableData = database.get(tableName);
-
+        assertNumValues(tableName, values);
         if (!tableData.containsKey(values.get(0)))
             throw new IllegalArgumentException(
                     "Primary key '" + values.get(0) + "' doesn't exist in table '" + tableName + "'.");
 
-        assertNumValues(tableName, values);
         tableData.put(values.get(0), values);
 
     }
@@ -87,7 +86,12 @@ public final class Database {
         if (tableInfo == null)
             throw new IllegalArgumentException("Table '" + tableName + "' doesn't exist.");
 
+        Map<String, List<String>> tableData = database.get(tableName);
         assertNumValues(tableName, values);
-        database.get(tableName).put(values.get(0), values);
+        if (tableData.containsKey(values.get(0)))
+            throw new IllegalArgumentException(
+                    "Primary key '" + values.get(0) + "' already exists in table '" + tableName + "'.");
+
+        tableData.put(values.get(0), values);
     }
 }
