@@ -30,13 +30,13 @@ public class Database {
         tables.put(tab.getName(), tab);
     }
 
-    public static void putTableInDB(String tableName, List<String> values){
+    public static void createTable(String tableName, List<String> values){
         List<List<String>> tableValues = new ArrayList<>();
         tableValues.add(values);
         database.put(tableName, tableValues);
     }
 
-    public static void addValuesInDB(String tableName, List<String> values){
+    public static void updateTable(String tableName, List<String> values){
         List<List<String>> allTableValues = database.get(tableName);
         allTableValues.add(values);
         database.replace(tableName, database.get(tableName), allTableValues);
@@ -49,10 +49,10 @@ public class Database {
                 throw new IllegalArgumentException("Values not allowed. "+ tableName + " should have values : " + table.getColumns().toString());
             }
             if(!database.containsKey(tableName)){
-                putTableInDB(tableName, values);
+                createTable(tableName, values);
             }
             else{
-                addValuesInDB(tableName, values);
+                updateTable(tableName, values);
             }
         }
     }
