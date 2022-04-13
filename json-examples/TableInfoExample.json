@@ -1,7 +1,7 @@
 {
     "name": "rien",
     "columns": [
-        { "name": "token_id", "type": "string", "nullable": false, "primary": true },
+        { "name": "id", "type": "int", "nullable": false, "primary": true },
         { "name": "first_name", "type": "string", "nullable": false, "primary": false },
         { "name": "last_name", "type": "string", "nullable": false, "primary": false },
         { "name": "some_int", "type": "int", "nullable": true, "primary": false }
