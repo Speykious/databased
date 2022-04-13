@@ -31,24 +31,18 @@ public class Database {
     }
 
     public static void putTableInDB(String tableName, List<String> values){
-        List<List<String>> columnValues = new ArrayList<>();
-        for (String value : values) {
-            List<String> newColumn = new ArrayList<>();
-            newColumn.add(value);
-            columnValues.add(newColumn);
-        }
-        database.put(tableName, columnValues);
+        List<List<String>> tableValues = new ArrayList<>();
+        tableValues.add(values);
+        database.put(tableName, tableValues);
     }
 
     public static void addValuesInDB(String tableName, List<String> values){
         List<List<String>> allTableValues = database.get(tableName);
-        for(int i = 0; i < allTableValues.size(); i++){
-            allTableValues.get(i).add(values.get(i));
-        }
+        allTableValues.add(values);
         database.replace(tableName, database.get(tableName), allTableValues);
     }
 
-    public static void addToDB(String tableName, List<String> values){
+    public static void insert(String tableName, List<String> values){
         if(tables.containsKey(tableName)){
             Table table = getTable(tableName);
             if(table.getColumns().size() != values.size()){
