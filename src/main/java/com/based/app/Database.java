@@ -20,7 +20,7 @@ public class Database {
     }
 
     /**
-     * After a CreateTable request
+     * Add a table in the tables HashMap
      * @param tab
      */
     public static void putTable(Table tab){
@@ -30,12 +30,22 @@ public class Database {
         tables.put(tab.getName(), tab);
     }
 
+    /**
+     * Create the table in the database
+     * @param tableName
+     * @param values
+     */
     public static void createTable(String tableName, List<String> values){
         List<List<String>> tableValues = new ArrayList<>();
         tableValues.add(values);
         database.put(tableName, tableValues);
     }
 
+    /**
+     * Update values of the database's table
+     * @param tableName
+     * @param values
+     */
     public static void updateTable(String tableName, List<String> values){
         List<List<String>> allTableValues = database.get(tableName);
         allTableValues.add(values);
