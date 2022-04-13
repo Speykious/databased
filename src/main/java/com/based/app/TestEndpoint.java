@@ -38,7 +38,7 @@ public class TestEndpoint {
 	@POST
 	@Path("/table")
 	public Table createTable(Table table) {
-		Database.put(table);
+		Database.putTable(table);
 		System.out.print(table + " is created");
 		return table;
 	}

@@ -13,6 +13,11 @@ public class Table implements Serializable {
         this.columns = new ArrayList<>();
 	}
 
+    public Table(String name, List<Column<Class<?>>> columns) {
+		this.name = name;
+        this.columns = columns;
+	}
+
     public String getName(){
         return name;
     }
