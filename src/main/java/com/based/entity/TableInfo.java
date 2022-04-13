@@ -14,6 +14,17 @@ public class TableInfo implements Serializable {
         return columns;
     }
 
+    public String getColumnTypeInfo(){
+        String typeInfo = "'";
+        boolean first = true;
+        for (Column column : columns) {
+            if(first) typeInfo += column.getType();
+            else typeInfo += ", " + column.getType();
+        }
+        typeInfo += "'";
+        return typeInfo;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("TableInfo {\n");

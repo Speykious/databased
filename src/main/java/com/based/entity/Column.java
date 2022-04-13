@@ -7,6 +7,10 @@ public class Column implements Serializable {
     private String type;
     private boolean nullable;
 
+    public String getType(){
+        return type;
+    }
+
     @Override
     public String toString() {
         return "Column { name: \"" + name + "\", type: " + type + ", nullable: " + nullable + " }";
