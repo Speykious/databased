@@ -19,7 +19,7 @@ public class GsonProvider implements MessageBodyWriter<Object>, MessageBodyReade
 
 	@Override
 	public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-		return true;
+		return mediaType.equals(MediaType.APPLICATION_JSON_TYPE);
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class GsonProvider implements MessageBodyWriter<Object>, MessageBodyReade
 
 	@Override
 	public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-		return true;
+		return mediaType.equals(MediaType.APPLICATION_JSON_TYPE) ;
 	}
 
 	@Override

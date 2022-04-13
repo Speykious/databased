@@ -7,6 +7,7 @@ import javax.ws.rs.core.Response;
 import com.based.entity.Account;
 import com.based.entity.Table;
 
+import java.io.InputStream;
 import java.util.List;
 
 @Path("/test")
@@ -47,4 +48,18 @@ public class TestEndpoint {
 	public Response exception() {
 		throw new RuntimeException("Cringe runtime error");
 	}
+
+	@POST
+	public String upload(InputStream input){
+		//Lire scv inoutStream
+
+		return "";
+	}
+
+	/**
+	 * new class endPOint 	createTable, uploadFichier, requete select
+	 * Stocker des strings	/	Select
+	 * 
+	 * list list string
+	 */
 }

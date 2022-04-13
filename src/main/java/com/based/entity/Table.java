@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Table implements Serializable {
 	private String name;
-    private List<Column> columns;
+    private List<Column<Class<?>>> columns;
 
 	public Table(String name) {
 		this.name = name;
@@ -17,15 +17,15 @@ public class Table implements Serializable {
         return name;
     }
 
-    public List<Column> getColumns(){
+    public List<Column<Class<?>>> getColumns(){
         return columns;
     }
 
-    public void setColumns(List<Column> columns){
+    public void setColumns(List<Column<Class<?>>> columns){
         this.columns = columns;
     }
 
-    public void addColumn(Column column){
+    public void addColumn(Column<Class<?>> column){
         this.columns.add(column);
     }
 }
