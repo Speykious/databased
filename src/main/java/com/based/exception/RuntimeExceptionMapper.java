@@ -8,6 +8,6 @@ import javax.ws.rs.ext.Provider;
 public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException> {
 	@Override
 	public Response toResponse(RuntimeException e) {
-		return Response.status(400).entity(e.getMessage()).type("plain/text").build();
+		return Response.status(400).entity("Error: " + e.getMessage() + "\n").type("plain/text").build();
 	}
 }
