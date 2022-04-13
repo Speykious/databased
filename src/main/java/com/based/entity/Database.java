@@ -1,6 +1,5 @@
 package com.based.entity;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +17,14 @@ public class Database {
     }
 
     /**
-     * Add a table in the tables HashMap
+     * Add a table to the database
      * 
      * @param tab
      */
-    public static void putTable(Table tab) {
-        if (tables.containsKey(tab.getName())) {
-            throw new IllegalArgumentException("Table " + tab.getName() + " already exists");
-        }
+    public static void createTable(Table tab) {
+        if (tables.containsKey(tab.getName()))
+            throw new IllegalArgumentException("Table '" + tab.getName() + "' already exists.");
+
         tables.put(tab.getName(), tab);
     }
 
@@ -38,21 +37,9 @@ public class Database {
     public static List<List<String>> select(String tableName) {
         var lines = database.get(tableName);
         if (lines == null)
-            throw new IllegalArgumentException("Table " + tableName + " doesn't exist.");
+            throw new IllegalArgumentException("Table '" + tableName + "' doesn't exist.");
 
         return lines;
-    }
-
-    /**
-     * Create the table in the database
-     * 
-     * @param tableName
-     * @param values
-     */
-    public static void createTable(String tableName, List<String> values) {
-        List<List<String>> tableValues = new ArrayList<>();
-        tableValues.add(values);
-        database.put(tableName, tableValues);
     }
 
     /**
@@ -61,24 +48,22 @@ public class Database {
      * @param tableName
      * @param values
      */
-    public static void updateTable(String tableName, List<String> values) {
+    public static void update(String tableName, List<String> values) {
         List<List<String>> allTableValues = database.get(tableName);
         allTableValues.add(values);
         database.replace(tableName, database.get(tableName), allTableValues);
     }
 
     public static void insert(String tableName, List<String> values) {
-        if (tables.containsKey(tableName)) {
-            Table table = getTable(tableName);
-            if (table.getColumns().size() != values.size()) {
-                throw new IllegalArgumentException(
-                        "Values not allowed. " + tableName + " should have values : " + table.getColumns().toString());
-            }
-            if (!database.containsKey(tableName)) {
-                createTable(tableName, values);
-            } else {
-                updateTable(tableName, values);
-            }
+        Table table = getTable(tableName);
+        if (table == null)
+            throw new IllegalArgumentException("Table '" + tableName + "' doesn't exist.");
+
+        if (table.getColumns().size() != values.size()) {
+            throw new IllegalArgumentException(
+                    "Values not allowed. " + tableName + " should have values : " + table.getColumns().toString());
         }
+
+        database.get(tableName).add(values);
     }
 }
