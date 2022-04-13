@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Classe de stockage in-memory
  */
-public class Database {
+public final class Database {
     private static final Map<String, TableInfo> tables = new HashMap<>();
     private static final Map<String, Map<String, List<String>>> database = new HashMap<>();
 
