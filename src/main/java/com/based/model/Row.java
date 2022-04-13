@@ -10,6 +10,10 @@ public class Row {
         return index;
     }
 
+    public int size() {
+        return values.size();
+    }
+
     public List<Object> getValues() {
         return values;
     }
