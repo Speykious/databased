@@ -2,8 +2,13 @@ package com.based.entity;
 
 import java.io.Serializable;
 
-public class TableMetadata implements Serializable {
+public class TableInfo implements Serializable {
+    private String name;
     private Column[] columns;
+
+    public String getName() {
+        return name;
+    }
 
     public Column[] getColumns() {
         return columns;
@@ -11,7 +16,7 @@ public class TableMetadata implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("CreateTableRequest {\n");
+        StringBuilder sb = new StringBuilder("TableInfo {\n");
         for (var column : columns)
             sb.append("  " + column + "\n");
         sb.append("}");

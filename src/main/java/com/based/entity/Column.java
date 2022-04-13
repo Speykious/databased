@@ -6,10 +6,9 @@ public class Column implements Serializable {
     private String name;
     private String type;
     private boolean nullable;
-    private boolean primary;
 
     @Override
     public String toString() {
-        return "Column { \"" + name + "\", " + type + ", " + nullable + ", " + primary + " }";
+        return "Column { name: \"" + name + "\", type: " + type + ", nullable: " + nullable + " }";
     }
 }
