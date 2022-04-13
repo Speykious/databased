@@ -22,9 +22,10 @@ public class TableInfo implements Serializable {
         for (Column column : columns) {
             if (first) {
                 typeInfo += column.getType();
-                first=false;
+                first = false;
+            } else {
+                typeInfo += ", " + column.getType();
             }
-            else typeInfo += ", " + column.getType();
         }
         typeInfo += "]";
         return typeInfo;
