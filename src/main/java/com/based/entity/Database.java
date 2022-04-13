@@ -47,10 +47,9 @@ public final class Database {
     private static void assertNumValues(String tableName, List<String> values) throws IllegalArgumentException {
         TableInfo tableInfo = getTableInfo(tableName);
         if (tableInfo.getColumns().length != values.size()) {
-            // TODO: get a readable string from an array of columns
             throw new IllegalArgumentException(
                     "Values not allowed. '" + tableName + "' should have values : "
-                            + tableInfo.getColumns().toString());
+                            + tableInfo.getColumnTypeInfo());
         }
     }
 
