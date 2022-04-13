@@ -1,6 +1,7 @@
 package com.based.app;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -23,7 +24,7 @@ public class DataEndpoint {
 
 	@GET
 	@Path("/{tableName}")
-	public List<List<String>> select(@PathParam("tableName") String tableName) throws IllegalArgumentException {
+	public Map<String, List<String>> select(@PathParam("tableName") String tableName) throws IllegalArgumentException {
 		return Database.select(tableName);
 	}
 }
