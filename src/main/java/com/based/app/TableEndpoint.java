@@ -3,6 +3,7 @@ package com.based.app;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+import com.based.entity.Database;
 import com.based.entity.TableInfo;
 
 @Path("/table")
@@ -11,11 +12,13 @@ import com.based.entity.TableInfo;
 public class TableEndpoint {
 	@POST
 	public String createTable(TableInfo request) {
-		return "Received TableInfo:\n" + request + "\n";
+		Database.createTable(request);
+		return "Created table:\n" + request + "\n";
 	}
 
 	@GET
-	public String getTable() {
-		return "Return table metadata here";
+	@Path("/{tableName}")
+	public TableInfo getTable(@PathParam("tableName") String tableName) {
+		return Database.getTableInfo(tableName);
 	}
 }
