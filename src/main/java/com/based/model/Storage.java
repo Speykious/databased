@@ -6,30 +6,27 @@ import java.util.function.Predicate;
 /**
  * Class that actually stores data.
  */
-public abstract class Storage {
-    public abstract List<Row> filter(Predicate<Row> predicate);
+public interface Storage {
+    /**
+     * Returns a filtered subset of the storage.
+     * 
+     * @param predicate
+     * @return
+     */
+    public List<Row> filter(Predicate<Row> predicate);
 
     /**
      * Adds a row to the storage.
      * 
-     * @param values
+     * @param values Row to add to the storage.
      */
-    public abstract void add(Row values);
+    public Row add(Row values);
 
     /**
-     * Adds rows in bulk to the storage.
+     * Removes a row from the storage.
      * 
-     * @param valueLines
+     * @param values Row to remove from the storage.
+     * @return
      */
-    public void addBulk(List<Row> valueLines) {
-        for (Row values : valueLines)
-            add(values);
-    }
-
-    public abstract Row remove(Row values);
-
-    public void removeBulk(List<Row> valueLines) {
-        for (Row values : valueLines)
-            remove(values);
-    }
+    public Row remove(Row values);
 }
