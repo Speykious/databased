@@ -32,14 +32,14 @@ public final class Database {
     /**
      * Select all values of a TableMetadata
      * 
-     * @param TableMetadataName
+     * @param tableName
      * @return
      */
-    public static Map<String, List<String>> select(String TableMetadataName) {
+    public static Map<String, List<String>> select(String tableName) {
         // TODO: add way to specify "where" etc.
-        Map<String, List<String>> lines = database.get(TableMetadataName);
+        Map<String, List<String>> lines = database.get(tableName);
         if (lines == null)
-            throw new IllegalArgumentException("Table '" + TableMetadataName + "' doesn't exist.");
+            throw new IllegalArgumentException("Table '" + tableName + "' doesn't exist.");
 
         return lines;
     }
@@ -60,7 +60,7 @@ public final class Database {
      * @param tableName
      * @param values
      */
-    public static void update(String tableName, List<String> values) {
+    public static void update(String tableName, List<String> values) throws IllegalArgumentException {
         TableInfo tableInfo = getTableInfo(tableName);
         if (tableInfo == null)
             throw new IllegalArgumentException("Table '" + tableName + "' doesn't exist.");
@@ -76,7 +76,12 @@ public final class Database {
 
     }
 
-    public static void insert(String tableName, List<String> values) {
+    /**
+     * 
+     * @param tableName
+     * @param values
+     */
+    public static void insert(String tableName, List<String> values) throws IllegalArgumentException {
         TableInfo tableInfo = getTableInfo(tableName);
         if (tableInfo == null)
             throw new IllegalArgumentException("Table '" + tableName + "' doesn't exist.");
