@@ -14,14 +14,18 @@ public class TableInfo implements Serializable {
         return columns;
     }
 
-    public String getColumnTypeInfo(){
-        String typeInfo = "'";
+    public String getColumnTypeInfo() {
+        String typeInfo = "[";
         boolean first = true;
+
         for (Column column : columns) {
-            if(first) typeInfo += column.getType();
+            if (first) {
+                typeInfo += column.getType();
+                first=false;
+            }
             else typeInfo += ", " + column.getType();
         }
-        typeInfo += "'";
+        typeInfo += "]";
         return typeInfo;
     }
 
