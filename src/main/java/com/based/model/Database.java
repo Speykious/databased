@@ -76,7 +76,6 @@ public final class Database {
 
         assertNumValues(tableName, values);
         tableData.put(values.get(0), values);
-
     }
 
     /**
