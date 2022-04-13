@@ -1,11 +1,12 @@
 package com.based.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class InsertRequest implements Serializable {
-    private String[] values;
+    private List<String> values;
 
-    public String[] getValues() {
+    public List<String> getValues() {
         return values;
     }
 

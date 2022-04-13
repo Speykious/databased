@@ -1,9 +1,14 @@
 package com.based.app;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import com.based.entity.InsertRequest;
+import com.based.entity.NbLinesResponse;
+import com.based.model.Database;
 
 @Path("/data")
 @Produces(MediaType.APPLICATION_JSON)
@@ -11,14 +16,15 @@ import com.based.entity.InsertRequest;
 public class DataEndpoint {
 	@POST
 	@Path("/{tableName}")
-	public String insert(@PathParam("tableName") String tableName, InsertRequest request) {
-		return "Received InsertRequest for table '" + tableName + "':\n" + request + "\n";
+	public NbLinesResponse insert(@PathParam("tableName") String tableName, InsertRequest request) throws IllegalArgumentException {
+		List<String> values = request.getValues();
+		Database.insert(tableName, values);
+		return new NbLinesResponse(1);
 	}
 
 	@GET
 	@Path("/{tableName}")
-	public String select(@PathParam("tableName") String tableName) {
-		// TODO: add `SelectRequest` for anything like 'where' and alike
-		return "Return all data from table '" + tableName + "' here\n";
+	public Map<String, List<String>> select(@PathParam("tableName") String tableName) throws IllegalArgumentException {
+		return Database.select(tableName);
 	}
 }
