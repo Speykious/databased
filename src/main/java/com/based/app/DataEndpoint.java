@@ -19,7 +19,7 @@ public class DataEndpoint {
 	public NbLinesResponse insert(@PathParam("tableName") String tableName, InsertRequest request) throws IllegalArgumentException {
 		List<String> values = request.getValues();
 		Database.insert(tableName, values);
-		return new NbLinesResponse(values.size());
+		return new NbLinesResponse(1);
 	}
 
 	@GET
