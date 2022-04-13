@@ -21,7 +21,9 @@ public final class Database {
      * 
      * @param table
      */
-    public static void createTable(TableInfo table) {
+    public static void createTable(TableInfo table) throws IllegalArgumentException {
+        if (table.getName() == null)
+            throw new IllegalArgumentException("Name of the table cannot be null");
         if (tables.containsKey(table.getName()))
             throw new IllegalArgumentException("Table '" + table.getName() + "' already exists.");
 
