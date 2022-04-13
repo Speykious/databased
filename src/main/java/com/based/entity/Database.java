@@ -1,11 +1,9 @@
-package com.based.app;
+package com.based.entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.based.entity.Table;
 
 /**
  * Classe de stockage in-memory
