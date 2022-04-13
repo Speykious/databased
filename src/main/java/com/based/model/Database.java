@@ -53,7 +53,7 @@ public final class Database {
         if (tableInfo.getColumns().size() != values.size()) {
             throw new IllegalArgumentException(
                     "Values not allowed. '" + tableName + "' should have values : "
-                            + tableInfo.getColumnTypeInfo());
+                            + tableInfo.getColumnsDescription());
         }
     }
 

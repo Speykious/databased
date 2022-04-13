@@ -17,7 +17,7 @@ public class TableDTO implements Serializable {
         return columns;
     }
 
-    public String getColumnTypeInfo() {
+    public String getColumnsDescription() {
         String typeInfo = "[";
         boolean first = true;
 
