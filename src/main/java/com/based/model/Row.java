@@ -3,12 +3,11 @@ package com.based.model;
 import java.util.List;
 
 public class Row {
-    private int index;
     private List<Object> values;
 
-    public int getIndex() {
-        return index;
-    }
+    public Row(List<Object> values) {
+        this.values = values;
+    }    
 
     public int size() {
         return values.size();
