@@ -15,10 +15,10 @@ import com.based.model.Table;
 @Consumes(MediaType.APPLICATION_JSON)
 public class TableEndpoint {
 	@POST
-	public String createTable(TableDTO request) throws DuplicateTableException, InvalidTableDTOException {
+	public TableDTO createTable(TableDTO request) throws DuplicateTableException, InvalidTableDTOException {
 		System.out.println("Creating a table");
 		Database.addTable(new Table(request));
-		return "Created table:\n" + request;
+		return request;
 	}
 
 	@GET
