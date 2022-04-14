@@ -24,8 +24,7 @@ public class InsertService {
 
     public void insertCsv(String tableName, InputStream csv, String csvValueSplitter) throws IOException, MissingTableException {
         Table table = Database.getTable(tableName);
-        InputStreamReader input = new InputStreamReader(csv);
-        BufferedReader csvReader = new BufferedReader(input);
+        BufferedReader csvReader = new BufferedReader(new InputStreamReader(csv));
 
         String csvRow;
         while ((csvRow = csvReader.readLine()) != null) {
