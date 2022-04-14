@@ -26,6 +26,9 @@ public class InsertService {
         Table table = Database.getTable(tableName);
         BufferedReader csvReader = new BufferedReader(new InputStreamReader(csv));
 
+        // Skip first line as it contains the column names
+        csvReader.readLine();
+
         int nbRows = 0;
         String csvRow;
         while ((csvRow = csvReader.readLine()) != null) {
