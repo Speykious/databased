@@ -6,6 +6,10 @@ import java.util.function.Predicate;
 
 public class StupidStorage implements Storage {
     private List<Row> rows;
+    
+    public StupidStorage() {
+        rows = new ArrayList<>();
+    }
 
     @Override
     public List<Row> filter(Predicate<Row> predicate) {
