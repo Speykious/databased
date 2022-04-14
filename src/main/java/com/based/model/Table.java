@@ -6,6 +6,10 @@ public class Table {
     private TableDTO dto;
     private Storage storage;
 
+    public Table(TableDTO dto) {
+        this(dto, new StupidStorage());
+    }
+
     public Table(TableDTO dto, Storage storage) {
         this.dto = dto;
         this.storage = storage;
