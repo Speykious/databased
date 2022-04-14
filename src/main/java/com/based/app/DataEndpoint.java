@@ -1,14 +1,16 @@
 package com.based.app;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import com.based.entity.InsertRequest;
 import com.based.entity.NbLinesResponse;
-import com.based.model.Database;
+import com.based.exception.MissingTableException;
+import com.based.model.Row;
+import com.based.services.InsertService;
+import com.based.services.SelectService;
 
 @Path("/data")
 @Produces(MediaType.APPLICATION_JSON)
@@ -16,15 +18,17 @@ import com.based.model.Database;
 public class DataEndpoint {
 	@POST
 	@Path("/{tableName}")
-	public NbLinesResponse insert(@PathParam("tableName") String tableName, InsertRequest request) throws IllegalArgumentException {
-		List<String> values = request.getValues();
-		Database.insert(tableName, values);
+	public NbLinesResponse insert(@PathParam("tableName") String tableName, InsertRequest request) throws MissingTableException {
+		List<Object> values = request.getValues();
+		InsertService insertService = new InsertService();
+		insertService.insert(tableName, values);
 		return new NbLinesResponse(1);
 	}
 
 	@GET
 	@Path("/{tableName}")
-	public Map<String, List<String>> select(@PathParam("tableName") String tableName) throws IllegalArgumentException {
-		return Database.select(tableName);
+	public List<Row> select(@PathParam("tableName") String tableName) throws MissingTableException {
+		SelectService selectService = new SelectService();
+		return selectService.selectAll(tableName);
 	}
 }
