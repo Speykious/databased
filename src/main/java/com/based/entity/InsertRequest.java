@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.List;
 
 public class InsertRequest implements Serializable {
-    private List<String> values;
+    private List<Object> values;
 
-    public List<String> getValues() {
+    public List<Object> getValues() {
         return values;
     }
 
