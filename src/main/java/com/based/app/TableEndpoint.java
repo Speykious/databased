@@ -16,7 +16,7 @@ public class TableEndpoint {
 	@POST
 	public String createTable(TableDTO request) throws DuplicateTableException {
 		Database.addTable(new Table(request));
-		return "Created table:\n" + request + "\n";
+		return "Created table:\n" + request;
 	}
 
 	@GET
