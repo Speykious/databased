@@ -17,6 +17,10 @@ public class Row {
         return values;
     }
 
+    public Object getValue(int index) {
+        return values.get(index);
+    }
+
     public void setValues(List<Object> values) {
         this.values = values;
     }
