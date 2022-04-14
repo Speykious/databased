@@ -16,6 +16,7 @@ public class App extends Application {
 		Set<Object> sets = new HashSet<>(1);
 		sets.add(new TableEndpoint());
 		sets.add(new DataEndpoint());
+		sets.add(new CsvEndpoint());
 		return sets;
 	}
 
