@@ -1,6 +1,10 @@
 package com.based.services;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
 
 import com.based.exception.MissingTableException;
@@ -14,7 +18,21 @@ public class InsertService {
         table.getStorage().add(new Row(values));
     }
 
-    public void insertCsv(String tableName, InputStream csv) {
+    public void insertCsv(String tableName, InputStream csv) throws IOException, MissingTableException {
+        insertCsv(tableName, csv, ",");
+    }
 
+    public void insertCsv(String tableName, InputStream csv, String csvValueSplitter) throws IOException, MissingTableException {
+        Table table = Database.getTable(tableName);
+        InputStreamReader input = new InputStreamReader(csv);
+        BufferedReader csvReader = new BufferedReader(input);
+
+        String csvRow;
+        while ((csvRow = csvReader.readLine()) != null) {
+            Object[] values = (Object[]) csvRow.split(csvValueSplitter);
+            Row row = new Row(Arrays.asList(values));
+            table.getStorage().add(row);
+        }
+        csvReader.close();
     }
 }
