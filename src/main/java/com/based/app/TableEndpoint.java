@@ -16,6 +16,7 @@ import com.based.model.Table;
 public class TableEndpoint {
 	@POST
 	public String createTable(TableDTO request) throws DuplicateTableException, InvalidTableDTOException {
+		System.out.println("Creating a table");
 		Database.addTable(new Table(request));
 		return "Created table:\n" + request;
 	}
@@ -23,6 +24,7 @@ public class TableEndpoint {
 	@GET
 	@Path("/{tableName}")
 	public TableDTO getTable(@PathParam("tableName") String tableName) throws MissingTableException {
+		System.out.println("Fetching information on a table");
 		return Database.getTable(tableName).getDTO();
 	}
 }

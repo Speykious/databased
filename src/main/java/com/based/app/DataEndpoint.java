@@ -19,6 +19,7 @@ public class DataEndpoint {
 	@POST
 	@Path("/{tableName}")
 	public NbLinesResponse insert(@PathParam("tableName") String tableName, InsertRequest request) throws MissingTableException {
+		System.out.println("Inserting values into a table");
 		List<Object> values = request.getValues();
 		InsertService insertService = new InsertService();
 		insertService.insert(tableName, values);
@@ -28,6 +29,7 @@ public class DataEndpoint {
 	@GET
 	@Path("/{tableName}")
 	public List<Row> select(@PathParam("tableName") String tableName) throws MissingTableException {
+		System.out.println("Selecting some data from a table");
 		SelectService selectService = new SelectService();
 		return selectService.selectAll(tableName);
 	}

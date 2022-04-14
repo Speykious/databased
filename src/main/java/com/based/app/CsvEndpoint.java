@@ -17,6 +17,7 @@ public class CsvEndpoint {
     @Path("/{tableName}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public void importCsv(@PathParam("tableName") String tableName, InputStream csv) throws IOException, MissingTableException {
+        System.out.println("Importing some CSV file");
         InsertService insertService = new InsertService();
         insertService.insertCsv(tableName, csv);
     }
