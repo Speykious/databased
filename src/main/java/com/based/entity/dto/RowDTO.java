@@ -1,9 +1,9 @@
-package com.based.entity;
+package com.based.entity.dto;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class InsertRequest implements Serializable {
+public class RowDTO implements Serializable {
     private List<Object> values;
 
     public List<Object> getValues() {
@@ -12,7 +12,7 @@ public class InsertRequest implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("InsertRequest {\n");
+        StringBuilder sb = new StringBuilder("RowDTO {\n");
         for (var value : values)
             sb.append("  \"" + value + "\"\n");
         sb.append("}");

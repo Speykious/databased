@@ -5,8 +5,8 @@ import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import com.based.entity.InsertRequest;
 import com.based.entity.NbLinesResponse;
+import com.based.entity.dto.RowDTO;
 import com.based.exception.MissingTableException;
 import com.based.model.Row;
 import com.based.services.InsertService;
@@ -18,7 +18,7 @@ import com.based.services.SelectService;
 public class DataEndpoint {
 	@POST
 	@Path("/{tableName}")
-	public NbLinesResponse insert(@PathParam("tableName") String tableName, InsertRequest request) throws MissingTableException {
+	public NbLinesResponse insert(@PathParam("tableName") String tableName, RowDTO request) throws MissingTableException {
 		System.out.println("Inserting values into a table");
 		List<Object> values = request.getValues();
 		InsertService insertService = new InsertService();
