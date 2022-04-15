@@ -2,9 +2,11 @@ package com.based.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class DataType {
-    public static DataType INT_32 = new DataType() {
+    public static final DataType INT_32 = new DataType() {
         @Override
         public Object parse(String s) throws NumberFormatException {
             return Integer.parseInt(s);
@@ -16,7 +18,7 @@ public abstract class DataType {
         }
     };
 
-    public static DataType INT_64 = new DataType() {
+    public static final DataType INT_64 = new DataType() {
         @Override
         public Object parse(String s) throws NumberFormatException {
             return Long.parseLong(s);
@@ -28,7 +30,7 @@ public abstract class DataType {
         }
     };
 
-    public static DataType FLOAT_32 = new DataType() {
+    public static final DataType FLOAT_32 = new DataType() {
         @Override
         public Object parse(String s) throws NumberFormatException {
             return Float.parseFloat(s);
@@ -40,7 +42,7 @@ public abstract class DataType {
         }
     };
 
-    public static DataType STRING = new DataType() {
+    public static final DataType STRING = new DataType() {
         @Override
         public Object parse(String s) {
             return s;
@@ -52,7 +54,7 @@ public abstract class DataType {
         }
     };
 
-    public static DataType DATE = new DataType() {
+    public static final DataType DATE = new DataType() {
         private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
 
         @Override
@@ -65,6 +67,15 @@ public abstract class DataType {
             return LocalDateTime.class;
         }
     };
+
+    public static final Map<String, DataType> DATATYPE_MAP = new HashMap<>();
+    static {
+        DATATYPE_MAP.put("int32", INT_32);
+        DATATYPE_MAP.put("int64", INT_64);
+        DATATYPE_MAP.put("float32", FLOAT_32);
+        DATATYPE_MAP.put("date", DATE);
+        DATATYPE_MAP.put("string", STRING);
+    }
 
     public abstract Object parse(String value);
 
