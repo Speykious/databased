@@ -8,9 +8,15 @@ import java.util.Map;
 public abstract class DataType {
     public static final DataType INT_32 = new DataType() {
         @Override
-        public Object parse(Object value) throws NumberFormatException {
-            if (value instanceof String)
-                return Integer.parseInt((String) value);
+        public Object parse(Object value, boolean isNullable) throws NumberFormatException {
+            if (value instanceof String) {
+                String s = (String) value;
+                if (s.isEmpty()) {
+                    if (isNullable) return null;
+                    else throw new IllegalArgumentException("INT_32 string cannot be empty as it is not nullable");
+                }
+                return Integer.parseInt(s);
+            }
             if (value instanceof Integer)
                 return (Integer) value;
 
@@ -25,9 +31,15 @@ public abstract class DataType {
 
     public static final DataType INT_64 = new DataType() {
         @Override
-        public Object parse(Object value) throws NumberFormatException {
-            if (value instanceof String)
-                return Long.parseLong((String) value);
+        public Object parse(Object value, boolean isNullable) throws NumberFormatException {
+            if (value instanceof String) {
+                String s = (String) value;
+                if (s.isEmpty()) {
+                    if (isNullable) return null;
+                    else throw new IllegalArgumentException("INT_64 string cannot be empty as it is not nullable");
+                }
+                return Long.parseLong(s);
+            }
             if (value instanceof Long || value instanceof Integer)
                 return (Long) value;
 
@@ -42,9 +54,15 @@ public abstract class DataType {
 
     public static final DataType FLOAT_32 = new DataType() {
         @Override
-        public Object parse(Object value) throws NumberFormatException {
-            if (value instanceof String)
-                return Float.parseFloat((String) value);
+        public Object parse(Object value, boolean isNullable) throws NumberFormatException {
+            if (value instanceof String) {
+                String s = (String) value;
+                if (s.isEmpty()) {
+                    if (isNullable) return null;
+                    else throw new IllegalArgumentException("FLOAT_32 string cannot be empty as it is not nullable");
+                }
+                return Float.parseFloat(s);
+            }
             if (value instanceof Long)
                 return (Float) value;
 
@@ -59,9 +77,12 @@ public abstract class DataType {
 
     public static final DataType STRING = new DataType() {
         @Override
-        public Object parse(Object value) throws IllegalArgumentException {
-            if (value instanceof String)
-                return value;
+        public Object parse(Object value, boolean isNullable) throws IllegalArgumentException {
+            if (value instanceof String) {
+                String s = (String) value;
+                if (isNullable && s.isEmpty()) return null;
+                return s;
+            }
 
             throw new IllegalArgumentException("Value has to be an instance of String");
         }
@@ -76,9 +97,15 @@ public abstract class DataType {
         private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
 
         @Override
-        public Object parse(Object value) throws IllegalArgumentException {
-            if (value instanceof String)
-                return LocalDateTime.parse((String) value, formatter);
+        public Object parse(Object value, boolean isNullable) throws IllegalArgumentException {
+            if (value instanceof String) {
+                String s = (String) value;
+                if (s.isEmpty()) {
+                    if (isNullable) return null;
+                    else throw new IllegalArgumentException("DATE string cannot be empty as it is not nullable");
+                }
+                return LocalDateTime.parse(s, formatter);
+            }
 
             throw new IllegalArgumentException("Value has to be an instance of String");
         }
@@ -98,7 +125,7 @@ public abstract class DataType {
         DATATYPE_MAP.put("string", STRING);
     }
 
-    public abstract Object parse(Object value);
+    public abstract Object parse(Object value, boolean isNullable);
 
     public abstract Class<?> getInternalClass();
 }
