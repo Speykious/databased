@@ -8,20 +8,30 @@ import java.util.Map;
 public abstract class DataType {
     public static final DataType INT_32 = new DataType() {
         @Override
-        public Object parse(String s) throws NumberFormatException {
-            return Integer.parseInt(s);
+        public Object parse(Object value) throws NumberFormatException {
+            if (value instanceof String)
+                return Integer.parseInt((String) value);
+            if (value instanceof Integer)
+                return (Integer) value;
+
+            throw new NumberFormatException("Cannot parse object of class " + value.getClass());
         }
 
         @Override
         public Class<?> getInternalClass() {
-            return long.class;
+            return int.class;
         }
     };
 
     public static final DataType INT_64 = new DataType() {
         @Override
-        public Object parse(String s) throws NumberFormatException {
-            return Long.parseLong(s);
+        public Object parse(Object value) throws NumberFormatException {
+            if (value instanceof String)
+                return Long.parseLong((String) value);
+            if (value instanceof Long || value instanceof Integer)
+                return (Long) value;
+
+            throw new NumberFormatException("Cannot parse object of class " + value.getClass());
         }
 
         @Override
@@ -32,8 +42,13 @@ public abstract class DataType {
 
     public static final DataType FLOAT_32 = new DataType() {
         @Override
-        public Object parse(String s) throws NumberFormatException {
-            return Float.parseFloat(s);
+        public Object parse(Object value) throws NumberFormatException {
+            if (value instanceof String)
+                return Float.parseFloat((String) value);
+            if (value instanceof Long)
+                return (Float) value;
+
+            throw new NumberFormatException("Cannot parse object of class " + value.getClass());
         }
 
         @Override
@@ -44,8 +59,11 @@ public abstract class DataType {
 
     public static final DataType STRING = new DataType() {
         @Override
-        public Object parse(String s) {
-            return s;
+        public Object parse(Object value) throws IllegalArgumentException {
+            if (value instanceof String)
+                return value;
+
+            throw new IllegalArgumentException("Value has to be an instance of String");
         }
 
         @Override
@@ -58,8 +76,11 @@ public abstract class DataType {
         private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
 
         @Override
-        public Object parse(String s) {
-            return LocalDateTime.parse(s, formatter);
+        public Object parse(Object value) throws IllegalArgumentException {
+            if (value instanceof String)
+                return LocalDateTime.parse((String) value, formatter);
+
+            throw new IllegalArgumentException("Value has to be an instance of String");
         }
 
         @Override
@@ -77,7 +98,7 @@ public abstract class DataType {
         DATATYPE_MAP.put("string", STRING);
     }
 
-    public abstract Object parse(String value);
+    public abstract Object parse(Object value);
 
     public abstract Class<?> getInternalClass();
 }
