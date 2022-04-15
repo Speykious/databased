@@ -6,7 +6,7 @@ import com.based.exception.InvalidColumnFormatException;
 
 public class Column implements Serializable {
     private String name;
-    private String typeName;
+    private String type;
     private boolean primaryKey;
     private boolean nullable;
 
@@ -15,11 +15,11 @@ public class Column implements Serializable {
     }
 
     public DataType getType() {
-        return DataType.DATATYPE_MAP.get(typeName);
+        return DataType.DATATYPE_MAP.get(type);
     }
 
     public String getTypeName() {
-        return typeName;
+        return type;
     }
 
     public boolean isPrimaryKey() {
@@ -33,12 +33,12 @@ public class Column implements Serializable {
     public void assertIsValid() throws InvalidColumnFormatException {
         if (name == null || name == "")
             throw new InvalidColumnFormatException("Empty names are not allowed");
-        if (!DataType.DATATYPE_MAP.containsKey(typeName))
-            throw new InvalidColumnFormatException("Type '" + typeName + "' doesn't exist");
+        if (!DataType.DATATYPE_MAP.containsKey(type))
+            throw new InvalidColumnFormatException("Type '" + type + "' doesn't exist");
     }
 
     @Override
     public String toString() {
-        return "Column { name: \"" + name + "\", type: " + typeName + ", nullable: " + nullable + " }";
+        return "Column { name: \"" + name + "\", type: " + type + ", nullable: " + nullable + " }";
     }
 }
