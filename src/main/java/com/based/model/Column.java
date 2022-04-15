@@ -2,9 +2,11 @@ package com.based.model;
 
 import java.io.Serializable;
 
+import com.based.exception.InvalidColumnFormatException;
+
 public class Column implements Serializable {
     private String name;
-    private String type;
+    private String typeName;
     private boolean primaryKey;
     private boolean nullable;
 
@@ -12,8 +14,12 @@ public class Column implements Serializable {
         return name;
     }
 
-    public String getType() {
-        return type;
+    public DataType getType() {
+        return DataType.DATATYPE_MAP.get(typeName);
+    }
+
+    public String getTypeName() {
+        return typeName;
     }
 
     public boolean isPrimaryKey() {
@@ -24,8 +30,15 @@ public class Column implements Serializable {
         return nullable;
     }
 
+    public void assertIsValid() throws InvalidColumnFormatException {
+        if (name == null || name == "")
+            throw new InvalidColumnFormatException("Empty names are not allowed");
+        if (!DataType.DATATYPE_MAP.containsKey(typeName))
+            throw new InvalidColumnFormatException("Type '" + typeName + "' doesn't exist");
+    }
+
     @Override
     public String toString() {
-        return "Column { name: \"" + name + "\", type: " + type + ", nullable: " + nullable + " }";
+        return "Column { name: \"" + name + "\", type: " + typeName + ", nullable: " + nullable + " }";
     }
 }
