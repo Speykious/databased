@@ -14,6 +14,9 @@ import com.based.model.Database;
 import com.based.model.Row;
 import com.based.model.Table;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
+
 public class InsertService {
     private void assertNbValues(Table table, List<Object> values) throws IllegalArgumentException {
         int nbColumns = table.getDTO().getColumns().size();
@@ -27,8 +30,10 @@ public class InsertService {
 
         List<Column> columns = table.getDTO().getColumns();
         List<Object> parsedValues = new ArrayList<>();
-        for (int i = 0; i < values.size(); i++)
-            parsedValues.add(columns.get(i).getType().parse(values.get(i)));
+        for (int i = 0; i < values.size(); i++) {
+            var column = columns.get(i);
+            parsedValues.add(column.getType().parse(values.get(i), column.isNullable()));
+        }
 
         return parsedValues;
     }
@@ -49,13 +54,23 @@ public class InsertService {
         Table table = Database.getTable(tableName);
         BufferedReader csvReader = new BufferedReader(new InputStreamReader(csv));
 
-        // Skip first line as it contains the column names
-        csvReader.readLine();
+        Iterable<CSVRecord> records = CSVFormat.Builder.create()
+                .setDelimiter(',')
+                .setQuote('"')
+                .setRecordSeparator("\n")
+                .setIgnoreEmptyLines(true)
+                .setAllowDuplicateHeaderNames(true)
+                .setTrailingDelimiter(true)
+                .build().parse(csvReader);
 
-        int nbRows = 0;
-        String csvRow;
-        while ((csvRow = csvReader.readLine()) != null) {
-            Object[] values = (Object[]) csvRow.split(csvValueSplitter);
+        int nbRows = -1;
+        for (CSVRecord record : records) {
+            if (nbRows == -1) {
+                nbRows++;
+                continue;
+            }
+
+            Object[] values = record.toList().toArray();
             Row row = new Row(parseValues(table, Arrays.asList(values)));
             table.getStorage().add(row);
             nbRows++;
