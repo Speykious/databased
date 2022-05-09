@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.based.model.Column;
 
+/** Data Transfer Object for Table */
 public class TableDTO implements Serializable {
     private String name;
     private List<Column> columns;
