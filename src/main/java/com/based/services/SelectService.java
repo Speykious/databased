@@ -18,4 +18,8 @@ public class SelectService {
         Table table = Database.getTable(tableName);
         return table.getStorage().getRows(table.getColumnIndexes(columnNames));
     }
+
+    public List<Row> selectWhere(String tableName) throws MissingTableException {
+        return Database.getTable(tableName).getStorage().getRows();
+    }
 }
