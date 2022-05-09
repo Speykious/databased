@@ -12,8 +12,10 @@ public abstract class DataType {
             if (value instanceof String) {
                 String s = (String) value;
                 if (s.isEmpty()) {
-                    if (isNullable) return null;
-                    else throw new IllegalArgumentException("INT_32 string cannot be empty as it is not nullable");
+                    if (isNullable)
+                        return null;
+                    else
+                        throw new IllegalArgumentException("INT_32 string cannot be empty as it is not nullable");
                 }
                 return Integer.parseInt(s);
             }
@@ -35,8 +37,10 @@ public abstract class DataType {
             if (value instanceof String) {
                 String s = (String) value;
                 if (s.isEmpty()) {
-                    if (isNullable) return null;
-                    else throw new IllegalArgumentException("INT_64 string cannot be empty as it is not nullable");
+                    if (isNullable)
+                        return null;
+                    else
+                        throw new IllegalArgumentException("INT_64 string cannot be empty as it is not nullable");
                 }
                 return Long.parseLong(s);
             }
@@ -58,12 +62,14 @@ public abstract class DataType {
             if (value instanceof String) {
                 String s = (String) value;
                 if (s.isEmpty()) {
-                    if (isNullable) return null;
-                    else throw new IllegalArgumentException("FLOAT_32 string cannot be empty as it is not nullable");
+                    if (isNullable)
+                        return null;
+                    else
+                        throw new IllegalArgumentException("FLOAT_32 string cannot be empty as it is not nullable");
                 }
                 return Float.parseFloat(s);
             }
-            if (value instanceof Long)
+            if (value instanceof Float)
                 return (Float) value;
 
             throw new NumberFormatException("Cannot parse object of class " + value.getClass());
@@ -71,7 +77,7 @@ public abstract class DataType {
 
         @Override
         public Class<?> getInternalClass() {
-            return long.class;
+            return float.class;
         }
     };
 
@@ -80,7 +86,8 @@ public abstract class DataType {
         public Object parse(Object value, boolean isNullable) throws IllegalArgumentException {
             if (value instanceof String) {
                 String s = (String) value;
-                if (isNullable && s.isEmpty()) return null;
+                if (isNullable && s.isEmpty())
+                    return null;
                 return s;
             }
 
@@ -101,8 +108,10 @@ public abstract class DataType {
             if (value instanceof String) {
                 String s = (String) value;
                 if (s.isEmpty()) {
-                    if (isNullable) return null;
-                    else throw new IllegalArgumentException("DATE string cannot be empty as it is not nullable");
+                    if (isNullable)
+                        return null;
+                    else
+                        throw new IllegalArgumentException("DATE string cannot be empty as it is not nullable");
                 }
                 return LocalDateTime.parse(s, formatter);
             }

@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.based.exception.MissingTableException;
@@ -18,30 +18,59 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
 public class InsertService {
-    private void assertNbValues(Table table, List<Object> values) throws IllegalArgumentException {
+    public static CSVFormat CSV_FORMATTER = CSVFormat.Builder.create()
+            .setDelimiter(',')
+            .setQuote('"')
+            .setRecordSeparator("\n")
+            .setIgnoreEmptyLines(true)
+            .setAllowDuplicateHeaderNames(true)
+            .setTrailingDelimiter(true)
+            .build();
+
+    /**
+     * Asserts that the row is compatible with the number of columns in the table.
+     * 
+     * @param table  The table to get the number of columns from.
+     * @param values The row to get the number of values from.
+     * @throws IllegalArgumentException
+     */
+    private void assertNbValues(Table table, List<String> values) throws IllegalArgumentException {
         int nbColumns = table.getDTO().getColumns().size();
         if (values.size() != nbColumns)
             throw new IllegalArgumentException(
                     "Received " + values.size() + " values, but there are " + nbColumns + " columns");
     }
 
-    private List<Object> parseValues(Table table, List<Object> values) throws IllegalArgumentException {
-        assertNbValues(table, values);
+    /**
+     * Converts a CSV row into a row of values typed after the columns of the table.
+     * 
+     * @param table     The table to get the columns from.
+     * @param csvValues The CSV row to parse.
+     * @return row that can be inserted into the table.
+     * @throws IllegalArgumentException
+     */
+    private List<Object> parseValues(Table table, List<String> csvValues) throws IllegalArgumentException {
+        assertNbValues(table, csvValues);
 
         List<Column> columns = table.getDTO().getColumns();
         List<Object> parsedValues = new ArrayList<>();
-        for (int i = 0; i < values.size(); i++) {
+        for (int i = 0; i < csvValues.size(); i++) {
             var column = columns.get(i);
-            parsedValues.add(column.getType().parse(values.get(i), column.isNullable()));
+            parsedValues.add(column.getType().parse(csvValues.get(i), column.isNullable()));
         }
 
         return parsedValues;
     }
 
-    public void insert(String tableName, List<Object> values)
-            throws MissingTableException, IllegalArgumentException {
+    public void insert(String tableName, String csvRow)
+            throws MissingTableException, IllegalArgumentException, IOException {
         Table table = Database.getTable(tableName);
-        table.getStorage().add(new Row(parseValues(table, values)));
+        Iterable<CSVRecord> records = CSV_FORMATTER.parse(new StringReader(csvRow));
+
+        // csvRow should only contain one row of CSV values
+        // so this for loop should only execute once.
+        for (CSVRecord record : records)
+            table.getStorage().add(new Row(parseValues(table, record.toList())));
     }
 
     public int insertCsv(String tableName, InputStream csv)
@@ -54,14 +83,7 @@ public class InsertService {
         Table table = Database.getTable(tableName);
         BufferedReader csvReader = new BufferedReader(new InputStreamReader(csv));
 
-        Iterable<CSVRecord> records = CSVFormat.Builder.create()
-                .setDelimiter(',')
-                .setQuote('"')
-                .setRecordSeparator("\n")
-                .setIgnoreEmptyLines(true)
-                .setAllowDuplicateHeaderNames(true)
-                .setTrailingDelimiter(true)
-                .build().parse(csvReader);
+        Iterable<CSVRecord> records = CSV_FORMATTER.parse(csvReader);
 
         int nbRows = -1;
         for (CSVRecord record : records) {
@@ -70,8 +92,7 @@ public class InsertService {
                 continue;
             }
 
-            Object[] values = record.toList().toArray();
-            Row row = new Row(parseValues(table, Arrays.asList(values)));
+            Row row = new Row(parseValues(table, record.toList()));
             table.getStorage().add(row);
             nbRows++;
         }
