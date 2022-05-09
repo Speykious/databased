@@ -1,3 +1,9 @@
 {
-    "where": "3 == 5 and 2 != 4 or 4 < 4"
+    "where": [
+        {
+            "column_name": "first_name",
+            "operator": "==",
+            "value": "george" 
+        }
+    ]
 }
