@@ -20,6 +20,11 @@ public interface Storage {
     public List<Row> getRows();
 
     /**
+     * @return all rows contained in the storage, containing only specified columns.
+     */
+    public List<Row> getRows(int[] columns);
+
+    /**
      * Adds a row to the storage.
      * 
      * @param values Row to add to the storage.

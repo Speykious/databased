@@ -5,6 +5,7 @@ import java.util.List;
 import com.based.entity.dto.TableDTO;
 import com.based.exception.InvalidColumnFormatException;
 import com.based.exception.InvalidTableFormatException;
+import com.based.exception.MissingColumnException;
 
 public class Table {
     private TableDTO dto;
@@ -31,6 +32,30 @@ public class Table {
 
         this.dto = dto;
         this.storage = storage;
+    }
+
+    public int[] getColumnIndexes(List<String> columnNames) throws MissingColumnException {
+        int[] indexes = new int[columnNames.size()];
+        
+        List<Column> columns = dto.getColumns();
+        for (int j = 0; j < columnNames.size(); j++) {
+            String columnName = columnNames.get(j);
+
+            boolean found = false;
+            for (int i = 0; i < columns.size(); i++) {
+                if (columns.get(i).getName().equals(columnName)) {
+                    indexes[j] = i;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+                throw new MissingColumnException(columnName);
+        }
+
+
+        return indexes;
     }
 
     public TableDTO getDTO() {

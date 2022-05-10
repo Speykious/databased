@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 
 public class StupidStorage implements Storage {
     private List<Row> rows;
-    
+
     public StupidStorage() {
         rows = new ArrayList<>();
     }
@@ -35,11 +35,23 @@ public class StupidStorage implements Storage {
 
     @Override
     public List<Row> getRows() {
-        // Get a copy of the internal list, but not a copy of the rows
-        // Avoids modification of the internal list but not the rows
+        return getRows(null);
+    }
+
+    @Override
+    public List<Row> getRows(int[] columns) {
         List<Row> copy = new ArrayList<>();
-        for (Row row : rows)
-            copy.add(row);
+        if (columns == null || columns.length == 0) {
+            for (Row row : rows)
+                copy.add(row);
+        } else {
+            for (Row row : rows) {
+                List<Object> rearranged = new ArrayList<>();
+                for (int index : columns)
+                    rearranged.add(row.getValue(index));
+                copy.add(new Row(rearranged));
+            }
+        }
         return copy;
     }
 }
