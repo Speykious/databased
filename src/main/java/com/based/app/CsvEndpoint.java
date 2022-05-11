@@ -25,7 +25,7 @@ public class CsvEndpoint {
     @Path("/{tableName}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public NbLinesResponse importCsv(@PathParam("tableName") String tableName, MultipartFormDataInput input)
-            throws IOException, MissingTableException {
+            throws IOException, MissingTableException, IllegalArgumentException, InterruptedException {
         System.out.println("Importing some CSV file");
         Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
         List<InputPart> inputParts = uploadForm.get("file");
