@@ -33,8 +33,10 @@ public class DataEndpoint {
 	public List<Row> select(@PathParam("tableName") String tableName, SelectRequestDTO selectRequest) throws MissingTableException, MissingColumnException {
 		System.out.println("Selecting some data from a table");
 		SelectService selectService = new SelectService();
+
+		if(selectRequest == null) throw new MissingTableException(tableName);
 		WhereCondition where = selectRequest.getWhere();
-		
+
 		if(where == null) return selectService.selectAll(tableName);
 		return selectService.selectWhere(tableName, selectRequest);
 	}
