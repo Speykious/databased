@@ -45,6 +45,8 @@ public class SelectService {
                 if(evaluated instanceof Boolean) return (boolean) evaluated;
                 return false;
             } catch (Exception e) {
+                //TODO : might throw exception ? because all exception are not displayed
+                //Solution : PredicateWithThrowable
                 return false;
             }
         };
