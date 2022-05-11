@@ -1,0 +1,634 @@
+_type: export
+__export_format: 4
+__export_date: 2022-05-11T12:08:03.346Z
+__export_source: insomnia.desktop.app:v2022.3.0
+resources:
+  - _id: req_5f9d40da40bd4d699ee9fa24db4b4dcf
+    parentId: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
+    modified: 1652270760254
+    created: 1652102463013
+    url: http://localhost:8080/based/data/yellow_tripdata
+    name: Based select-all request
+    description: ""
+    method: GET
+    body:
+      mimeType: application/json
+      text: "[]"
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_19dea5ef109d4342bb5d4b03c580abb2
+    authentication: {}
+    metaSortKey: -1649937513110.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
+    parentId: wrk_d2bac865327b4153aa21603971f16e1d
+    modified: 1652102463002
+    created: 1652102463002
+    name: Table yellow-tripdata
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1650030812963.5
+    _type: request_group
+  - _id: wrk_d2bac865327b4153aa21603971f16e1d
+    parentId: null
+    modified: 1649863471725
+    created: 1649863471725
+    name: New Document
+    description: ""
+    scope: design
+    _type: workspace
+  - _id: req_edb929688a0045428bea7d66f1705707
+    parentId: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
+    modified: 1652270762293
+    created: 1652177992348
+    url: http://localhost:8080/based/data/yellow_tripdata
+    name: Based select request
+    description: ""
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"columns": [
+        		"vendor_name",
+        		"Passenger_Count",
+        		"surcharge",
+        		"surcharge"
+        	],
+        	"where": {
+        		"type": "operator",
+        		"value": "and",
+        		"children": [
+        			{
+        				"type": "operator",
+        				"value": "==",
+        				"children": [
+        					{
+        						"type": "ident",
+        						"value": "column_name"
+        					},
+        					{
+        						"type": "string",
+        						"value": "bonjour"
+        					}
+        				]
+        			},
+        			{
+        				"type": "operator",
+        				"value": "and",
+        				"children": [
+        					{
+        						"type": "operator",
+        						"value": ">",
+        						"children": [
+        							{
+        								"type": "ident",
+        								"value": "id"
+        							},
+        							{
+        								"type": "number",
+        								"value": "3"
+        							}
+        						]
+        					},
+        					{
+        						"type": "operator",
+        						"value": "!=",
+        						"children": [
+        							{
+        								"type": "ident",
+        								"value": "desh"
+        							},
+        							{
+        								"type": "string",
+        								"value": "real"
+        							}
+        						]
+        					}
+        				]
+        			}
+        		]
+        	}
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_628d7fb92d1d4f3195fed8e1113ea879
+    authentication: {}
+    metaSortKey: -1649937513097.75
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_eba693cd949e4a13b966d58714532d08
+    parentId: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
+    modified: 1652102478913
+    created: 1652102463020
+    url: http://localhost:8080/based/table/yellow_tripdata
+    name: Based table info request
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1649937513085.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_1bc44780a03145b7b00100503eb75bd7
+    parentId: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
+    modified: 1652180276631
+    created: 1652102463007
+    url: http://localhost:8080/based/table
+    name: Based create-table request
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name": "yellow_tripdata",
+        	"columns": [
+        		{
+        			"name": "vendor_name",
+        			"type": "string",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Trip_Pickup_DateTime",
+        			"type": "string",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Trip_Dropoff_DateTime",
+        			"type": "string",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Passenger_Count",
+        			"type": "int32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Trip_Distance",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Start_Lon",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Start_Lat",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Rate_Code",
+        			"type": "string",
+        			"nullable": true
+        		},
+        		{
+        			"name": "store_and_forward",
+        			"type": "string",
+        			"nullable": true
+        		},
+        		{
+        			"name": "End_Lon",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "End_Lat",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Payment_Type",
+        			"type": "string",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Fare_Amt",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "surcharge",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "mta_tax",
+        			"type": "string",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Tip_Amt",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Tolls_Amt",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Total_Amt",
+        			"type": "float32",
+        			"nullable": true
+        		}
+        	]
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_f64f8068f5654be283ef92b7dbc0cae9
+    authentication: {}
+    metaSortKey: -1649937513060.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_271ae068a9da4099acd729a4aaba0ae4
+    parentId: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
+    modified: 1652178222875
+    created: 1652102463025
+    url: http://localhost:8080/based/csv/yellow_tripdata
+    name: Based import-csv request
+    description: ""
+    method: POST
+    body:
+      mimeType: multipart/form-data
+      params:
+        - id: pair_cab04f00ff8d4c6b8374eeb3a026a4e0
+          name: file
+          value: ""
+          description: ""
+          type: file
+          fileName: /home/speykious/Downloads/yellow_trippeddata_2009-01.csv
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: multipart/form-data
+        id: pair_f64f8068f5654be283ef92b7dbc0cae9
+    authentication: {}
+    metaSortKey: -1649937513010.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_4aea3baa094c4be2a2ace05fdeb40c43
+    parentId: fld_b2c20e0a2e404475ae2f74a360ca1d24
+    modified: 1650035376644
+    created: 1649863471740
+    url: ""
+    name: Based select request
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1649987697412.5
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_b2c20e0a2e404475ae2f74a360ca1d24
+    parentId: wrk_d2bac865327b4153aa21603971f16e1d
+    modified: 1650027191650
+    created: 1650027191650
+    name: Table rien
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1650027191650
+    _type: request_group
+  - _id: req_3c642be2916042a187e13a598c9d92bf
+    parentId: fld_b2c20e0a2e404475ae2f74a360ca1d24
+    modified: 1650035400169
+    created: 1650035354342
+    url: ""
+    name: Based table info request
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1649987697362.5
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_7ae7630b31d4401c97ce6ea0f0dba45f
+    parentId: fld_b2c20e0a2e404475ae2f74a360ca1d24
+    modified: 1650035429581
+    created: 1649947972873
+    url: ""
+    name: Based import-csv request
+    description: ""
+    method: POST
+    body:
+      mimeType: multipart/form-data
+      params:
+        - id: pair_cab04f00ff8d4c6b8374eeb3a026a4e0
+          name: file
+          value: ""
+          description: ""
+          type: file
+          fileName: /home/speykious/repos/github.com/Speykious/databased/csv-examples/rien.csv
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: multipart/form-data
+        id: pair_f64f8068f5654be283ef92b7dbc0cae9
+    authentication: {}
+    metaSortKey: -1649987697262.5
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_2480d0070772489a9a2f7cf78e4e5b8c
+    parentId: fld_b4cc5432b56a4a729db6116a1888e289
+    modified: 1650034442762
+    created: 1649947930654
+    url: http://localhost:8080/based/table
+    name: Based create-table request
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name": "rien",
+        	"columns": [
+        		{
+        			"name": "id",
+        			"type": "int32",
+        			"nullable": false,
+        			"primary": true
+        		},
+        		{
+        			"name": "first_name",
+        			"type": "string",
+        			"nullable": false,
+        			"primary": false
+        		},
+        		{
+        			"name": "last_name",
+        			"type": "string",
+        			"nullable": false,
+        			"primary": false
+        		},
+        		{
+        			"name": "some_int",
+        			"type": "int32",
+        			"nullable": true,
+        			"primary": false
+        		}
+        	]
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_f64f8068f5654be283ef92b7dbc0cae9
+    authentication: {}
+    metaSortKey: -1649948210045
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_b4cc5432b56a4a729db6116a1888e289
+    parentId: fld_b2c20e0a2e404475ae2f74a360ca1d24
+    modified: 1650027200087
+    created: 1649948202775
+    name: create-table
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1649987697212.5
+    _type: request_group
+  - _id: req_cfe0ca85d0c04abfb467d20e7fd17d0f
+    parentId: fld_d838e792003244bd9ea4fb7c38f58a10
+    modified: 1650034212917
+    created: 1649948242670
+    url: http://localhost:8080/based/table
+    name: Bad create-table request (no columns)
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name": "rien"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_f64f8068f5654be283ef92b7dbc0cae9
+    authentication: {}
+    metaSortKey: -1649926816075.5
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_d838e792003244bd9ea4fb7c38f58a10
+    parentId: fld_b4cc5432b56a4a729db6116a1888e289
+    modified: 1649948209995
+    created: 1649948209995
+    name: bad
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1649948209995
+    _type: request_group
+  - _id: req_daefe2196cb8438a93b346be9609993f
+    parentId: fld_d838e792003244bd9ea4fb7c38f58a10
+    modified: 1650033133450
+    created: 1649948292415
+    url: http://localhost:8080/based/table
+    name: Bad create-table request (columns empty)
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name": "rien",
+        	"columns": []
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_f64f8068f5654be283ef92b7dbc0cae9
+    authentication: {}
+    metaSortKey: -1649926816063
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_4543624c8bcf423fb45f62515d3dafca
+    parentId: fld_d838e792003244bd9ea4fb7c38f58a10
+    modified: 1650033136223
+    created: 1649948190200
+    url: http://localhost:8080/based/table
+    name: Bad create-table request (no name)
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"columns": [
+        		{
+        			"name": "id",
+        			"type": "int",
+        			"nullable": false,
+        			"primary": true
+        		}
+        	]
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_f64f8068f5654be283ef92b7dbc0cae9
+    authentication: {}
+    metaSortKey: -1649926816050.5
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_4c6a873a81fa4e7e8e8e66a8dc410073
+    parentId: fld_d838e792003244bd9ea4fb7c38f58a10
+    modified: 1650033139200
+    created: 1649948360449
+    url: http://localhost:8080/based/table
+    name: Bad create-table request (name empty)
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name": "",
+        	"columns": [
+        		{
+        			"name": "id",
+        			"type": "int",
+        			"nullable": false,
+        			"primary": true
+        		}
+        	]
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_f64f8068f5654be283ef92b7dbc0cae9
+    authentication: {}
+    metaSortKey: -1649926815950.5
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: env_a1f81657044c5a2c3811a35164fea31bfd23e870
+    parentId: wrk_d2bac865327b4153aa21603971f16e1d
+    modified: 1649863471735
+    created: 1649863471735
+    name: Base Environment
+    data: {}
+    dataPropertyOrder: null
+    color: null
+    isPrivate: false
+    metaSortKey: 1649863471735
+    _type: environment
+  - _id: jar_a1f81657044c5a2c3811a35164fea31bfd23e870
+    parentId: wrk_d2bac865327b4153aa21603971f16e1d
+    modified: 1649863471738
+    created: 1649863471738
+    name: Default Jar
+    cookies: []
+    _type: cookie_jar
+  - _id: spc_bc31836ab4b942058a40a8345cb2fd2e
+    parentId: wrk_d2bac865327b4153aa21603971f16e1d
+    modified: 1649947880205
+    created: 1649863471732
+    fileName: Based Document
+    contents: ""
+    contentType: yaml
+    _type: api_spec
+  - _id: uts_6ff364aa117c4c7ba8f75272da969da8
+    parentId: wrk_d2bac865327b4153aa21603971f16e1d
+    modified: 1649863471740
+    created: 1649863471740
+    name: Example Test Suite
+    _type: unit_test_suite
