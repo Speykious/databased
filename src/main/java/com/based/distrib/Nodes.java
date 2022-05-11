@@ -50,6 +50,19 @@ public final class Nodes {
         }
     }
 
+    public static int getNextOnlineNodeIndex() throws IndexOutOfBoundsException {
+        for (int index : onlineNodeIndexes) {
+            if (index > selfIndex)
+                return index;
+        }
+
+        return onlineNodeIndexes.get(0);
+    }
+
+    public static List<Integer> getOnlineNodeIndexes() {
+        return onlineNodeIndexes;
+    }
+
     public static String getMachineIp() {
         return getMachineIp(selfIndex);
     }
@@ -80,6 +93,10 @@ public final class Nodes {
     public static MachineTarget getMachineTarget(int index, String path) {
         System.out.println("Getting target " + index + " with path " + path);
         return new MachineTarget(index, httpClient.target(getMachineUrl(index, path)));
+    }
+
+    public static MachineTarget getNextOnlineMachineTarget(String path) {
+        return getMachineTarget(getNextOnlineNodeIndex(), path);
     }
 
     public static MachineTarget[] getOtherMachineTargets(String path) {

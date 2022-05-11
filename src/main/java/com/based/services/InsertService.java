@@ -8,6 +8,13 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import com.based.distrib.MachineTarget;
+import com.based.distrib.Nodes;
+import com.based.entity.NbLinesResponse;
 import com.based.exception.MissingTableException;
 import com.based.model.Column;
 import com.based.model.Database;
@@ -16,6 +23,7 @@ import com.based.model.Table;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 public class InsertService {
     public static CSVFormat CSV_FORMATTER = CSVFormat.Builder.create()
@@ -49,7 +57,7 @@ public class InsertService {
      * @return row that can be inserted into the table.
      * @throws IllegalArgumentException
      */
-    private List<Object> parseValues(Table table, List<String> csvValues) throws IllegalArgumentException {
+    protected List<Object> parseValues(Table table, List<String> csvValues) throws IllegalArgumentException {
         assertNbValues(table, csvValues);
 
         List<Column> columns = table.getDTO().getColumns();
@@ -76,10 +84,12 @@ public class InsertService {
     private static String[] csvStringBuffer = new String[100_000];
 
     public int insertCsv(String tableName, InputStream csv)
-            throws IOException, MissingTableException, IllegalArgumentException {
-        Table table = Database.getTable(tableName);
-        BufferedReader csvReader = new BufferedReader(new InputStreamReader(csv));
+            throws IllegalArgumentException, IOException, MissingTableException, InterruptedException {
+        return insertCsv(Database.getTable(tableName), new BufferedReader(new InputStreamReader(csv)));
+    }
 
+    public int insertCsv(Table table, BufferedReader csvReader)
+            throws IOException, MissingTableException, IllegalArgumentException, InterruptedException {
         boolean reachedEOF = false;
         for (int i = 0; i < csvStringBuffer.length; i++) {
             String line = csvReader.readLine();
@@ -92,25 +102,67 @@ public class InsertService {
             csvStringBuffer[i] = line;
         }
 
-        if (false == reachedEOF) {
-            
-        }
-
         Iterable<CSVRecord> records = CSV_FORMATTER.parse(csvReader);
 
-        int nbRows = -1;
+        InsertRunnable insertRunnable = new InsertRunnable(table, records, this);
+        Thread insertOperation = new Thread(insertRunnable);
+        insertOperation.start();
+
+        int nbLines = 0;
+        if (false == reachedEOF) {
+            try {
+                MachineTarget nextMachine = Nodes.getNextOnlineMachineTarget("/csv/" + table.getName());
+                ResteasyWebTarget target = nextMachine.getTarget();
+                Builder request = target.request().accept(MediaType.APPLICATION_JSON);
+                Response response = request.get();
+                nbLines += response.readEntity(NbLinesResponse.class).getNbLines();
+            } catch (IndexOutOfBoundsException e) {
+                // If there are no other online machines, we continue to read the CSV
+                nbLines += insertCsv(table, csvReader);
+            }
+        }
+
+        insertOperation.join();
+        nbLines += insertRunnable.getNbRows();
+
+        try {
+            csvReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return nbLines;
+    }
+}
+
+class InsertRunnable implements Runnable {
+    private Table table;
+    private Iterable<CSVRecord> records;
+    private InsertService insertService;
+    private int nbRows = -1;
+
+    public InsertRunnable(Table table, Iterable<CSVRecord> records, InsertService insertService) {
+        this.table = table;
+        this.records = records;
+        this.insertService = insertService;
+    }
+
+    public int getNbRows() {
+        return nbRows;
+    }
+
+    @Override
+    public void run() {
+        nbRows = -1;
         for (CSVRecord record : records) {
             if (nbRows == -1) {
                 nbRows++;
                 continue;
             }
 
-            Row row = new Row(parseValues(table, record.toList()));
+            Row row = new Row(insertService.parseValues(table, record.toList()));
             table.getStorage().add(row);
             nbRows++;
         }
-        csvReader.close();
-
-        return nbRows;
     }
 }
