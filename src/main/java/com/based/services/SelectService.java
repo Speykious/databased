@@ -48,8 +48,9 @@ public class SelectService {
                 return false;
             }
         };
-        if(columns == null) throw new MissingColumnException(tableName);
-        int[] indexes = table.getColumnIndexes(columns);
+        int[] indexes;
+        if(columns == null) indexes = null;
+        else indexes = table.getColumnIndexes(columns);
         return Database.getTable(tableName).getStorage().filter(tester, indexes);
     }
 
