@@ -38,13 +38,16 @@ public class DataEndpoint {
 			WhereCondition where = selectRequest.getWhere();
 
 			if(where != null) {
-				System.out.println("where !!!!!!!!!!!!!!!!!!!!!!!!!!!");
-				return selectService.selectWhere(tableName, selectRequest);
+				if(where.getType() == null || where.getValue() == null){
+					return selectService.selectAll(tableName);
+				}else{
+					return selectService.selectWhere(tableName, selectRequest);
+				}
 			}else{
 				return selectService.selectAll(tableName);
 			}
 		}
-		System.out.println("No REQUEST !!!!!!!!!");
+
 
 		throw new Exception("Commande incorrect");
 
