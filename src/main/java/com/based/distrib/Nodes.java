@@ -1,6 +1,8 @@
-package com.based;
+package com.based.distrib;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
@@ -8,16 +10,44 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 public final class Nodes {
     private static int[] baseIp = new int[] { 132, 227, 115, 97 };
+
     private static int count = 24;
     private static int port = Integer.parseInt(System.getProperty("jetty.port", "8080"));
     private static int selfIndex = 0;
     private static ResteasyClient httpClient = createHttpClient();
-    
+
+    private static List<Integer> onlineNodeIndexes;
+
     public static ResteasyClient createHttpClient() {
         return new ResteasyClientBuilder()
-            .connectionPoolSize(727)
-            .connectTimeout(200, TimeUnit.MILLISECONDS)
-            .build();
+                .connectionPoolSize(727)
+                .connectTimeout(200, TimeUnit.MILLISECONDS)
+                .build();
+    }
+
+    /**
+     * Tells all other nodes that it exists and constructs back a list of active
+     * nodes.
+     * @throws InterruptedException
+     */
+    public static void pingOtherNodes() throws InterruptedException {
+        onlineNodeIndexes = new ArrayList<>();
+
+        MachineTarget[] machineTargets = Nodes.getOtherMachineTargets("/node/ping");
+
+        PingRequestRunnable[] runnables = new PingRequestRunnable[machineTargets.length];
+        Thread[] requests = new Thread[machineTargets.length];
+        for (int i = 0; i < requests.length; i++) {
+            runnables[i] = new PingRequestRunnable(machineTargets[i]);
+            requests[i] = new Thread(runnables[i]);
+            requests[i].start();
+        }
+
+        for (int i = 0; i < requests.length; i++) {
+            requests[i].join();
+            if (runnables[i].hasResponded())
+                onlineNodeIndexes.add(runnables[i].getNodeIndex());
+        }
     }
 
     public static String getMachineIp() {
@@ -60,10 +90,11 @@ public final class Nodes {
         int length = end - beg + 1;
         if (selfIndex >= beg && selfIndex <= end)
             length--;
-        
+
         MachineTarget[] targets = new MachineTarget[length];
         for (int i = 0, targetIndex = 0; i <= end - beg; i++) {
-            if (i == selfIndex) continue;
+            if (i == selfIndex)
+                continue;
             targets[targetIndex++] = getMachineTarget(i, path);
         }
 

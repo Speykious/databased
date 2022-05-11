@@ -5,8 +5,8 @@ import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.based.MachineTarget;
-import com.based.Nodes;
+import com.based.distrib.MachineTarget;
+import com.based.distrib.Nodes;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 

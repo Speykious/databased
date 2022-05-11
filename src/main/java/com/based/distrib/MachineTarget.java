@@ -1,4 +1,4 @@
-package com.based;
+package com.based.distrib;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
