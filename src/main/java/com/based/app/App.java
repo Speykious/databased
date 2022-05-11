@@ -3,7 +3,7 @@ package com.based.app;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import com.based.Nodes;
+import com.based.distrib.Nodes;
 import com.based.exception.RuntimeExceptionMapper;
 import com.based.filter.GsonProvider;
 
@@ -14,9 +14,16 @@ import java.util.Set;
 public class App extends Application {
 	public App() {
 		super();
+
 		int selfIndex = Integer.parseInt(System.getProperty("index", "0"));
 		Nodes.setSelfIndex(selfIndex);
 		System.out.println("Set selfIndex to " + selfIndex);
+
+		try {
+			Nodes.pingOtherNodes();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

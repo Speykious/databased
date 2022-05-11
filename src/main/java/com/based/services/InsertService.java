@@ -73,15 +73,28 @@ public class InsertService {
             table.getStorage().add(new Row(parseValues(table, record.toList())));
     }
 
-    public int insertCsv(String tableName, InputStream csv)
-            throws IOException, MissingTableException, IllegalArgumentException {
-        return insertCsv(tableName, csv, ",");
-    }
+    private static String[] csvStringBuffer = new String[100_000];
 
-    public int insertCsv(String tableName, InputStream csv, String csvValueSplitter)
+    public int insertCsv(String tableName, InputStream csv)
             throws IOException, MissingTableException, IllegalArgumentException {
         Table table = Database.getTable(tableName);
         BufferedReader csvReader = new BufferedReader(new InputStreamReader(csv));
+
+        boolean reachedEOF = false;
+        for (int i = 0; i < csvStringBuffer.length; i++) {
+            String line = csvReader.readLine();
+
+            if (null == line) {
+                reachedEOF = true;
+                break;
+            }
+
+            csvStringBuffer[i] = line;
+        }
+
+        if (false == reachedEOF) {
+            
+        }
 
         Iterable<CSVRecord> records = CSV_FORMATTER.parse(csvReader);
 
