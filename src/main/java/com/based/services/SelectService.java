@@ -10,6 +10,7 @@ import com.based.exception.MissingColumnException;
 import com.based.exception.MissingTableException;
 import com.based.model.Database;
 import com.based.model.Row;
+import com.based.model.Storage;
 import com.based.model.Table;
 import com.based.model.WhereCondition;
 
@@ -21,7 +22,11 @@ public class SelectService {
     public List<Row> selectAll(String tableName, List<String> columnNames)
             throws MissingTableException, MissingColumnException {
         Table table = Database.getTable(tableName);
-        return table.getStorage().getRows(table.getColumnIndexes(columnNames));
+        Storage storage = table.getStorage();
+        if (columnNames == null)
+            return storage.getRows();
+        else
+            return storage.getRows(table.getColumnIndexes(columnNames));
     }
 
     public List<Row> selectWhere(String tableName) throws MissingTableException {
