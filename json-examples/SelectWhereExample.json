@@ -1,9 +1,62 @@
 {
-    "where": [
+    "columns": [
+      "vendor_name",
+      "Passenger_Count",
+      "surcharge",
+      "surcharge"
+    ],
+    "where": {
+      "type": "operator",
+      "value": "and",
+      "children": [
         {
-            "column_name": "first_name",
-            "operator": "==",
-            "value": "george" 
+          "type": "operator",
+          "value": "==",
+          "children": [
+            {
+              "type": "ident",
+              "value": "column_name"
+            },
+            {
+              "type": "string",
+              "value": "bonjour"
+            }
+          ]
+        },
+        {
+          "type": "operator",
+          "value": "and",
+          "children": [
+            {
+              "type": "operator",
+              "value": ">",
+              "children": [
+                {
+                  "type": "ident",
+                  "value": "id"
+                },
+                {
+                  "type": "number",
+                  "value": "3"
+                }
+              ]
+            },
+            {
+              "type": "operator",
+              "value": "!=",
+              "children": [
+                {
+                  "type": "ident",
+                  "value": "desh"
+                },
+                {
+                  "type": "string",
+                  "value": "real"
+                }
+              ]
+            }
+          ]
         }
-    ]
-}
+      ]
+    }
+  }

@@ -1,6 +1,9 @@
 package com.based.services;
 
 import java.util.List;
+
+import com.based.entity.dto.SelectRequestDTO;
+import com.based.exception.MissingColumnException;
 import com.based.exception.MissingTableException;
 import com.based.model.Database;
 import com.based.model.Row;
@@ -23,9 +26,11 @@ public class SelectService {
         return Database.getTable(tableName).getStorage().getRows();
     }
 
-    public List<Row> selectWhere(String tableName) throws MissingTableException {
+    public List<Row> selectWhere(String tableName, SelectRequestDTO selectRequest) throws MissingTableException {
         return Database.getTable(tableName).getStorage().getRows();
     }
+
+
 
     //const myCondition = "column_name == 'bonjour' and ( id > 3 and desh != 'real' )"
 
