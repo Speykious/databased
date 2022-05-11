@@ -11,6 +11,7 @@ import com.based.entity.dto.SelectRequestDTO;
 import com.based.exception.MissingColumnException;
 import com.based.exception.MissingTableException;
 import com.based.model.Row;
+import com.based.model.WhereCondition;
 import com.based.services.InsertService;
 import com.based.services.SelectService;
 
@@ -32,6 +33,9 @@ public class DataEndpoint {
 	public List<Row> select(@PathParam("tableName") String tableName, SelectRequestDTO selectRequest) throws MissingTableException, MissingColumnException {
 		System.out.println("Selecting some data from a table");
 		SelectService selectService = new SelectService();
+		WhereCondition where = selectRequest.getWhere();
+		
+		if(where == null) return selectService.selectAll(tableName);
 		return selectService.selectWhere(tableName, selectRequest);
 	}
 }
