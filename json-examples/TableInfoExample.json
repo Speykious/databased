@@ -1,9 +1,0 @@
-{
-    "name": "rien",
-    "columns": [
-        { "name": "id", "type": "int64", "nullable": false, "primary": true },
-        { "name": "first_name", "type": "string", "nullable": false, "primary": false },
-        { "name": "last_name", "type": "string", "nullable": false, "primary": false },
-        { "name": "some_int", "type": "int32", "nullable": true, "primary": false }
-    ]
-}
