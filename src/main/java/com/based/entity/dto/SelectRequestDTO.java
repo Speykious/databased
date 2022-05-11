@@ -1,18 +1,18 @@
 package com.based.entity.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 
 import com.based.model.WhereCondition;
 
 public class SelectRequestDTO implements Serializable {
-    private ArrayList<String> columns;
+    private List<String> columns;
     private WhereCondition where;
     
-    public ArrayList<String> getColumns() {
+    public List<String> getColumns() {
         return columns;
     }
-    public void setColumns(ArrayList<String> columns) {
+    public void setColumns(List<String> columns) {
         this.columns = columns;
     }
     public WhereCondition getWhere() {

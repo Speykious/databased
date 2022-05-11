@@ -34,7 +34,7 @@ public class WhereCondition implements Serializable {
                     return child1.equals(child2);
                 }
                 else {
-                    throw new Exception();
+                    throw new Exception("No children Exception");
                 }
             }
         }
