@@ -12,11 +12,20 @@ public class StupidStorage implements Storage {
     }
 
     @Override
-    public List<Row> filter(Predicate<Row> predicate) {
+    public List<Row> filter(Predicate<Row> predicate, int[] columns) {
         ArrayList<Row> filteredRows = new ArrayList<>();
         for (Row row : rows) {
-            if (predicate.test(row))
-                filteredRows.add(row);
+            if (predicate.test(row)) {
+                if (columns == null || columns.length == 0) {
+                    filteredRows.add(row);
+                } else {
+                    List<Object> rearranged = new ArrayList<>();
+                    for (int index : columns) {
+                        rearranged.add(row.getValue(index));
+                    }
+                    filteredRows.add(new Row(rearranged));
+                }
+            }
         }
         return filteredRows;
     }

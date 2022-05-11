@@ -1,15 +1,17 @@
 package com.based.services;
 
 import java.util.List;
+import java.util.function.Predicate;
+
 
 import com.based.entity.dto.SelectRequestDTO;
+import com.based.entity.dto.TableDTO;
 import com.based.exception.MissingColumnException;
 import com.based.exception.MissingTableException;
 import com.based.model.Database;
 import com.based.model.Row;
 import com.based.model.Table;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.based.model.WhereCondition;
 
 public class SelectService {
     public List<Row> selectAll(String tableName) throws MissingTableException, MissingColumnException {
@@ -26,50 +28,23 @@ public class SelectService {
         return Database.getTable(tableName).getStorage().getRows();
     }
 
-    public List<Row> selectWhere(String tableName, SelectRequestDTO selectRequest) throws MissingTableException {
-        return Database.getTable(tableName).getStorage().getRows();
-    }
+    public List<Row> selectWhere(String tableName, SelectRequestDTO selectRequest) throws MissingTableException, MissingColumnException {
+        Table table = Database.getTable(tableName);
+        TableDTO tableDto = table.getDTO();
+        WhereCondition where = selectRequest.getWhere();
+        List<String> columns = selectRequest.getColumns();
 
-
-
-    //const myCondition = "column_name == 'bonjour' and ( id > 3 and desh != 'real' )"
-
-    //column
-
-    //[
-    //   { type: "ident", value: "column_name" },
-    //   { type: "operator", value: "==" },
-    //   { type: "string", value: "bonjour" },
-    //   { type: "operator", value: "and" },
-    //   { type: "bracket", value: "(" },
-    //   { type: "ident", value: "id" },
-    //   { type: "operator", value: ">" },
-    //   { type: "number", value: "3" },
-    //   { type: "operator", value: "and" },
-    //   { type: "ident", value: "desh" },
-    //   { type: "operator", value: "!=" },
-    //   { type: "string", value: "real" },
-    //   { type: "bracket", value: ")" },
-    // ]
-
-
-    public void parseWhereCondition(String condition) {
-        GsonBuilder builder = new GsonBuilder();
-        Gson gson = builder.create();
-
-        String json = gson.toJson(1);
-        int fromJsonInt = gson.fromJson(json, int.class);
-        System.out.println("1 -> " + fromJsonInt);
-        
-        String[] splitCondition = condition.split(" ");
-
-        for(int i= 0; i < splitCondition.length; i++){
-            if(i != splitCondition.length){
-
+        Predicate<Row> tester = (Row row) -> {
+            try {
+                Object evaluated = where.evaluate(tableDto, row);
+                if(evaluated instanceof Boolean) return (boolean) evaluated;
+                return false;
+            } catch (Exception e) {
+                return false;
             }
-        }
-
-
+        };
+        int[] indexes = table.getColumnIndexes(columns);
+        return Database.getTable(tableName).getStorage().filter(tester, indexes);
     }
 
 }

@@ -34,6 +34,14 @@ public class TableDTO implements Serializable {
         return typeInfo;
     }
 
+    public int getColumnIndex(String name) throws Exception {
+        int i;
+        for (i = 0; i < columns.size(); i++){
+            if(columns.get(i).getName().equals(name)) return i;
+        }
+        throw new Exception();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(name + " {\n");

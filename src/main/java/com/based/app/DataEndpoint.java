@@ -7,6 +7,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import com.based.entity.NbLinesResponse;
+import com.based.entity.dto.SelectRequestDTO;
 import com.based.exception.MissingColumnException;
 import com.based.exception.MissingTableException;
 import com.based.model.Row;
@@ -28,9 +29,9 @@ public class DataEndpoint {
 
 	@GET
 	@Path("/{tableName}")
-	public List<Row> select(@PathParam("tableName") String tableName, List<String> columnNames) throws MissingTableException, MissingColumnException {
+	public List<Row> select(@PathParam("tableName") String tableName, SelectRequestDTO selectRequest) throws MissingTableException, MissingColumnException {
 		System.out.println("Selecting some data from a table");
 		SelectService selectService = new SelectService();
-		return selectService.selectAll(tableName, columnNames);
+		return selectService.selectWhere(tableName, selectRequest);
 	}
 }

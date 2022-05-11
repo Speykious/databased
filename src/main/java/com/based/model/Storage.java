@@ -12,7 +12,7 @@ public interface Storage {
      *                  subset.
      * @return a filtered subset of the storage.
      */
-    public List<Row> filter(Predicate<Row> predicate);
+    public List<Row> filter(Predicate<Row> predicate, int[] columns);
 
     /**
      * @return all rows contained in the storage.
