@@ -57,6 +57,12 @@ public final class Nodes {
 
         if (onlineNodeIndexes.size() == 0)
             System.out.println("Nobody responded :(");
+        else {
+            System.out.print("Registered " + onlineNodeIndexes.size() + " indexes:");
+            for (int nodeIndex : onlineNodeIndexes)
+                System.out.print(" " + nodeIndex);
+            System.out.println();
+        }
     }
 
     public static int getNextOnlineNodeIndex() throws IndexOutOfBoundsException {
@@ -105,7 +111,15 @@ public final class Nodes {
     }
 
     public static MachineTarget getNextOnlineMachineTarget(String path) {
-        return getMachineTarget(getNextOnlineNodeIndex(), path);
+        while (true) {
+            MachineTarget machineTarget = getMachineTarget(getNextOnlineNodeIndex(), path);
+            PingRequestRunnable requestRunnable = new PingRequestRunnable(machineTarget);
+            requestRunnable.run();
+            if (!requestRunnable.hasResponded())
+                onlineNodeIndexes.remove((Integer) machineTarget.getIndex());
+            else
+                return machineTarget;
+        }
     }
 
     public static MachineTarget[] getOtherMachineTargets(String path) {
