@@ -1,5 +1,6 @@
 package com.based.distrib;
 
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -31,7 +32,9 @@ public class PingRequestRunnable implements Runnable {
 		try {
 			ResteasyWebTarget target = machineTarget.getTarget();
 			Builder request = target.request().accept(MediaType.APPLICATION_JSON_TYPE);
-			Response response = request.get();
+			Entity<NodePingDTO> nodePing = Entity.entity(new NodePingDTO(Nodes.getSelfIndex()),
+					MediaType.APPLICATION_JSON_TYPE);
+			Response response = request.post(nodePing);
 
 			NodePingDTO responseDto = response.readEntity(NodePingDTO.class);
 			nodeIndex = responseDto.getNodeIndex();
