@@ -25,6 +25,7 @@ public class WhereCondition implements Serializable {
         return children;
     }
 
+    //TODO : create custom exception ?
     public Object evaluate(TableDTO tableDto, Row row) throws Exception{
         if(type.equals("operator")){
             if(value.equals("==")){
@@ -34,7 +35,6 @@ public class WhereCondition implements Serializable {
                     return child1.equals(child2);
                 }
                 else {
-                    //TODO : create custom exception
                     throw new Exception("No children Exception");
                 }
             }
@@ -45,7 +45,6 @@ public class WhereCondition implements Serializable {
                     return !child1.equals(child2);
                 }
                 else {
-                    //TODO : create custom exception
                     throw new Exception("No children Exception");
                 }
             }
@@ -60,12 +59,10 @@ public class WhereCondition implements Serializable {
                         return (Float) child1 > (Float) child2;
                     }
                     else {
-                        //TODO : create custom exception
                         throw new Exception("Superiority comparison with a non Integer type");
                     }
                 }
                 else {
-                    //TODO : create custom exception
                     throw new Exception("No children Exception");
                 }
             }
@@ -80,12 +77,10 @@ public class WhereCondition implements Serializable {
                         return (Float) child1 < (Float) child2;
                     }
                     else {
-                        //TODO : create custom exception
                         throw new Exception("Inferiority comparison with a non Integer type");
                     }
                 }
                 else {
-                    //TODO : create custom exception
                     throw new Exception("No children Exception");
                 }
             }
@@ -97,12 +92,10 @@ public class WhereCondition implements Serializable {
                         return (Boolean) child1 && (Boolean) child2;
                     }
                     else {
-                        //TODO : create custom exception
                         throw new Exception("Require boolean children for 'and' operator");
                     }
                 }
                 else {
-                    //TODO : create custom exception
                     throw new Exception("No children Exception");
                 }
             }

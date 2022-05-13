@@ -34,6 +34,7 @@ public class Table {
         this.storage = storage;
     }
 
+    //TODO : check doublons
     public int[] getColumnIndexes(List<String> columnNames) throws MissingColumnException {
         int[] indexes = new int[columnNames.size()];
         
