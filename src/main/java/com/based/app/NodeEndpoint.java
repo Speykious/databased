@@ -15,7 +15,7 @@ import com.based.entity.dto.NodePingDTO;
 public class NodeEndpoint {
 	@GET
 	@Path("/ping")
-	public NodePingDTO sayYes() {
+	public NodePingDTO ping() {
 		return new NodePingDTO(Nodes.getSelfIndex());
 	}
 }

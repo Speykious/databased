@@ -33,6 +33,7 @@ public class App extends Application {
 		sets.add(new DataEndpoint());
 		sets.add(new CsvEndpoint());
 		sets.add(new DistributedTestEndpoint());
+		sets.add(new NodeEndpoint());
 		return sets;
 	}
 
