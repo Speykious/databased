@@ -30,14 +30,20 @@ public class PingRequestRunnable implements Runnable {
 	public void run() {
 		try {
 			ResteasyWebTarget target = machineTarget.getTarget();
-			Builder request = target.request().accept(MediaType.TEXT_HTML);
+			Builder request = target.request().accept(MediaType.APPLICATION_JSON_TYPE);
 			Response response = request.get();
 
 			NodePingDTO responseDto = response.readEntity(NodePingDTO.class);
 			nodeIndex = responseDto.getNodeIndex();
 			hasResponded = true;
 		} catch (Exception e) {
-			// Do nothing to avoid exception noise
+			String emsg = e.getMessage();
+			if (emsg.contains("timed out"))
+				System.err.println(machineTarget + " timed out.");
+			else if (emsg.contains("Connection refused"))
+				System.err.println(machineTarget + " refused connection.");
+			else
+				System.err.println(machineTarget + " had error: " + e.getMessage());
 		}
 	}
 }

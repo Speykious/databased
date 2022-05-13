@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.based.filter.GsonProvider;
+
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
@@ -22,12 +24,14 @@ public final class Nodes {
         return new ResteasyClientBuilder()
                 .connectionPoolSize(727)
                 .connectTimeout(200, TimeUnit.MILLISECONDS)
-                .build();
+                .build()
+                .register(GsonProvider.class);
     }
 
     /**
      * Tells all other nodes that it exists and constructs back a list of active
      * nodes.
+     * 
      * @throws InterruptedException
      */
     public static void pingOtherNodes() throws InterruptedException {
@@ -45,9 +49,14 @@ public final class Nodes {
 
         for (int i = 0; i < requests.length; i++) {
             requests[i].join();
-            if (runnables[i].hasResponded())
+            if (runnables[i].hasResponded()) {
+                System.out.println("Machine " + machineTargets[i] + " responded!");
                 onlineNodeIndexes.add(runnables[i].getNodeIndex());
+            }
         }
+
+        if (onlineNodeIndexes.size() == 0)
+            System.out.println("Nobody responded :(");
     }
 
     public static int getNextOnlineNodeIndex() throws IndexOutOfBoundsException {
