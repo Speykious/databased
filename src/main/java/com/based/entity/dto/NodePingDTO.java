@@ -16,4 +16,12 @@ public class NodePingDTO implements Serializable {
     public void setNodeIndex(int nodeIndex) {
         this.nodeIndex = nodeIndex;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + nodeIndex;
+        return result;
+    }
 }
