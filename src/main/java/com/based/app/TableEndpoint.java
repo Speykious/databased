@@ -4,6 +4,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.based.distrib.MachineTarget;
 import com.based.distrib.Nodes;
@@ -61,10 +62,11 @@ class CreateTableRequestRunnable extends RequestRunnable {
 
 	@Override
 	protected void sendRequest(Builder request) throws Exception {
-		TableDTO response = (TableDTO) request.put(
-				Entity.entity(TableDTO.class, MediaType.APPLICATION_JSON_TYPE)).getEntity();
+		Response response = request.put(
+				Entity.entity(tableDTO, MediaType.APPLICATION_JSON_TYPE));
+		TableDTO tableDTOResponse = response.readEntity(TableDTO.class);
 
-		if (response.hashCode() != tableDTO.hashCode())
+		if (tableDTOResponse.hashCode() != tableDTO.hashCode())
 			throw new Exception("Response TableDTO is different from request TableDTO!");
 	}
 }
