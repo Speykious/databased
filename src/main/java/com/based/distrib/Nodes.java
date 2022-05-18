@@ -1,8 +1,8 @@
 package com.based.distrib;
 
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.based.filter.GsonProvider;
@@ -18,7 +18,7 @@ public final class Nodes {
     private static int selfIndex = 0;
     private static ResteasyClient httpClient = createHttpClient();
 
-    private static List<Integer> onlineNodeIndexes;
+    private static Set<Integer> onlineNodeIndexes;
 
     public static ResteasyClient createHttpClient() {
         return new ResteasyClientBuilder()
@@ -35,7 +35,7 @@ public final class Nodes {
      * @throws InterruptedException
      */
     public static void pingOtherNodes() throws InterruptedException {
-        onlineNodeIndexes = new ArrayList<>();
+        onlineNodeIndexes = new HashSet<>();
 
         BroadcastedRequests<PingRequestRunnable> broadcastedRequests = RequestRunnable.broadcastRequests(
                 PingRequestRunnable.class,
@@ -61,10 +61,10 @@ public final class Nodes {
                 return index;
         }
 
-        return onlineNodeIndexes.get(0);
+        return onlineNodeIndexes.iterator().next();
     }
 
-    public static List<Integer> getOnlineNodeIndexes() {
+    public static Set<Integer> getOnlineNodeIndexes() {
         return onlineNodeIndexes;
     }
 
