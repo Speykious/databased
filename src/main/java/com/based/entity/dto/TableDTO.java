@@ -51,4 +51,13 @@ public class TableDTO implements Serializable {
         sb.append("}");
         return sb.toString();
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((columns == null) ? 0 : columns.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
 }

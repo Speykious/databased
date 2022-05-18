@@ -37,23 +37,13 @@ public final class Nodes {
     public static void pingOtherNodes() throws InterruptedException {
         onlineNodeIndexes = new ArrayList<>();
 
-        MachineTarget[] machineTargets = Nodes.getOtherMachineTargets("/node/ping");
+        BroadcastedRequests<PingRequestRunnable> broadcastedRequests = RequestRunnable.broadcastRequests(
+                PingRequestRunnable.class,
+                Nodes.getOtherMachineTargets("/node/ping"),
+                (machineTarget) -> new PingRequestRunnable(machineTarget));
 
-        PingRequestRunnable[] runnables = new PingRequestRunnable[machineTargets.length];
-        Thread[] requests = new Thread[machineTargets.length];
-        for (int i = 0; i < requests.length; i++) {
-            runnables[i] = new PingRequestRunnable(machineTargets[i]);
-            requests[i] = new Thread(runnables[i]);
-            requests[i].start();
-        }
-
-        for (int i = 0; i < requests.length; i++) {
-            requests[i].join();
-            if (runnables[i].hasResponded()) {
-                System.out.println("Machine " + machineTargets[i] + " responded!");
-                onlineNodeIndexes.add(runnables[i].getNodeIndex());
-            }
-        }
+        for (var runnable : broadcastedRequests.getSuccessfulRequestRunnables())
+            onlineNodeIndexes.add(runnable.getNodeIndex());
 
         if (onlineNodeIndexes.size() == 0)
             System.out.println("Nobody responded :(");
@@ -137,6 +127,15 @@ public final class Nodes {
                 continue;
             targets[targetIndex++] = getMachineTarget(i, path);
         }
+
+        return targets;
+    }
+
+    public static MachineTarget[] getOtherOnlineMachineTargets(String path) {
+        MachineTarget[] targets = new MachineTarget[onlineNodeIndexes.size()];
+        int targetIndex = 0;
+        for (int i : onlineNodeIndexes)
+            targets[targetIndex++] = getMachineTarget(i, path);
 
         return targets;
     }
