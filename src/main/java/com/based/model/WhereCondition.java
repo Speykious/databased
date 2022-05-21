@@ -25,7 +25,7 @@ public class WhereCondition implements Serializable {
         return children;
     }
 
-    //TODO : create custom exception ?
+    //TODO : create custom exceptions ?
     public Object evaluate(TableDTO tableDto, Row row) throws Exception{
         if(type.equals("operator")){
             if(value.equals("==")){

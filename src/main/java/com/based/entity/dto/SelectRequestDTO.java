@@ -7,6 +7,7 @@ import com.based.model.WhereCondition;
 public class SelectRequestDTO implements Serializable {
     private Select select;
     private WhereCondition where;
+    private String groupby;
     
     public Select getSelect() {
         return select;
@@ -14,6 +15,13 @@ public class SelectRequestDTO implements Serializable {
     public void setSelect(Select select) {
         this.select = select;
     }
+    public String getGroupby() {
+        return groupby;
+    }
+    public void setGroupby(String groupby) {
+        this.groupby = groupby;
+    }
+    
     public WhereCondition getWhere() {
         return where;
     }

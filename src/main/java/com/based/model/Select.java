@@ -3,6 +3,7 @@ package com.based.model;
 import java.io.Serializable;
 import java.util.List;
 
+
 public class Select implements Serializable{
     private List<Aggregate> aggregates;
     private List<String> columns;
@@ -20,5 +21,15 @@ public class Select implements Serializable{
         this.columns = columns;
     }
 
+    // public Object evaluate(TableDTO tableDto, Row row) throws Exception{
+    //     for(Aggregate aggregate : aggregates){
+    //         switch(aggregate.getFunction()){
+    //             case "count" :
+    //                 break;
+    //             case "sum" :
+    //                 break;
+    //         }
+    //     }
+    // }
     
 }
