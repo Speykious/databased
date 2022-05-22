@@ -37,18 +37,16 @@ public class StupidStorage implements Storage {
         return filteredRows;
     }
 
-    public HashMap<String, List<Row>> groupByFilter(Predicate<Row> predicate, int[] columns, int groupby) {
-        /**
-         * if(select != null) if(select.aggregates == null)
-         */
-
+    //TODO : look if we can merge whereGroupByFilter & groupByFilter (using a null arg)
+    public HashMap<String, List<Row>> whereGroupByFilter(Predicate<Row> predicate, int[] columns, int groupby) throws Exception {
         HashMap<String, List<Row>> map = new HashMap<>();
 
-        // if groupby not in columns[x] throw error or empty hash map
+        if(!contains(columns, groupby)){
+            throw new Exception("GroupByException : The column in the groupby must be specified in the select");
+        }
 
         for (Row row : rows) {
             if (predicate.test(row)) {
-                //tester les aggregates 
                 if (columns == null || columns.length == 0) {
                     List<Row> values = map.get(row.getValue(groupby));
                     if(values == null){
@@ -57,7 +55,6 @@ public class StupidStorage implements Storage {
                         map.put(row.getValue(groupby).toString(), listValue);
                     }
                     else {
-                        //should add to the hashmap value : usefull for count
                         values.add(row);
                     }
                 } else {
@@ -84,6 +81,51 @@ public class StupidStorage implements Storage {
         // }
 
         return map;
+    }
+    
+    public HashMap<String, List<Row>> groupByFilter(int[] columns, int groupby) throws Exception {
+        HashMap<String, List<Row>> map = new HashMap<>();
+
+        if(!contains(columns, groupby)){
+            throw new Exception("GroupByException : The column in the groupby must be specified in the select");
+        }
+
+        for (Row row : rows) {
+            if (columns == null || columns.length == 0) {
+                List<Row> values = map.get(row.getValue(groupby));
+                if(values == null){
+                    List<Row> listValue = new ArrayList<Row>();
+                    listValue.add(row);
+                    map.put(row.getValue(groupby).toString(), listValue);
+                }
+                else {
+                    values.add(row);
+                }
+            } else {
+                List<Row> values = map.get(row.getValue(groupby));
+                List<Object> rearranged = new ArrayList<>();
+                for (int index : columns) {
+                    rearranged.add(row.getValue(index));
+                }
+                if(values == null){
+                    List<Row> listValue = new ArrayList<Row>();
+                    listValue.add(new Row(rearranged));
+                    map.put(row.getValue(groupby).toString(), listValue);
+                }
+                else {
+                    values.add(new Row(rearranged));
+                }
+            }
+        }
+
+        return map;
+    }
+
+    private boolean contains(int[] array, int number){
+        for(int i : array){
+            if(i == number) return true;
+        }
+        return false;
     }
 
     @Override

@@ -11,7 +11,6 @@ import com.based.entity.dto.SelectRequestDTO;
 import com.based.exception.MissingColumnException;
 import com.based.exception.MissingTableException;
 import com.based.model.Row;
-import com.based.model.WhereCondition;
 import com.based.services.InsertService;
 import com.based.services.SelectService;
 
@@ -35,17 +34,7 @@ public class DataEndpoint {
 		SelectService selectService = new SelectService();
 		
 		if(selectRequest != null) {
-			WhereCondition where = selectRequest.getWhere();
-
-			if(where != null) {
-				if(where.getType() == null || where.getValue() == null){
-					return selectService.selectAll(tableName);
-				}else{
-					return selectService.selectWhere(tableName, selectRequest);
-				}
-			}else{
-				return selectService.selectAll(tableName);
-			}
+			return selectService.select(tableName, selectRequest);
 		}
 
 		//TODO : create custom exception

@@ -37,24 +37,24 @@ public class Table {
     //TODO : check doublons
     public int[] getColumnIndexes(List<String> columnNames) throws MissingColumnException {
         int[] indexes = new int[columnNames.size()];
-        
-        List<Column> columns = dto.getColumns();
-        for (int j = 0; j < columnNames.size(); j++) {
-            String columnName = columnNames.get(j);
+        if(indexes.length > 0){
+            List<Column> columns = dto.getColumns();
+            for (int j = 0; j < columnNames.size(); j++) {
+                String columnName = columnNames.get(j);
 
-            boolean found = false;
-            for (int i = 0; i < columns.size(); i++) {
-                if (columns.get(i).getName().equals(columnName)) {
-                    indexes[j] = i;
-                    found = true;
-                    break;
+                boolean found = false;
+                for (int i = 0; i < columns.size(); i++) {
+                    if (columns.get(i).getName().equals(columnName)) {
+                        indexes[j] = i;
+                        found = true;
+                        break;
+                    }
                 }
+
+                if (!found)
+                    throw new MissingColumnException(columnName);
             }
-
-            if (!found)
-                throw new MissingColumnException(columnName);
         }
-
 
         return indexes;
     }
