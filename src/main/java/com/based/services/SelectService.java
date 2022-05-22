@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-
 import com.based.entity.dto.SelectRequestDTO;
 import com.based.entity.dto.TableDTO;
 import com.based.exception.MissingColumnException;
@@ -20,15 +19,31 @@ import com.based.model.WhereCondition;
 
 public class SelectService {
 
-    //TODO : handle alone count
-    public List<Row> selectAll(String tableName, List<String> columnNames)
+    public List<Row> selectAll(String tableName, List<String> columnNames, List<Aggregate> aggregates)
             throws MissingTableException, MissingColumnException {
         Table table = Database.getTable(tableName);
         Storage storage = table.getStorage();
-        if (columnNames == null)
-            return storage.getRows();
-        else
-            return storage.getRows(table.getColumnIndexes(columnNames));
+        List<Row> response = storage.getRows(table.getColumnIndexes(columnNames));
+
+        if(aggregates != null){
+            for(Aggregate agg : aggregates){
+                if(agg.getFunction().equals("count")){
+                    int count = response.size();
+                    List<Object> newList = new ArrayList<>();
+                    newList.add(count);
+                    //add only the first row to the list output 
+                    if(count > 0){
+                        System.err.println("response.size() > 0");
+                        for(Object o : response.get(0).getValues()){
+                            newList.add(o);
+                        }
+                    }
+                    response.clear();
+                    response.add(new Row(newList));
+                }
+            }
+        }
+        return response;
     }
 
     public List<Row> select(String tableName, SelectRequestDTO selectRequest) throws Exception {
@@ -49,6 +64,7 @@ public class SelectService {
 
         if(where != null){
             if(groupby != null){
+                System.err.println("Where & Groupby request");
                 List<String> li = new ArrayList<>(); 
                 li.add(groupby);
                 groupbyIndexes = table.getColumnIndexes(li);
@@ -56,16 +72,18 @@ public class SelectService {
                 return toListOfRow(map, aggregates);
             }
             else {
-                return Database.getTable(tableName).getStorage().filter(getWherePredicate(tableDto, where), indexes);
+                System.err.println("Where request");
+                return Database.getTable(tableName).getStorage().filter(getWherePredicate(tableDto, where), indexes, aggregates);
             }
         }
         else {
             if(groupby == null) {
-                return selectAll(tableName, columns);
+                System.err.println("Only select request");
+                return selectAll(tableName, columns, aggregates);
             }
         }
-
         //Scenario : Select X Group by X
+        System.err.println("Select & Groupby request");
         List<String> li = new ArrayList<>(); 
         li.add(groupby);
         groupbyIndexes = table.getColumnIndexes(li);
@@ -114,72 +132,6 @@ public class SelectService {
         }
         return returnedMap;
     }
-
-    // public List<Row> selectWhere(String tableName, SelectRequestDTO selectRequest) throws MissingTableException, MissingColumnException, Exception {
-    //     Table table = Database.getTable(tableName);
-    //     TableDTO tableDto = table.getDTO();
-    //     Select select = selectRequest.getSelect();
-    //     WhereCondition where = selectRequest.getWhere();
-    //     String groupby = selectRequest.getGroupby();
-        
-    //     if(select == null) throw new Exception("No select Exception : Must specified a select field in the request");
-
-    //     List<Aggregate> aggregates = select.getAggregates();
-    //     List<String> columns = select.getColumns();
-        
-    //     if(columns == null) throw new Exception("NoSelectedColumnsException : Must specified a columns field in the select request with a list of column_name or an empty list");
-
-    //     int[] groupbyIndexes = null;
-    //     if(groupby != null){
-    //         List<String> li = new ArrayList<>(); 
-    //         li.add(groupby);
-    //         groupbyIndexes = table.getColumnIndexes(li);
-    //     }
-
-    //     Predicate<Row> tester = (Row row) -> {
-    //         try {
-    //             Object evaluated = where.evaluate(tableDto, row);
-    //             if (evaluated instanceof Boolean)
-    //                 return (boolean) evaluated;
-    //             else
-    //                 System.err.println("An error occured while testing a row");
-    //         } catch (Exception e) {
-    //             System.err.println("An error occured while testing a row: " + e);
-    //         }
-
-    //         return false;
-    //     };
-
-    //     //If no select : send errors
-    //     int[] indexes = table.getColumnIndexes(columns);
-
-    //     if(groupby != null) {
-    //         HashMap<String, List<Row>> map = Database.getTable(tableName).getStorage().whereGroupByFilter(tester, indexes, groupbyIndexes[0]);
-    //         ArrayList<Row> returnedMap = new ArrayList<>();
-            
-    //         for(Map.Entry<String,List<Row>> mEntry : map.entrySet()){
-    //             List<Row> entryValues = mEntry.getValue();
-                
-    //             if(aggregates != null){
-    //                 for(Aggregate agg : aggregates){
-    //                     if(agg.getFunction().equals("count")){
-    //                         List<Object> o = entryValues.get(0).getValues();
-    //                         o.add(entryValues.size());
-    //                         returnedMap.add(new Row(o));
-    //                     }
-    //                     else {
-    //                         returnedMap.add(entryValues.get(0));
-    //                     }
-    //                 }
-    //             }
-    //             else {
-    //                 returnedMap.add(entryValues.get(0));
-    //             }
-    //         }
-    //         return returnedMap;
-    //     }
-    //     return Database.getTable(tableName).getStorage().filter(tester, indexes);
-    // }
 
     /**
          * COUNT(*) -> count number of lines : foreach(row) count++

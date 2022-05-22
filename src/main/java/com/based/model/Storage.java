@@ -13,7 +13,7 @@ public interface Storage {
      *                  subset.
      * @return a filtered subset of the storage.
      */
-    public List<Row> filter(Predicate<Row> predicate, int[] columns);
+    public List<Row> filter(Predicate<Row> predicate, int[] columns, List<Aggregate> aggregates);
 
     public HashMap<String, List<Row>> whereGroupByFilter(Predicate<Row> predicate, int[] columns, int groupby) throws Exception;
 

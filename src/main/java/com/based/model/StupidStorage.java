@@ -13,8 +13,8 @@ public class StupidStorage implements Storage {
     }
 
     @Override
-    public List<Row> filter(Predicate<Row> predicate, int[] columns) {
-        //TODO: filter(Predicate<Row> predicate, Select select)
+    public List<Row> filter(Predicate<Row> predicate, int[] columns, List<Aggregate> aggregates) {
+        //ToDo ? : filter(Predicate<Row> predicate, Select select)
         //il faudrait recuperer les valeurs pour les aggregates au moment du parcours pour le where
         /**
          * if(select != null) if(select.aggregates == null)
@@ -31,6 +31,24 @@ public class StupidStorage implements Storage {
                         rearranged.add(row.getValue(index));
                     }
                     filteredRows.add(new Row(rearranged));
+                }
+            }
+        }
+        if(aggregates != null){
+            for(Aggregate agg : aggregates){
+                if(agg.getFunction().equals("count")){
+                    int count = filteredRows.size();
+                    List<Object> newList = new ArrayList<>();
+                    newList.add(count);
+                    //add only the first row to the list output 
+                    if(count > 0){
+                        System.err.println("response.size() > 0");
+                        for(Object o : filteredRows.get(0).getValues()){
+                            newList.add(o);
+                        }
+                    }
+                    filteredRows.clear();
+                    filteredRows.add(new Row(newList));
                 }
             }
         }
