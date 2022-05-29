@@ -34,7 +34,6 @@ public class Table {
         this.storage = storage;
     }
 
-    //TODO : check doublons
     public int[] getColumnIndexes(List<String> columnNames) throws MissingColumnException {
         int[] indexes = new int[columnNames.size()];
         if(indexes.length > 0){
@@ -57,6 +56,24 @@ public class Table {
         }
 
         return indexes;
+    }
+
+    public int getColumnIndexe(String columnName) throws MissingColumnException {
+        int indexe = 0;
+        List<Column> columns = dto.getColumns();
+        boolean found = false;
+        for (int i = 0; i < columns.size(); i++) {
+            if (columns.get(i).getName().equals(columnName)) {
+                indexe = i;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+            throw new MissingColumnException(columnName);
+
+        return indexe;
     }
 
     public TableDTO getDTO() {

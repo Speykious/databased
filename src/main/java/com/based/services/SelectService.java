@@ -20,28 +20,50 @@ import com.based.model.WhereCondition;
 public class SelectService {
 
     public List<Row> selectAll(String tableName, List<String> columnNames, List<Aggregate> aggregates)
-            throws MissingTableException, MissingColumnException {
+            throws MissingTableException, MissingColumnException, Exception {
         Table table = Database.getTable(tableName);
         Storage storage = table.getStorage();
-        List<Row> response = storage.getRows(table.getColumnIndexes(columnNames));
+        int[] indexes = table.getColumnIndexes(columnNames);
+        List<Row> response = storage.getRows(indexes);
 
-        if(aggregates != null){
+        if(aggregates != null && !aggregates.isEmpty()){
+            int count = response.size();
+            List<Object> newList = new ArrayList<>();
             for(Aggregate agg : aggregates){
                 if(agg.getFunction().equals("count")){
-                    int count = response.size();
-                    List<Object> newList = new ArrayList<>();
-                    newList.add(count);
-                    //add only the first row to the list output 
-                    if(count > 0){
-                        System.err.println("response.size() > 0");
-                        for(Object o : response.get(0).getValues()){
-                            newList.add(o);
+                    newList.add(count);                    
+                }
+                else if(agg.getFunction().equals("sum")){
+                    String target = agg.getColumn_target();
+                    int targetTableIndexe = table.getColumnIndexe(target);
+                    int responseIndexe = getIndexeOfTableIndexes(targetTableIndexe, indexes);
+                    Object sum = 0;
+
+                    for(Row row : response){
+                        List<Object> rowValues = row.getValues();
+                        if(rowValues.size() > 0){
+                            if(rowValues.get(responseIndexe) instanceof Integer){
+                                sum = (Integer) sum + (Integer) rowValues.get(responseIndexe);
+                            }
+                            else if(rowValues.get(responseIndexe) instanceof Float){
+                                sum = (Float) sum + (Float) rowValues.get(responseIndexe);
+                            }
+                            else {
+                                throw new Exception("Can sum only integer or float types");
+                            }
                         }
                     }
-                    response.clear();
-                    response.add(new Row(newList));
+                    newList.add(sum);
                 }
             }
+            //add only the first row to the list output
+            if(count > 0){
+                for(Object o : response.get(0).getValues()){
+                    newList.add(o);
+                }
+            }
+            response.clear();
+            response.add(new Row(newList));
         }
         return response;
     }
@@ -65,15 +87,16 @@ public class SelectService {
         if(where != null){
             if(groupby != null){
                 System.err.println("Where & Groupby request");
-                List<String> li = new ArrayList<>(); 
-                li.add(groupby);
-                groupbyIndexes = table.getColumnIndexes(li);
-                HashMap<String, List<Row>> map = Database.getTable(tableName).getStorage().whereGroupByFilter(getWherePredicate(tableDto, where), indexes, groupbyIndexes[0]);
-                return toListOfRow(map, aggregates);
+                groupbyIndexes = table.getColumnIndexes(List.of(groupby));
+                HashMap<String, List<Row>> map = Database.getTable(tableName).getStorage().groupByFilter(getWherePredicate(tableDto, where), indexes, groupbyIndexes[0]);
+                return toListOfRow(map, aggregates, table, indexes);
             }
             else {
-                System.err.println("Where request");
-                return Database.getTable(tableName).getStorage().filter(getWherePredicate(tableDto, where), indexes, aggregates);
+                System.err.println("Where request");                
+                return Database.getTable(tableName).getStorage().filter(getWherePredicate(tableDto, where), indexes, aggregates, (target, specIndexes) -> {
+                    int targetTableIndexe = table.getColumnIndexe(target);
+                    return getIndexeOfTableIndexes(targetTableIndexe, indexes);
+                });
             }
         }
         else {
@@ -82,14 +105,12 @@ public class SelectService {
                 return selectAll(tableName, columns, aggregates);
             }
         }
-        //Scenario : Select X Group by X
+        //when only select & gb : Select X Group by X
         System.err.println("Select & Groupby request");
-        List<String> li = new ArrayList<>(); 
-        li.add(groupby);
-        groupbyIndexes = table.getColumnIndexes(li);
+        groupbyIndexes = table.getColumnIndexes(List.of(groupby));
 
-        HashMap<String, List<Row>> groupMap = Database.getTable(tableName).getStorage().groupByFilter(indexes, groupbyIndexes[0]);
-        return toListOfRow(groupMap, aggregates);
+        HashMap<String, List<Row>> groupMap = Database.getTable(tableName).getStorage().groupByFilter(null,indexes, groupbyIndexes[0]);
+        return toListOfRow(groupMap, aggregates, table, indexes);
     }
 
     private Predicate<Row> getWherePredicate(TableDTO tableDto, WhereCondition where){
@@ -108,23 +129,42 @@ public class SelectService {
         };
     }
 
-    private List<Row> toListOfRow(HashMap<String, List<Row>> map, List<Aggregate> aggregates){
+    private List<Row> toListOfRow(HashMap<String, List<Row>> map, List<Aggregate> aggregates, Table table, int[] indexes) throws Exception{
         ArrayList<Row> returnedMap = new ArrayList<>();
             
         for(Map.Entry<String,List<Row>> mEntry : map.entrySet()){
             List<Row> entryValues = mEntry.getValue();
             
-            if(aggregates != null){
+            if(aggregates != null && !aggregates.isEmpty()){
+                List<Object> o = entryValues.get(0).getValues();
                 for(Aggregate agg : aggregates){
                     if(agg.getFunction().equals("count")){
-                        List<Object> o = entryValues.get(0).getValues();
                         o.add(entryValues.size());
-                        returnedMap.add(new Row(o));
                     }
-                    else {
-                        returnedMap.add(entryValues.get(0));
+                    else if(agg.getFunction().equals("sum")){
+                        String target = agg.getColumn_target();
+                        int targetTableIndexe = table.getColumnIndexe(target);
+                        int responseIndexe = getIndexeOfTableIndexes(targetTableIndexe, indexes);
+                        Object sum = 0;
+    
+                        for(Row row : entryValues){
+                            List<Object> rowValues = row.getValues();
+                            if(rowValues.size() > 0){
+                                if(rowValues.get(responseIndexe) instanceof Integer){
+                                    sum = (Integer) sum + (Integer) rowValues.get(responseIndexe);
+                                }
+                                else if(rowValues.get(responseIndexe) instanceof Float){
+                                    sum = (Float) sum + (Float) rowValues.get(responseIndexe);
+                                }
+                                else {
+                                    throw new Exception("Can sum only integer or float types");
+                                }
+                            }
+                        }
+                        o.add(sum);
                     }
                 }
+                returnedMap.add(new Row(o));
             }
             else {
                 returnedMap.add(entryValues.get(0));
@@ -133,25 +173,11 @@ public class SelectService {
         return returnedMap;
     }
 
-    /**
-         * COUNT(*) -> count number of lines : foreach(row) count++
-         * COUNT(column_name) -> if(row[column_name].value != null) count++
-         */
+    private int getIndexeOfTableIndexes(int indexe, int[] indexes) throws Exception{
+        for(int i = 0; i < indexes.length; i++){
+            if(indexe == indexes[i]) return i;
+        }
 
-         /**
-          * GROUP BY family_name
-          * don't show doublon
-          *
-          * Select family_name , count(*)
-          * From Person p
-          * GROUP BY family_name
-          * -> count number of occurence of family_name.value (ex: Dupond   32)
-          *                                                        Cotigu   5   
-          */
-
-          //TODO :
-          /**
-           * For COUNT & SUM, if there is not a group by, don't handle others columns input
-           * Select COUNT(*), name  X
-           */
+        throw new Exception("Column target is not mentioned in the selected columns !");
+    }
 }

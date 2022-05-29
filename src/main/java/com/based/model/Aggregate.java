@@ -1,11 +1,10 @@
 package com.based.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class Aggregate implements Serializable{
     private String function;
-    private List<String> columns_target;
+    private String column_target;
     
     public String getFunction() {
         return function;
@@ -13,11 +12,11 @@ public class Aggregate implements Serializable{
     public void setFunction(String function) {
         this.function = function;
     }
-    public List<String> getColumns_target() {
-        return columns_target;
+    public String getColumn_target() {
+        return column_target;
     }
-    public void setColumns_target(List<String> columns_target) {
-        this.columns_target = columns_target;
+    public void setColumns_target(String column_target) {
+        this.column_target = column_target;
     }
     
 }
