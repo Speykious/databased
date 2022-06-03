@@ -1,8 +1,8 @@
 package com.based.distrib;
 
 import java.security.InvalidParameterException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 import com.based.filter.GsonProvider;
@@ -18,7 +18,7 @@ public final class Nodes {
     private static int selfIndex = 0;
     private static ResteasyClient httpClient = createHttpClient();
 
-    private static Set<Integer> onlineNodeIndexes;
+    private static SortedSet<Integer> onlineNodeIndexes;
 
     public static ResteasyClient createHttpClient() {
         return new ResteasyClientBuilder()
@@ -35,7 +35,7 @@ public final class Nodes {
      * @throws InterruptedException
      */
     public static void pingOtherNodes() throws InterruptedException {
-        onlineNodeIndexes = new HashSet<>();
+        onlineNodeIndexes = new TreeSet<>();
 
         BroadcastedRequests<PingRequestRunnable> broadcastedRequests = RequestRunnable.broadcastRequests(
                 PingRequestRunnable.class,
@@ -64,7 +64,7 @@ public final class Nodes {
         return onlineNodeIndexes.iterator().next();
     }
 
-    public static Set<Integer> getOnlineNodeIndexes() {
+    public static SortedSet<Integer> getOnlineNodeIndexes() {
         return onlineNodeIndexes;
     }
 
@@ -156,3 +156,4 @@ public final class Nodes {
         return port;
     }
 }
+
