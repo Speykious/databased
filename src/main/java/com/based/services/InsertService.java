@@ -90,7 +90,8 @@ public class InsertService {
 
     public int insertCsv(Table table, BufferedReader csvReader, boolean skipFirstLine)
             throws IOException, MissingTableException, IllegalArgumentException, InterruptedException {
-        System.out.println("Importing some CSV file " + (skipFirstLine ? "(skipping)" : "(no skipping)"));
+        System.out.println("Importing CSV file into " + table.getName()
+                + (skipFirstLine ? " (skipping first line)" : " (not skipping first line)"));
 
         StringBuilder builder = new StringBuilder();
         boolean reachedEOF = readChunkOfLines(csvReader, builder);
@@ -192,12 +193,12 @@ class InsertRunnable implements Runnable {
     private InsertService insertService;
     private int nbRows;
 
-    public InsertRunnable(Table table, Iterable<CSVRecord> records, InsertService insertService, boolean skipFirstLine) {
+    public InsertRunnable(Table table, Iterable<CSVRecord> records, InsertService insertService,
+            boolean skipFirstLine) {
         this.table = table;
         this.records = records;
         this.insertService = insertService;
         this.nbRows = skipFirstLine ? -1 : 0;
-        System.out.println((skipFirstLine ? "Skipping" : "Not skipping") + " the first line");
     }
 
     public int getNbRows() {
@@ -219,5 +220,7 @@ class InsertRunnable implements Runnable {
             table.getStorage().add(row);
             nbRows++;
         }
+
+        System.out.println("Row chunk insertion: 100% (complete)");
     }
 }
