@@ -26,7 +26,6 @@ public class CsvEndpoint {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public NbLinesResponse importCsv(@PathParam("tableName") String tableName, MultipartFormDataInput input)
             throws IOException, MissingTableException, IllegalArgumentException, InterruptedException {
-        System.out.println("Importing some CSV file");
         Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
         List<InputPart> inputParts = uploadForm.get("file");
 
@@ -36,7 +35,26 @@ public class CsvEndpoint {
         InputStream csv = new SequenceInputStream(Collections.enumeration(inputStreams));
 
         InsertService insertService = new InsertService();
-        int nbLines = insertService.insertCsv(tableName, csv);
+        int nbLines = insertService.insertCsv(tableName, csv, true);
+
+        return new NbLinesResponse(nbLines);
+    }
+
+    @PUT
+    @Path("/{tableName}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public NbLinesResponse importCsvNoSkip(@PathParam("tableName") String tableName, MultipartFormDataInput input)
+            throws IOException, MissingTableException, IllegalArgumentException, InterruptedException {
+        Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+        List<InputPart> inputParts = uploadForm.get("file");
+
+        List<InputStream> inputStreams = new ArrayList<>();
+        for (InputPart inputPart : inputParts)
+            inputStreams.add(inputPart.getBody(InputStream.class, null));
+        InputStream csv = new SequenceInputStream(Collections.enumeration(inputStreams));
+
+        InsertService insertService = new InsertService();
+        int nbLines = insertService.insertCsv(tableName, csv, false);
 
         return new NbLinesResponse(nbLines);
     }
