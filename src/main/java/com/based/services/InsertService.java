@@ -83,18 +83,26 @@ public class InsertService {
             table.getStorage().add(new Row(parseValues(table, record.toList())));
     }
 
-    public int insertCsv(String tableName, InputStream csv)
+    public int insertCsv(String tableName, InputStream csv, boolean skipFirstLine)
             throws IllegalArgumentException, IOException, MissingTableException, InterruptedException {
-        return insertCsv(Database.getTable(tableName), new BufferedReader(new InputStreamReader(csv)));
+        return insertCsv(Database.getTable(tableName), new BufferedReader(new InputStreamReader(csv)), skipFirstLine);
     }
 
-    public int insertCsv(Table table, BufferedReader csvReader)
+    public int insertCsv(Table table, BufferedReader csvReader, boolean skipFirstLine)
             throws IOException, MissingTableException, IllegalArgumentException, InterruptedException {
+        System.out.println("Importing some CSV file " + (skipFirstLine ? "(skipping)" : "(no skipping)"));
+
         StringBuilder builder = new StringBuilder();
         boolean reachedEOF = readChunkOfLines(csvReader, builder);
 
-        Iterable<CSVRecord> records = CSV_FORMATTER.parse(new StringReader(builder.toString()));
-        InsertRunnable insertRunnable = new InsertRunnable(table, records, this);
+        String built = builder.toString();
+        if (built.isEmpty()) {
+            System.out.println("Chunk of line is empty");
+            return 0;
+        }
+
+        Iterable<CSVRecord> records = CSV_FORMATTER.parse(new StringReader(built));
+        InsertRunnable insertRunnable = new InsertRunnable(table, records, this, skipFirstLine);
 
         int nbLines = 0;
 
@@ -107,39 +115,46 @@ public class InsertService {
                 int[] nodeIndexes = Nodes.randomlyOrderedNodeIndexes();
                 while (reachedEOF == false) {
                     for (int nodeIndex : nodeIndexes) {
-                        StringBuilder sb = new StringBuilder();
-                        reachedEOF = readChunkOfLines(csvReader, sb);
-                        String chunk = sb.toString();
+                        StringBuilder chunkBuilder = new StringBuilder();
+                        reachedEOF = readChunkOfLines(csvReader, chunkBuilder);
 
                         MachineTarget nextMachine = Nodes.getMachineTarget(nodeIndex, "/csv/" + table.getName());
                         ResteasyWebTarget target = nextMachine.getTarget();
-                        Builder request = target.request().accept(MediaType.MULTIPART_FORM_DATA);
+                        Builder request = target.request().accept(MediaType.APPLICATION_JSON_TYPE);
 
                         MultipartFormDataOutput output = new MultipartFormDataOutput();
-                        output.addFormData("file", chunk, MediaType.APPLICATION_OCTET_STREAM_TYPE);
+                        output.addFormData("file", chunkBuilder.toString().getBytes(),
+                                MediaType.APPLICATION_OCTET_STREAM_TYPE);
 
-                        Response response = request.post(Entity.entity(output, MediaType.MULTIPART_FORM_DATA));
-                        nbLines += response.readEntity(NbLinesResponse.class).getNbLines();
+                        Response response = request.put(Entity.entity(output, MediaType.MULTIPART_FORM_DATA));
+                        int nbLinesResponse = response.readEntity(NbLinesResponse.class).getNbLines();
+                        System.out.println("Got " + nbLinesResponse + " lines from " + nextMachine);
+
+                        nbLines += nbLinesResponse;
 
                         if (reachedEOF)
                             break;
                     }
+
+                    if (reachedEOF)
+                        break;
+
+                    InsertService insertService = new InsertService();
+                    nbLines += insertService.insertCsv(table, csvReader, false);
                 }
             } catch (IndexOutOfBoundsException e) {
                 // If there are no other online machines, we continue to read the CSV
-                nbLines += insertCsv(table, csvReader);
+                InsertService insertService = new InsertService();
+                nbLines += insertService.insertCsv(table, csvReader, false);
             }
             insertOperation.join();
         }
 
-        nbLines += insertRunnable.getNbRows();
+        int nbLinesFromRunnable = insertRunnable.getNbRows();
+        System.out.println("Inserted " + nbLinesFromRunnable + " CSV lines");
+        nbLines += nbLinesFromRunnable;
 
-        try {
-            csvReader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        System.out.println("Total lines: " + nbLines);
         return nbLines;
     }
 
@@ -158,11 +173,14 @@ public class InsertService {
 
             if (null == line) {
                 reachedEOF = true;
-                // Do not break so that the rest of the buffer gets filled with nulls
+                break;
             }
 
-            builder.append(line);
+            builder.append(line + "\n");
         }
+
+        if (false == reader.ready())
+            reachedEOF = true;
 
         return reachedEOF;
     }
@@ -172,12 +190,14 @@ class InsertRunnable implements Runnable {
     private Table table;
     private Iterable<CSVRecord> records;
     private InsertService insertService;
-    private int nbRows = -1;
+    private int nbRows;
 
-    public InsertRunnable(Table table, Iterable<CSVRecord> records, InsertService insertService) {
+    public InsertRunnable(Table table, Iterable<CSVRecord> records, InsertService insertService, boolean skipFirstLine) {
         this.table = table;
         this.records = records;
         this.insertService = insertService;
+        this.nbRows = skipFirstLine ? -1 : 0;
+        System.out.println((skipFirstLine ? "Skipping" : "Not skipping") + " the first line");
     }
 
     public int getNbRows() {
@@ -186,12 +206,14 @@ class InsertRunnable implements Runnable {
 
     @Override
     public void run() {
-        nbRows = -1;
         for (CSVRecord record : records) {
-            if (nbRows == -1) {
+            if (nbRows < 0) {
                 nbRows++;
                 continue;
             }
+
+            if (nbRows % 10000 == 0)
+                System.out.println("Row chunk insertion: " + (nbRows / 1000) + "%");
 
             Row row = new Row(insertService.parseValues(table, record.toList()));
             table.getStorage().add(row);
