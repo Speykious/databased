@@ -1,6 +1,9 @@
 package com.based.distrib;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
@@ -62,6 +65,19 @@ public final class Nodes {
         }
 
         return onlineNodeIndexes.iterator().next();
+    }
+
+    public static int[] randomlyOrderedNodeIndexes() {
+        List<Integer> indexList = new ArrayList<>();
+        for (int nodeIndex : onlineNodeIndexes)
+            indexList.add(nodeIndex);
+
+        Collections.shuffle(indexList);
+        int[] indexArray = new int[indexList.size()];
+        for (int i = 0; i < indexArray.length; i++)
+            indexArray[i] = indexList.get(i);
+
+        return indexArray;
     }
 
     public static SortedSet<Integer> getOnlineNodeIndexes() {
@@ -156,4 +172,3 @@ public final class Nodes {
         return port;
     }
 }
-

@@ -8,6 +8,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -24,6 +25,7 @@ import com.based.model.Table;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 
 public class InsertService {
     public static CSVFormat CSV_FORMATTER = CSVFormat.Builder.create()
@@ -81,8 +83,6 @@ public class InsertService {
             table.getStorage().add(new Row(parseValues(table, record.toList())));
     }
 
-    private static String[] csvStringBuffer = new String[100_000];
-
     public int insertCsv(String tableName, InputStream csv)
             throws IllegalArgumentException, IOException, MissingTableException, InterruptedException {
         return insertCsv(Database.getTable(tableName), new BufferedReader(new InputStreamReader(csv)));
@@ -90,39 +90,48 @@ public class InsertService {
 
     public int insertCsv(Table table, BufferedReader csvReader)
             throws IOException, MissingTableException, IllegalArgumentException, InterruptedException {
-        boolean reachedEOF = false;
-        for (int i = 0; i < csvStringBuffer.length; i++) {
-            String line = csvReader.readLine();
+        StringBuilder builder = new StringBuilder();
+        boolean reachedEOF = readChunkOfLines(csvReader, builder);
 
-            if (null == line) {
-                reachedEOF = true;
-                break;
-            }
-
-            csvStringBuffer[i] = line;
-        }
-
-        Iterable<CSVRecord> records = CSV_FORMATTER.parse(csvReader);
-
+        Iterable<CSVRecord> records = CSV_FORMATTER.parse(new StringReader(builder.toString()));
         InsertRunnable insertRunnable = new InsertRunnable(table, records, this);
-        Thread insertOperation = new Thread(insertRunnable);
-        insertOperation.start();
 
         int nbLines = 0;
-        if (false == reachedEOF) {
+
+        if (reachedEOF) {
+            insertRunnable.run();
+        } else {
+            Thread insertOperation = new Thread(insertRunnable);
+            insertOperation.start();
             try {
-                MachineTarget nextMachine = Nodes.getNextOnlineMachineTarget("/csv/" + table.getName());
-                ResteasyWebTarget target = nextMachine.getTarget();
-                Builder request = target.request().accept(MediaType.APPLICATION_JSON);
-                Response response = request.get();
-                nbLines += response.readEntity(NbLinesResponse.class).getNbLines();
+                int[] nodeIndexes = Nodes.randomlyOrderedNodeIndexes();
+                while (reachedEOF == false) {
+                    for (int nodeIndex : nodeIndexes) {
+                        StringBuilder sb = new StringBuilder();
+                        reachedEOF = readChunkOfLines(csvReader, sb);
+                        String chunk = sb.toString();
+
+                        MachineTarget nextMachine = Nodes.getMachineTarget(nodeIndex, "/csv/" + table.getName());
+                        ResteasyWebTarget target = nextMachine.getTarget();
+                        Builder request = target.request().accept(MediaType.MULTIPART_FORM_DATA);
+
+                        MultipartFormDataOutput output = new MultipartFormDataOutput();
+                        output.addFormData("file", chunk, MediaType.APPLICATION_OCTET_STREAM_TYPE);
+
+                        Response response = request.post(Entity.entity(output, MediaType.MULTIPART_FORM_DATA));
+                        nbLines += response.readEntity(NbLinesResponse.class).getNbLines();
+
+                        if (reachedEOF)
+                            break;
+                    }
+                }
             } catch (IndexOutOfBoundsException e) {
                 // If there are no other online machines, we continue to read the CSV
                 nbLines += insertCsv(table, csvReader);
             }
+            insertOperation.join();
         }
 
-        insertOperation.join();
         nbLines += insertRunnable.getNbRows();
 
         try {
@@ -132,6 +141,30 @@ public class InsertService {
         }
 
         return nbLines;
+    }
+
+    /**
+     * Reads 100,000 lines from the reader.
+     * 
+     * @param reader The reader to read lines from.
+     * @param buffer The buffer to store streams in.
+     * @return Whether we reached EOF.
+     * @throws IOException
+     */
+    private boolean readChunkOfLines(BufferedReader reader, StringBuilder builder) throws IOException {
+        boolean reachedEOF = false;
+        for (int i = 0; i < 100_000; i++) {
+            String line = reader.readLine();
+
+            if (null == line) {
+                reachedEOF = true;
+                // Do not break so that the rest of the buffer gets filled with nulls
+            }
+
+            builder.append(line);
+        }
+
+        return reachedEOF;
     }
 }
 
