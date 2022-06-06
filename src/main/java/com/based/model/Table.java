@@ -79,6 +79,19 @@ public class Table {
         return index;
     }
 
+    public Column getColumn(String columnName) throws MissingColumnException {
+        for (Column column : dto.getColumns()) {
+            if (column.getName().equals(columnName))
+                return column;
+        }
+
+        throw new MissingColumnException(columnName);
+    }
+
+    public Column getColumn(int columnIndex) {
+        return dto.getColumns().get(columnIndex);
+    }
+
     public TableDTO getDTO() {
         return dto;
     }
