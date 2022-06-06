@@ -29,6 +29,11 @@ public abstract class DataType {
         public Class<?> getInternalClass() {
             return int.class;
         }
+
+        @Override
+        public String getName() {
+            return "int32";
+        }
     };
 
     public static final DataType INT_64 = new DataType() {
@@ -53,6 +58,11 @@ public abstract class DataType {
         @Override
         public Class<?> getInternalClass() {
             return long.class;
+        }
+
+        @Override
+        public String getName() {
+            return "int64";
         }
     };
 
@@ -79,6 +89,11 @@ public abstract class DataType {
         public Class<?> getInternalClass() {
             return float.class;
         }
+
+        @Override
+        public String getName() {
+            return "float32";
+        }
     };
 
     public static final DataType STRING = new DataType() {
@@ -97,6 +112,11 @@ public abstract class DataType {
         @Override
         public Class<?> getInternalClass() {
             return String.class;
+        }
+
+        @Override
+        public String getName() {
+            return "string";
         }
     };
 
@@ -123,18 +143,25 @@ public abstract class DataType {
         public Class<?> getInternalClass() {
             return LocalDateTime.class;
         }
+
+        @Override
+        public String getName() {
+            return "date";
+        }
     };
 
     public static final Map<String, DataType> DATATYPE_MAP = new HashMap<>();
     static {
-        DATATYPE_MAP.put("int32", INT_32);
-        DATATYPE_MAP.put("int64", INT_64);
-        DATATYPE_MAP.put("float32", FLOAT_32);
-        DATATYPE_MAP.put("date", DATE);
-        DATATYPE_MAP.put("string", STRING);
+        DATATYPE_MAP.put(INT_32.getName(), INT_32);
+        DATATYPE_MAP.put(INT_64.getName(), INT_64);
+        DATATYPE_MAP.put(FLOAT_32.getName(), FLOAT_32);
+        DATATYPE_MAP.put(DATE.getName(), DATE);
+        DATATYPE_MAP.put(STRING.getName(), STRING);
     }
 
     public abstract Object parse(Object value, boolean isNullable);
+
+    public abstract String getName();
 
     public abstract Class<?> getInternalClass();
 }
