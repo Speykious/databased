@@ -132,7 +132,7 @@ public class SelectService {
     }
 
     private List<Row> toListOfRow(Map<String, List<Row>> map, List<Aggregate> aggregates, Table table, int[] indexes) throws InvalidOperationException, MissingColumnException, InvalidSelectException{
-        ArrayList<Row> returnedMap = new ArrayList<>();
+        ArrayList<Row> returnedCast = new ArrayList<>();
             
         for(Map.Entry<String,List<Row>> mEntry : map.entrySet()){
             List<Row> entryValues = mEntry.getValue();
@@ -164,12 +164,12 @@ public class SelectService {
                         o.add(sum);
                     }
                 }
-                returnedMap.add(new Row(o));
+                returnedCast.add(new Row(o));
             } else {
-                returnedMap.add(entryValues.get(0));
+                returnedCast.add(entryValues.get(0));
             }
         }
-        return returnedMap;
+        return returnedCast;
     }
 
     /*
