@@ -58,7 +58,7 @@ public class Table {
         return indexes;
     }
 
-    public int getColumnIndexe(String columnName) throws MissingColumnException {
+    public int getColumnIndex(String columnName) throws MissingColumnException {
         int indexe = 0;
         List<Column> columns = dto.getColumns();
         boolean found = false;
