@@ -41,4 +41,15 @@ public class Column implements Serializable {
     public String toString() {
         return "Column { name: \"" + name + "\", type: " + type + ", nullable: " + nullable + " }";
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + (nullable ? 1231 : 1237);
+        result = prime * result + (primaryKey ? 1231 : 1237);
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
 }
