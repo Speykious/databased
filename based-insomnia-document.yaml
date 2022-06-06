@@ -1,12 +1,12 @@
 _type: export
 __export_format: 4
-__export_date: 2022-06-06T19:55:46.711Z
+__export_date: 2022-06-06T20:09:04.583Z
 __export_source: insomnia.desktop.app:v2022.3.0
 resources:
-  - _id: req_5f9d40da40bd4d699ee9fa24db4b4dcf
-    parentId: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
-    modified: 1652270760254
-    created: 1652102463013
+  - _id: req_fb02bdea71ba493f8172d5de177ecbd8
+    parentId: fld_7038269775624a3ba9dc6d8d2efd2c02
+    modified: 1654546121619
+    created: 1654546088203
     url: http://localhost:8080/based/data/yellow_tripdata
     name: Based select-all request
     description: ""
@@ -29,15 +29,15 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
+  - _id: fld_7038269775624a3ba9dc6d8d2efd2c02
     parentId: wrk_d2bac865327b4153aa21603971f16e1d
-    modified: 1652102463002
-    created: 1652102463002
-    name: Table yellow-tripdata
+    modified: 1654546090396
+    created: 1654546088201
+    name: Table yellow-tripdata (local)
     description: ""
     environment: {}
     environmentPropertyOrder: null
-    metaSortKey: -1650030812963.5
+    metaSortKey: -1650029002356.75
     _type: request_group
   - _id: wrk_d2bac865327b4153aa21603971f16e1d
     parentId: null
@@ -47,78 +47,69 @@ resources:
     description: ""
     scope: design
     _type: workspace
-  - _id: req_edb929688a0045428bea7d66f1705707
-    parentId: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
-    modified: 1652286359360
-    created: 1652177992348
+  - _id: req_900e2fe0995e45f08ccc2ee652e87117
+    parentId: fld_7038269775624a3ba9dc6d8d2efd2c02
+    modified: 1654546122434
+    created: 1654546088206
     url: http://localhost:8080/based/data/yellow_tripdata
-    name: Based select request
+    name: Based select-where request
     description: ""
     method: GET
     body:
       mimeType: application/json
       text: |-
         {
-        	"columns": [
-        		"vendor_name",
-        		"Passenger_Count",
-        		"surcharge",
-        		"surcharge"
-        	],
+        	"select": {
+        		"aggregates": [
+        			{
+        				"function": "count"
+        			},
+        			{
+        				"function": "sum",
+        				"column_target": "Passenger_Count"
+        			}
+        		],
+        		"columns": [
+        			"vendor_name",
+        			"Passenger_Count",
+        			"surcharge"
+        		]
+        	},
         	"where": {
         		"type": "operator",
         		"value": "and",
         		"children": [
         			{
         				"type": "operator",
-        				"value": "==",
+        				"value": ">",
         				"children": [
         					{
-        						"type": "ident",
-        						"value": "column_name"
+        						"type": "column",
+        						"value": "Passenger_Count"
         					},
         					{
-        						"type": "string",
-        						"value": "bonjour"
+        						"type": "int32",
+        						"value": 0
         					}
         				]
         			},
         			{
         				"type": "operator",
-        				"value": "and",
+        				"value": "<",
         				"children": [
         					{
-        						"type": "operator",
-        						"value": ">",
-        						"children": [
-        							{
-        								"type": "ident",
-        								"value": "id"
-        							},
-        							{
-        								"type": "number",
-        								"value": "3"
-        							}
-        						]
+        						"type": "column",
+        						"value": "Passenger_Count"
         					},
         					{
-        						"type": "operator",
-        						"value": "!=",
-        						"children": [
-        							{
-        								"type": "ident",
-        								"value": "desh"
-        							},
-        							{
-        								"type": "string",
-        								"value": "real"
-        							}
-        						]
+        						"type": "int32",
+        						"value": 3
         					}
         				]
         			}
         		]
-        	}
+        	},
+        	"groupby": "vendor_name"
         }
     parameters: []
     headers:
@@ -135,10 +126,10 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: req_eba693cd949e4a13b966d58714532d08
-    parentId: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
-    modified: 1652102478913
-    created: 1652102463020
+  - _id: req_fd41a3649533449899a0b73f9d2fa44e
+    parentId: fld_7038269775624a3ba9dc6d8d2efd2c02
+    modified: 1654546111194
+    created: 1654546088204
     url: http://localhost:8080/based/table/yellow_tripdata
     name: Based table info request
     description: ""
@@ -156,10 +147,10 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: req_1bc44780a03145b7b00100503eb75bd7
-    parentId: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
-    modified: 1652180276631
-    created: 1652102463007
+  - _id: req_2e25f6f6af884b0e982050e20e1d0e22
+    parentId: fld_7038269775624a3ba9dc6d8d2efd2c02
+    modified: 1654546124459
+    created: 1654546088202
     url: http://localhost:8080/based/table
     name: Based create-table request
     description: ""
@@ -277,10 +268,10 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: req_271ae068a9da4099acd729a4aaba0ae4
-    parentId: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
-    modified: 1652178222875
-    created: 1652102463025
+  - _id: req_fa8566abcd7d42df91d3253ac10e22bd
+    parentId: fld_7038269775624a3ba9dc6d8d2efd2c02
+    modified: 1654546119660
+    created: 1654546088205
     url: http://localhost:8080/based/csv/yellow_tripdata
     name: Based import-csv request
     description: ""
@@ -311,7 +302,7 @@ resources:
     _type: request
   - _id: req_428294a59c1f4c6ebfe7f1359210b64c
     parentId: fld_66feea5053b24dddb337f80a6dc72453
-    modified: 1654544896448
+    modified: 1654546056334
     created: 1652286658306
     url: http://132.227.115.115:8080/based/data/yellow_tripdata
     name: Based select-all request
@@ -347,7 +338,7 @@ resources:
     _type: request_group
   - _id: req_3453168fcfd5439db4842030bac8c1a7
     parentId: fld_66feea5053b24dddb337f80a6dc72453
-    modified: 1654545331279
+    modified: 1654546055872
     created: 1652286658309
     url: http://132.227.115.115:8080/based/data/yellow_tripdata
     name: Based select-where request
@@ -447,7 +438,7 @@ resources:
     _type: request
   - _id: req_9332a0f9c4094e23b0a862a9f768c253
     parentId: fld_66feea5053b24dddb337f80a6dc72453
-    modified: 1654545098547
+    modified: 1654546052316
     created: 1652286658304
     url: http://132.227.115.115:8080/based/table
     name: Based create-table request
@@ -568,7 +559,7 @@ resources:
     _type: request
   - _id: req_19f4f3e00de145eaa888cff537d9a7a9
     parentId: fld_66feea5053b24dddb337f80a6dc72453
-    modified: 1652888358921
+    modified: 1654546010865
     created: 1652286658308
     url: http://132.227.115.115:8080/based/csv/yellow_tripdata
     name: Based import-csv request
