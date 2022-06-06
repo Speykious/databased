@@ -13,6 +13,7 @@ import com.based.exception.InvalidSelectException;
 import com.based.exception.MissingColumnException;
 import com.based.exception.MissingTableException;
 import com.based.model.Aggregate;
+import com.based.model.Column;
 import com.based.model.Database;
 import com.based.model.Row;
 import com.based.model.Select;
@@ -146,9 +147,12 @@ public class SelectService {
                     if (agg.getFunction().equals("count")) {
                         o.add(groupRows.size());
                     } else if (agg.getFunction().equals("sum")) {
-                        String target = agg.getColumnTarget();
-                        int targetTableIndex = table.getColumnIndex(target);
-                        int responseIndex = getIndexOfTableIndexes(targetTableIndex, indexes);
+                        String columnTarget = agg.getColumnTarget();
+                        int columnIndex = table.getColumnIndex(columnTarget);
+                        int responseIndex = getIndexOfTableIndexes(columnIndex, indexes);
+                        // Column column = table.getColumn(columnIndex);
+
+                        // TODO: This won't work, do something with column datatypes instead
                         Object sum = 0;
 
                         for (Row row : groupRows) {
