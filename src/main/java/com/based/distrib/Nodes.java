@@ -14,9 +14,12 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 public final class Nodes {
-    private static int[] baseIp = new int[] { 132, 227, 115, 97 };
+    private static boolean isLocal = System.getProperty("local", "false").equals("true");
+    private static int[] baseIp = isLocal
+            ? new int[] { 132, 227, 115, 97 }
+            : new int[] { 127, 0, 0, 1 };
 
-    private static int count = 24;
+    private static int count = Integer.parseInt(System.getProperty("node.count", "24"));
     private static int port = Integer.parseInt(System.getProperty("jetty.port", "8080"));
     private static int selfIndex = 0;
     private static ResteasyClient httpClient = createHttpClient();
@@ -38,6 +41,11 @@ public final class Nodes {
      * @throws InterruptedException
      */
     public static void pingOtherNodes() throws InterruptedException {
+        if (count <= 1) {
+            System.out.println("Count is 1 or less, not pinging other nodes");
+            return;
+        }
+
         onlineNodeIndexes = new TreeSet<>();
 
         BroadcastedRequests<PingRequestRunnable> broadcastedRequests = RequestRunnable.broadcastRequests(
