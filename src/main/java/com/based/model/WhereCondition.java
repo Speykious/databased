@@ -3,6 +3,9 @@ package com.based.model;
 import java.io.Serializable;
 import java.util.List;
 import com.based.entity.dto.TableDTO;
+import com.based.exception.InvalidOperationException;
+import com.based.exception.MissingChildrenException;
+import com.based.exception.MissingColumnException;
 
 public class WhereCondition implements Serializable {
     private String type;
@@ -25,8 +28,7 @@ public class WhereCondition implements Serializable {
         return children;
     }
 
-    //TODO : create custom exceptions ?
-    public Object evaluate(TableDTO tableDto, Row row) throws Exception{
+    public Object evaluate(TableDTO tableDto, Row row) throws InvalidOperationException, MissingChildrenException, MissingColumnException{
         if(type.equals("operator")){
             if(value.equals("==")){
                 if(children.size() == 2) {
@@ -35,7 +37,7 @@ public class WhereCondition implements Serializable {
                     return child1.equals(child2);
                 }
                 else {
-                    throw new Exception("No children Exception");
+                    throw new MissingChildrenException(value);
                 }
             }
             else if(value.equals("!=")){
@@ -45,7 +47,7 @@ public class WhereCondition implements Serializable {
                     return !child1.equals(child2);
                 }
                 else {
-                    throw new Exception("No children Exception");
+                    throw new MissingChildrenException(value);
                 }
             }
             else if(value.equals(">")){
@@ -59,11 +61,11 @@ public class WhereCondition implements Serializable {
                         return (Float) child1 > (Float) child2;
                     }
                     else {
-                        throw new Exception("Superiority comparison with a non Integer type");
+                        throw new InvalidOperationException("Superiority comparison with a non Integer type");
                     }
                 }
                 else {
-                    throw new Exception("No children Exception");
+                    throw new MissingChildrenException(value);
                 }
             }
             else if(value.equals("<")){
@@ -77,11 +79,11 @@ public class WhereCondition implements Serializable {
                         return (Float) child1 < (Float) child2;
                     }
                     else {
-                        throw new Exception("Inferiority comparison with a non Integer type");
+                        throw new InvalidOperationException("Inferiority comparison with a non Integer type");
                     }
                 }
                 else {
-                    throw new Exception("No children Exception");
+                    throw new MissingChildrenException(value);
                 }
             }
             else if(value.equals("and")){
@@ -92,11 +94,11 @@ public class WhereCondition implements Serializable {
                         return (Boolean) child1 && (Boolean) child2;
                     }
                     else {
-                        throw new Exception("Require boolean children for 'and' operator");
+                        throw new InvalidOperationException("Require boolean children for 'and' operator");
                     }
                 }
                 else {
-                    throw new Exception("No children Exception");
+                    throw new MissingChildrenException(value);
                 }
             }
         }

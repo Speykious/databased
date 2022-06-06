@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.function.Predicate;
 import com.based.entity.dto.SelectRequestDTO;
 import com.based.entity.dto.TableDTO;
+import com.based.exception.InvalidGroupByException;
+import com.based.exception.InvalidOperationException;
+import com.based.exception.InvalidSelectException;
 import com.based.exception.MissingColumnException;
 import com.based.exception.MissingTableException;
 import com.based.model.Aggregate;
@@ -20,7 +23,7 @@ import com.based.model.WhereCondition;
 public class SelectService {
 
     public List<Row> selectAll(String tableName, List<String> columnNames, List<Aggregate> aggregates)
-            throws MissingTableException, MissingColumnException, Exception {
+            throws MissingTableException, MissingColumnException, InvalidOperationException, InvalidSelectException {
         Table table = Database.getTable(tableName);
         Storage storage = table.getStorage();
         int[] indexes = table.getColumnIndexes(columnNames);
@@ -36,7 +39,7 @@ public class SelectService {
                 else if(agg.getFunction().equals("sum")){
                     String target = agg.getColumn_target();
                     int targetTableIndexe = table.getColumnIndexe(target);
-                    int responseIndexe = getIndexeOfTableIndexes(targetTableIndexe, indexes);
+                    int responseIndexe = getIndexOfTableIndexes(targetTableIndexe, indexes);
                     Object sum = 0;
 
                     for(Row row : response){
@@ -49,7 +52,7 @@ public class SelectService {
                                 sum = (Float) sum + (Float) rowValues.get(responseIndexe);
                             }
                             else {
-                                throw new Exception("Can sum only integer or float types");
+                                throw new InvalidOperationException("Can sum only integer or float types");
                             }
                         }
                     }
@@ -68,7 +71,7 @@ public class SelectService {
         return response;
     }
 
-    public List<Row> select(String tableName, SelectRequestDTO selectRequest) throws Exception {
+    public List<Row> select(String tableName, SelectRequestDTO selectRequest) throws InvalidSelectException, MissingTableException, MissingColumnException, InvalidOperationException, InvalidGroupByException {
         Table table = Database.getTable(tableName);
         TableDTO tableDto = table.getDTO();
         Select select = selectRequest.getSelect();
@@ -76,12 +79,12 @@ public class SelectService {
         String groupby = selectRequest.getGroupby();
         int[] groupbyIndexes = null;
         
-        if(select == null) throw new Exception("No select Exception : Must specified a select field in the request");
+        if(select == null) throw new InvalidSelectException("Must specified a select field in the request");
 
         List<Aggregate> aggregates = select.getAggregates();
         List<String> columns = select.getColumns();
         
-        if(columns == null) throw new Exception("NoSelectedColumnsException : Must specified a columns field in the select request with a list of column_name or an empty list");
+        if(columns == null) throw new InvalidSelectException("Must specified a 'columns' field in the select request with a list of column_name or an empty list");
         int[] indexes = table.getColumnIndexes(columns);
 
         if(where != null){
@@ -95,7 +98,7 @@ public class SelectService {
                 System.err.println("Where request");                
                 return Database.getTable(tableName).getStorage().filter(getWherePredicate(tableDto, where), indexes, aggregates, (target, specIndexes) -> {
                     int targetTableIndexe = table.getColumnIndexe(target);
-                    return getIndexeOfTableIndexes(targetTableIndexe, indexes);
+                    return getIndexOfTableIndexes(targetTableIndexe, indexes);
                 });
             }
         }
@@ -129,7 +132,7 @@ public class SelectService {
         };
     }
 
-    private List<Row> toListOfRow(HashMap<String, List<Row>> map, List<Aggregate> aggregates, Table table, int[] indexes) throws Exception{
+    private List<Row> toListOfRow(HashMap<String, List<Row>> map, List<Aggregate> aggregates, Table table, int[] indexes) throws InvalidOperationException, MissingColumnException, InvalidSelectException{
         ArrayList<Row> returnedMap = new ArrayList<>();
             
         for(Map.Entry<String,List<Row>> mEntry : map.entrySet()){
@@ -144,7 +147,7 @@ public class SelectService {
                     else if(agg.getFunction().equals("sum")){
                         String target = agg.getColumn_target();
                         int targetTableIndexe = table.getColumnIndexe(target);
-                        int responseIndexe = getIndexeOfTableIndexes(targetTableIndexe, indexes);
+                        int responseIndexe = getIndexOfTableIndexes(targetTableIndexe, indexes);
                         Object sum = 0;
     
                         for(Row row : entryValues){
@@ -157,7 +160,7 @@ public class SelectService {
                                     sum = (Float) sum + (Float) rowValues.get(responseIndexe);
                                 }
                                 else {
-                                    throw new Exception("Can sum only integer or float types");
+                                    throw new InvalidOperationException("Can sum only integer or float types");
                                 }
                             }
                         }
@@ -173,11 +176,15 @@ public class SelectService {
         return returnedMap;
     }
 
-    private int getIndexeOfTableIndexes(int indexe, int[] indexes) throws Exception{
+    /*
+     * return the index of n in indexes array
+     * if n is not in indexes array, throw an error
+     */
+    private int getIndexOfTableIndexes(int n, int[] indexes) throws InvalidSelectException{
         for(int i = 0; i < indexes.length; i++){
-            if(indexe == indexes[i]) return i;
+            if(n == indexes[i]) return i;
         }
 
-        throw new Exception("Column target is not mentioned in the selected columns !");
+        throw new InvalidSelectException("the column target of an aggregate must be mentioned in the selected columns.");
     }
 }

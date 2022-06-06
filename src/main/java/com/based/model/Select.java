@@ -20,16 +20,5 @@ public class Select implements Serializable{
     public void setColumns(List<String> columns) {
         this.columns = columns;
     }
-
-    // public Object evaluate(TableDTO tableDto, Row row) throws Exception{
-    //     for(Aggregate aggregate : aggregates){
-    //         switch(aggregate.getFunction()){
-    //             case "count" :
-    //                 break;
-    //             case "sum" :
-    //                 break;
-    //         }
-    //     }
-    // }
     
 }

@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Predicate;
 
+import com.based.exception.InvalidGroupByException;
+import com.based.exception.InvalidOperationException;
+import com.based.exception.InvalidSelectException;
+import com.based.exception.MissingColumnException;
+
 public class StupidStorage implements Storage {
     private List<Row> rows;
 
@@ -47,7 +52,7 @@ public class StupidStorage implements Storage {
     }
 
     @Override
-    public List<Row> filter(Predicate<Row> predicate, int[] columns, List<Aggregate> aggregates, CallBackInterface getRowsCallback) throws Exception {
+    public List<Row> filter(Predicate<Row> predicate, int[] columns, List<Aggregate> aggregates, CallBackInterface getRowsCallback) throws InvalidOperationException, InvalidSelectException, MissingColumnException {
         ArrayList<Row> filteredRows = new ArrayList<>();
         for (Row row : rows) {
             if (predicate.test(row)) {
@@ -91,7 +96,7 @@ public class StupidStorage implements Storage {
                 }
                 else if(agg.getFunction().equals("sum")){
                     String target = agg.getColumn_target();
-                    int targetIndexe = getRowsCallback.getTargetIndexe(target, columns);
+                    int targetIndexe = getRowsCallback.getTargetIndex(target, columns);
                     Object sum = 0;
 
                     for(Row row : filteredRows){
@@ -104,7 +109,7 @@ public class StupidStorage implements Storage {
                                 sum = (Float) sum + (Float) rowValues.get(targetIndexe);
                             }
                             else {
-                                throw new Exception("Can sum only integer or float types");
+                                throw new InvalidOperationException("Can sum only integer or float types");
                             }
                         }
                     }
@@ -128,11 +133,11 @@ public class StupidStorage implements Storage {
      * wherePredicate can be null
      */
     @Override
-    public HashMap<String, List<Row>> groupByFilter(Predicate<Row> wherePredicate, int[] columns, int groupby) throws Exception {
+    public HashMap<String, List<Row>> groupByFilter(Predicate<Row> wherePredicate, int[] columns, int groupby) throws InvalidGroupByException {
         HashMap<String, List<Row>> map = new HashMap<>();
 
         if(!contains(columns, groupby)){
-            throw new Exception("GroupByException : The column in the groupby must be specified in the select");
+            throw new InvalidGroupByException("The column in the groupby must be specified in the select");
         }
 
         for (Row row : rows) {

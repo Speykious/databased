@@ -4,6 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Predicate;
 
+import com.based.exception.InvalidGroupByException;
+import com.based.exception.InvalidOperationException;
+import com.based.exception.InvalidSelectException;
+import com.based.exception.MissingColumnException;
+
 /**
  * Class that actually stores data.
  */
@@ -13,9 +18,9 @@ public interface Storage {
      *                  subset.
      * @return a filtered subset of the storage.
      */
-    public List<Row> filter(Predicate<Row> predicate, int[] columns, List<Aggregate> aggregates, CallBackInterface callback) throws Exception;
+    public List<Row> filter(Predicate<Row> predicate, int[] columns, List<Aggregate> aggregates, CallBackInterface callback) throws InvalidSelectException, MissingColumnException, InvalidOperationException;
 
-    public HashMap<String, List<Row>> groupByFilter(Predicate<Row> predicate, int[] columns, int groupby) throws Exception;
+    public HashMap<String, List<Row>> groupByFilter(Predicate<Row> predicate, int[] columns, int groupby) throws InvalidGroupByException;
 
     /**
      * @return all rows contained in the storage.
