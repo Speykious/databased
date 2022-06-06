@@ -41,17 +41,22 @@ public final class Nodes {
      * @throws InterruptedException
      */
     public static void pingOtherNodes() throws InterruptedException {
+        onlineNodeIndexes = new TreeSet<>();
+
         if (count <= 1) {
             System.out.println("Count is 1 or less, not pinging other nodes");
             return;
         }
 
-        onlineNodeIndexes = new TreeSet<>();
-
         BroadcastedRequests<PingRequestRunnable> broadcastedRequests = RequestRunnable.broadcastRequests(
                 PingRequestRunnable.class,
                 Nodes.getOtherMachineTargets("/node/ping"),
                 (machineTarget) -> new PingRequestRunnable(machineTarget));
+
+        if (broadcastedRequests == null) {
+            System.out.println("No machine targets for some reason, not pinging other nodes");
+            return;
+        }
 
         for (var runnable : broadcastedRequests.getSuccessfulRequestRunnables())
             onlineNodeIndexes.add(runnable.getNodeIndex());

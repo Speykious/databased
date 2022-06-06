@@ -43,6 +43,9 @@ public abstract class RequestRunnable implements Runnable {
 	public static <T extends RequestRunnable> BroadcastedRequests<T> broadcastRequests(Class<T> clazz,
 			MachineTarget[] machineTargets,
 			RequestRunnableConstructor<T> constructor) throws InterruptedException {
+		if (machineTargets.length == 0)
+			return null;
+
 		@SuppressWarnings("unchecked")
 		T[] runnables = (T[]) Array.newInstance(clazz, machineTargets.length);
 		Thread[] requests = new Thread[machineTargets.length];
