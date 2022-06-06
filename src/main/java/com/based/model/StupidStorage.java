@@ -3,7 +3,6 @@ package com.based.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 import com.based.exception.InvalidGroupByException;
@@ -69,24 +68,6 @@ public class StupidStorage implements Storage {
                 }
             }
         }
-        // if(aggregates != null){
-        // for(Aggregate agg : aggregates){
-        // if(agg.getFunction().equals("count")){
-        // int count = filteredRows.size();
-        // List<Object> newList = new ArrayList<>();
-        // newList.add(count);
-        // //add only the first row to the list output
-        // if(count > 0){
-        // System.err.println("response.size() > 0");
-        // for(Object o : filteredRows.get(0).getValues()){
-        // newList.add(o);
-        // }
-        // }
-        // filteredRows.clear();
-        // filteredRows.add(new Row(newList));
-        // }
-        // }
-        // }
 
         if (aggregates != null && !aggregates.isEmpty()) {
             int count = filteredRows.size();
