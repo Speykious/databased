@@ -3,6 +3,7 @@ package com.based.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import com.based.exception.InvalidGroupByException;
@@ -56,7 +57,7 @@ public class StupidStorage implements Storage {
         ArrayList<Row> filteredRows = new ArrayList<>();
         for (Row row : rows) {
             if (predicate.test(row)) {
-                //tester les aggregates 
+                // tester les aggregates
                 if (columns == null || columns.length == 0) {
                     filteredRows.add(row);
                 } else {
@@ -69,43 +70,41 @@ public class StupidStorage implements Storage {
             }
         }
         // if(aggregates != null){
-        //     for(Aggregate agg : aggregates){
-        //         if(agg.getFunction().equals("count")){
-        //             int count = filteredRows.size();
-        //             List<Object> newList = new ArrayList<>();
-        //             newList.add(count);
-        //             //add only the first row to the list output 
-        //             if(count > 0){
-        //                 System.err.println("response.size() > 0");
-        //                 for(Object o : filteredRows.get(0).getValues()){
-        //                     newList.add(o);
-        //                 }
-        //             }
-        //             filteredRows.clear();
-        //             filteredRows.add(new Row(newList));
-        //         }
-        //     }
+        // for(Aggregate agg : aggregates){
+        // if(agg.getFunction().equals("count")){
+        // int count = filteredRows.size();
+        // List<Object> newList = new ArrayList<>();
+        // newList.add(count);
+        // //add only the first row to the list output
+        // if(count > 0){
+        // System.err.println("response.size() > 0");
+        // for(Object o : filteredRows.get(0).getValues()){
+        // newList.add(o);
+        // }
+        // }
+        // filteredRows.clear();
+        // filteredRows.add(new Row(newList));
+        // }
+        // }
         // }
 
-        if(aggregates != null && !aggregates.isEmpty()){
+        if (aggregates != null && !aggregates.isEmpty()) {
             int count = filteredRows.size();
             List<Object> newList = new ArrayList<>();
-            for(Aggregate agg : aggregates){
-                if(agg.getFunction().equals("count")){
-                    newList.add(count);                    
-                }
-                else if(agg.getFunction().equals("sum")){
+            for (Aggregate agg : aggregates) {
+                if (agg.getFunction().equals("count")) {
+                    newList.add(count);
+                } else if (agg.getFunction().equals("sum")) {
                     String target = agg.getColumn_target();
                     int targetIndexe = getRowsCallback.getTargetIndex(target, columns);
                     Object sum = 0;
 
-                    for(Row row : filteredRows){
+                    for (Row row : filteredRows) {
                         List<Object> rowValues = row.getValues();
-                        if(rowValues.size() > 0){
-                            if(rowValues.get(targetIndexe) instanceof Integer){
+                        if (rowValues.size() > 0) {
+                            if (rowValues.get(targetIndexe) instanceof Integer) {
                                 sum = (Integer) sum + (Integer) rowValues.get(targetIndexe);
-                            }
-                            else if(rowValues.get(targetIndexe) instanceof Float){
+                            } else if (rowValues.get(targetIndexe) instanceof Float) {
                                 sum = (Float) sum + (Float) rowValues.get(targetIndexe);
                             }
                             else {
@@ -116,9 +115,9 @@ public class StupidStorage implements Storage {
                     newList.add(sum);
                 }
             }
-            //add only the first row to the list output
-            if(count > 0){
-                for(Object o : filteredRows.get(0).getValues()){
+            // add only the first row to the list output
+            if (count > 0) {
+                for (Object o : filteredRows.get(0).getValues()) {
                     newList.add(o);
                 }
             }
@@ -128,7 +127,6 @@ public class StupidStorage implements Storage {
         return filteredRows;
     }
 
-   
     /**
      * wherePredicate can be null
      */
@@ -144,12 +142,11 @@ public class StupidStorage implements Storage {
             if (wherePredicate == null || wherePredicate.test(row)) {
                 if (columns == null || columns.length == 0) {
                     List<Row> values = map.get(row.getValue(groupby));
-                    if(values == null){
+                    if (values == null) {
                         List<Row> listValue = new ArrayList<Row>();
                         listValue.add(row);
                         map.put(row.getValue(groupby).toString(), listValue);
-                    }
-                    else {
+                    } else {
                         values.add(row);
                     }
                 } else {
@@ -158,12 +155,11 @@ public class StupidStorage implements Storage {
                     for (int index : columns) {
                         rearranged.add(row.getValue(index));
                     }
-                    if(values == null){
+                    if (values == null) {
                         List<Row> listValue = new ArrayList<Row>();
                         listValue.add(new Row(rearranged));
                         map.put(row.getValue(groupby).toString(), listValue);
-                    }
-                    else {
+                    } else {
                         values.add(new Row(rearranged));
                     }
                 }
@@ -173,9 +169,10 @@ public class StupidStorage implements Storage {
         return map;
     }
 
-    private boolean contains(int[] array, int number){
-        for(int i : array){
-            if(i == number) return true;
+    private boolean contains(int[] array, int number) {
+        for (int i : array) {
+            if (i == number)
+                return true;
         }
         return false;
     }

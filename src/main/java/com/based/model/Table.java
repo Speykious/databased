@@ -18,15 +18,15 @@ public class Table {
     public Table(TableDTO dto, Storage storage) throws InvalidTableFormatException, InvalidColumnFormatException {
         if (dto == null)
             throw new InvalidTableFormatException("Table info cannot be null");
-        
+
         String name = dto.getName();
         List<Column> columns = dto.getColumns();
-        
+
         if (name == null || name.equals(""))
             throw new InvalidTableFormatException("Empty table names are not allowed");
         if (columns == null || columns.size() == 0)
             throw new InvalidTableFormatException("Table needs at least one column");
-        
+
         for (Column column : columns)
             column.assertIsValid();
 
@@ -36,7 +36,7 @@ public class Table {
 
     public int[] getColumnIndexes(List<String> columnNames) throws MissingColumnException {
         int[] indexes = new int[columnNames.size()];
-        if(indexes.length > 0){
+        if (indexes.length > 0) {
             List<Column> columns = dto.getColumns();
             for (int j = 0; j < columnNames.size(); j++) {
                 String columnName = columnNames.get(j);
@@ -58,13 +58,13 @@ public class Table {
         return indexes;
     }
 
-    public int getColumnIndexe(String columnName) throws MissingColumnException {
-        int indexe = 0;
+    public int getColumnIndex(String columnName) throws MissingColumnException {
+        int index = 0;
         List<Column> columns = dto.getColumns();
         boolean found = false;
         for (int i = 0; i < columns.size(); i++) {
             if (columns.get(i).getName().equals(columnName)) {
-                indexe = i;
+                index = i;
                 found = true;
                 break;
             }
@@ -73,7 +73,7 @@ public class Table {
         if (!found)
             throw new MissingColumnException(columnName);
 
-        return indexe;
+        return index;
     }
 
     public TableDTO getDTO() {

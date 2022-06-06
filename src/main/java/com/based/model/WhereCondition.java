@@ -15,15 +15,19 @@ public class WhereCondition implements Serializable {
     public String getType() {
         return type;
     }
+
     public void setType(String type) {
         this.type = type;
     }
+
     public String getValue() {
         return value;
     }
+
     public void setValue(String value) {
         this.value = value;
     }
+
     public List<WhereCondition> getChildren() {
         return children;
     }
@@ -39,25 +43,22 @@ public class WhereCondition implements Serializable {
                 else {
                     throw new MissingChildrenException(value);
                 }
-            }
-            else if(value.equals("!=")){
-                if(children.size() == 2) {
-                    Object child1 = children.get(0).evaluate(tableDto,row);
-                    Object child2 = children.get(1).evaluate(tableDto,row);
+            } else if (value.equals("!=")) {
+                if (children.size() == 2) {
+                    Object child1 = children.get(0).evaluate(tableDto, row);
+                    Object child2 = children.get(1).evaluate(tableDto, row);
                     return !child1.equals(child2);
                 }
                 else {
                     throw new MissingChildrenException(value);
                 }
-            }
-            else if(value.equals(">")){
-                if(children.size() == 2) {
-                    Object child1 = children.get(0).evaluate(tableDto,row);
-                    Object child2 = children.get(1).evaluate(tableDto,row);
-                    if(child1 instanceof Integer && child2 instanceof Integer){
+            } else if (value.equals(">")) {
+                if (children.size() == 2) {
+                    Object child1 = children.get(0).evaluate(tableDto, row);
+                    Object child2 = children.get(1).evaluate(tableDto, row);
+                    if (child1 instanceof Integer && child2 instanceof Integer) {
                         return (int) child1 > (int) child2;
-                    }
-                    else if(child1 instanceof Float && child2 instanceof Float){
+                    } else if (child1 instanceof Float && child2 instanceof Float) {
                         return (Float) child1 > (Float) child2;
                     }
                     else {
@@ -67,15 +68,13 @@ public class WhereCondition implements Serializable {
                 else {
                     throw new MissingChildrenException(value);
                 }
-            }
-            else if(value.equals("<")){
-                if(children.size() == 2) {
-                    Object child1 = children.get(0).evaluate(tableDto,row);
-                    Object child2 = children.get(1).evaluate(tableDto,row);
-                    if(child1 instanceof Integer && child2 instanceof Integer){
+            } else if (value.equals("<")) {
+                if (children.size() == 2) {
+                    Object child1 = children.get(0).evaluate(tableDto, row);
+                    Object child2 = children.get(1).evaluate(tableDto, row);
+                    if (child1 instanceof Integer && child2 instanceof Integer) {
                         return (int) child1 < (int) child2;
-                    }
-                    else if(child1 instanceof Float && child2 instanceof Float){
+                    } else if (child1 instanceof Float && child2 instanceof Float) {
                         return (Float) child1 < (Float) child2;
                     }
                     else {
@@ -85,12 +84,11 @@ public class WhereCondition implements Serializable {
                 else {
                     throw new MissingChildrenException(value);
                 }
-            }
-            else if(value.equals("and")){
-                if(children.size() == 2) {
-                    Object child1 = children.get(0).evaluate(tableDto,row);
-                    Object child2 = children.get(1).evaluate(tableDto,row);
-                    if(child1 instanceof Boolean && child2 instanceof Boolean){
+            } else if (value.equals("and")) {
+                if (children.size() == 2) {
+                    Object child1 = children.get(0).evaluate(tableDto, row);
+                    Object child2 = children.get(1).evaluate(tableDto, row);
+                    if (child1 instanceof Boolean && child2 instanceof Boolean) {
                         return (Boolean) child1 && (Boolean) child2;
                     }
                     else {
@@ -101,16 +99,13 @@ public class WhereCondition implements Serializable {
                     throw new MissingChildrenException(value);
                 }
             }
-        }
-        else if(type.equals("column")){
+        } else if (type.equals("column")) {
             int index = tableDto.getColumnIndex(value);
             return row.getValue(index);
-        }
-        else if(type.equals("int32")){
+        } else if (type.equals("int32")) {
             int v = Integer.parseInt(value);
             return v;
-        }
-        else if(type.equals("float32")){
+        } else if (type.equals("float32")) {
             Float v = Float.parseFloat(value);
             return v;
         }

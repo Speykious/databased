@@ -29,26 +29,24 @@ public class SelectService {
         int[] indexes = table.getColumnIndexes(columnNames);
         List<Row> response = storage.getRows(indexes);
 
-        if(aggregates != null && !aggregates.isEmpty()){
+        if (aggregates != null && !aggregates.isEmpty()) {
             int count = response.size();
             List<Object> newList = new ArrayList<>();
-            for(Aggregate agg : aggregates){
-                if(agg.getFunction().equals("count")){
-                    newList.add(count);                    
-                }
-                else if(agg.getFunction().equals("sum")){
+            for (Aggregate agg : aggregates) {
+                if (agg.getFunction().equals("count")) {
+                    newList.add(count);
+                } else if (agg.getFunction().equals("sum")) {
                     String target = agg.getColumn_target();
-                    int targetTableIndexe = table.getColumnIndexe(target);
+                    int targetTableIndexe = table.getColumnIndex(target);
                     int responseIndexe = getIndexOfTableIndexes(targetTableIndexe, indexes);
                     Object sum = 0;
 
-                    for(Row row : response){
+                    for (Row row : response) {
                         List<Object> rowValues = row.getValues();
-                        if(rowValues.size() > 0){
-                            if(rowValues.get(responseIndexe) instanceof Integer){
+                        if (rowValues.size() > 0) {
+                            if (rowValues.get(responseIndexe) instanceof Integer) {
                                 sum = (Integer) sum + (Integer) rowValues.get(responseIndexe);
-                            }
-                            else if(rowValues.get(responseIndexe) instanceof Float){
+                            } else if (rowValues.get(responseIndexe) instanceof Float) {
                                 sum = (Float) sum + (Float) rowValues.get(responseIndexe);
                             }
                             else {
@@ -59,9 +57,9 @@ public class SelectService {
                     newList.add(sum);
                 }
             }
-            //add only the first row to the list output
-            if(count > 0){
-                for(Object o : response.get(0).getValues()){
+            // add only the first row to the list output
+            if (count > 0) {
+                for (Object o : response.get(0).getValues()) {
                     newList.add(o);
                 }
             }
@@ -87,19 +85,20 @@ public class SelectService {
         if(columns == null) throw new InvalidSelectException("Must specified a 'columns' field in the select request with a list of column_name or an empty list");
         int[] indexes = table.getColumnIndexes(columns);
 
-        if(where != null){
-            if(groupby != null){
+        if (where != null) {
+            if (groupby != null) {
                 System.err.println("Where & Groupby request");
                 groupbyIndexes = table.getColumnIndexes(List.of(groupby));
-                HashMap<String, List<Row>> map = Database.getTable(tableName).getStorage().groupByFilter(getWherePredicate(tableDto, where), indexes, groupbyIndexes[0]);
+                Map<String, List<Row>> map = Database.getTable(tableName).getStorage()
+                        .groupByFilter(getWherePredicate(tableDto, where), indexes, groupbyIndexes[0]);
                 return toListOfRow(map, aggregates, table, indexes);
-            }
-            else {
-                System.err.println("Where request");                
-                return Database.getTable(tableName).getStorage().filter(getWherePredicate(tableDto, where), indexes, aggregates, (target, specIndexes) -> {
-                    int targetTableIndexe = table.getColumnIndexe(target);
-                    return getIndexOfTableIndexes(targetTableIndexe, indexes);
-                });
+            } else {
+                System.err.println("Where request");
+                return Database.getTable(tableName).getStorage().filter(getWherePredicate(tableDto, where), indexes,
+                        aggregates, (target, specIndexes) -> {
+                            int targetTableIndexe = table.getColumnIndex(target);
+                            return getIndexOfTableIndexes(targetTableIndexe, indexes);
+                        });
             }
         }
         else {
@@ -108,15 +107,16 @@ public class SelectService {
                 return selectAll(tableName, columns, aggregates);
             }
         }
-        //when only select & gb : Select X Group by X
+        // when only select & gb : Select X Group by X
         System.err.println("Select & Groupby request");
         groupbyIndexes = table.getColumnIndexes(List.of(groupby));
 
-        HashMap<String, List<Row>> groupMap = Database.getTable(tableName).getStorage().groupByFilter(null,indexes, groupbyIndexes[0]);
+        Map<String, List<Row>> groupMap = Database.getTable(tableName).getStorage().groupByFilter(null, indexes,
+                groupbyIndexes[0]);
         return toListOfRow(groupMap, aggregates, table, indexes);
     }
 
-    private Predicate<Row> getWherePredicate(TableDTO tableDto, WhereCondition where){
+    private Predicate<Row> getWherePredicate(TableDTO tableDto, WhereCondition where) {
         return (Row row) -> {
             try {
                 Object evaluated = where.evaluate(tableDto, row);
@@ -132,31 +132,29 @@ public class SelectService {
         };
     }
 
-    private List<Row> toListOfRow(HashMap<String, List<Row>> map, List<Aggregate> aggregates, Table table, int[] indexes) throws InvalidOperationException, MissingColumnException, InvalidSelectException{
+    private List<Row> toListOfRow(Map<String, List<Row>> map, List<Aggregate> aggregates, Table table, int[] indexes) throws InvalidOperationException, MissingColumnException, InvalidSelectException{
         ArrayList<Row> returnedMap = new ArrayList<>();
             
         for(Map.Entry<String,List<Row>> mEntry : map.entrySet()){
             List<Row> entryValues = mEntry.getValue();
-            
-            if(aggregates != null && !aggregates.isEmpty()){
+
+            if (aggregates != null && !aggregates.isEmpty()) {
                 List<Object> o = entryValues.get(0).getValues();
-                for(Aggregate agg : aggregates){
-                    if(agg.getFunction().equals("count")){
+                for (Aggregate agg : aggregates) {
+                    if (agg.getFunction().equals("count")) {
                         o.add(entryValues.size());
-                    }
-                    else if(agg.getFunction().equals("sum")){
+                    } else if (agg.getFunction().equals("sum")) {
                         String target = agg.getColumn_target();
-                        int targetTableIndexe = table.getColumnIndexe(target);
+                        int targetTableIndexe = table.getColumnIndex(target);
                         int responseIndexe = getIndexOfTableIndexes(targetTableIndexe, indexes);
                         Object sum = 0;
-    
-                        for(Row row : entryValues){
+
+                        for (Row row : entryValues) {
                             List<Object> rowValues = row.getValues();
-                            if(rowValues.size() > 0){
-                                if(rowValues.get(responseIndexe) instanceof Integer){
+                            if (rowValues.size() > 0) {
+                                if (rowValues.get(responseIndexe) instanceof Integer) {
                                     sum = (Integer) sum + (Integer) rowValues.get(responseIndexe);
-                                }
-                                else if(rowValues.get(responseIndexe) instanceof Float){
+                                } else if (rowValues.get(responseIndexe) instanceof Float) {
                                     sum = (Float) sum + (Float) rowValues.get(responseIndexe);
                                 }
                                 else {
@@ -168,8 +166,7 @@ public class SelectService {
                     }
                 }
                 returnedMap.add(new Row(o));
-            }
-            else {
+            } else {
                 returnedMap.add(entryValues.get(0));
             }
         }
