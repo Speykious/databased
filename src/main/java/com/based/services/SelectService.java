@@ -35,7 +35,7 @@ public class SelectService {
                 if (agg.getFunction().equals("count")) {
                     newList.add(count);
                 } else if (agg.getFunction().equals("sum")) {
-                    String target = agg.getColumn_target();
+                    String target = agg.getColumnTarget();
                     int targetTableIndex = table.getColumnIndex(target);
                     int responseIndex = getIndexOfTableIndexes(targetTableIndex, indexes);
                     Object sum = 0;
@@ -124,7 +124,7 @@ public class SelectService {
                 if (evaluated instanceof Boolean)
                     return (boolean) evaluated;
                 else
-                    System.err.println("An error occured while testing a row");
+                    System.err.println("WhereCondition did not evaluate to a boolean");
             } catch (Exception e) {
                 System.err.println("An error occured while testing a row: " + e);
             }
@@ -146,7 +146,7 @@ public class SelectService {
                     if (agg.getFunction().equals("count")) {
                         o.add(groupRows.size());
                     } else if (agg.getFunction().equals("sum")) {
-                        String target = agg.getColumn_target();
+                        String target = agg.getColumnTarget();
                         int targetTableIndex = table.getColumnIndex(target);
                         int responseIndex = getIndexOfTableIndexes(targetTableIndex, indexes);
                         Object sum = 0;

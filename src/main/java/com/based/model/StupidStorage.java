@@ -77,7 +77,7 @@ public class StupidStorage implements Storage {
                 if (agg.getFunction().equals("count")) {
                     newList.add(count);
                 } else if (agg.getFunction().equals("sum")) {
-                    String target = agg.getColumn_target();
+                    String target = agg.getColumnTarget();
                     int targetIndex = getRowsCallback.getTargetIndex(target, columns);
                     Object sum = 0;
 

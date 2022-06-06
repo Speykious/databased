@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Aggregate implements Serializable {
     private String function;
-    private String column_target;
+    private String columnTarget;
 
     public String getFunction() {
         return function;
@@ -14,11 +14,11 @@ public class Aggregate implements Serializable {
         this.function = function;
     }
 
-    public String getColumn_target() {
-        return column_target;
+    public String getColumnTarget() {
+        return columnTarget;
     }
 
-    public void setColumns_target(String column_target) {
-        this.column_target = column_target;
+    public void setColumns_target(String columnTarget) {
+        this.columnTarget = columnTarget;
     }
 }
