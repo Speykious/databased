@@ -3,6 +3,7 @@ package com.based.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import com.based.exception.InvalidGroupByException;
@@ -53,7 +54,7 @@ public class StupidStorage implements Storage {
 
     @Override
     public List<Row> filter(Predicate<Row> predicate, int[] columns, List<Aggregate> aggregates, CallBackInterface getRowsCallback) throws InvalidOperationException, InvalidSelectException, MissingColumnException {
-        ArrayList<Row> filteredRows = new ArrayList<>();
+        List<Row> filteredRows = new ArrayList<>();
         for (Row row : rows) {
             if (predicate.test(row)) {
                 // tester les aggregates
@@ -77,16 +78,16 @@ public class StupidStorage implements Storage {
                     newList.add(count);
                 } else if (agg.getFunction().equals("sum")) {
                     String target = agg.getColumn_target();
-                    int targetIndexe = getRowsCallback.getTargetIndex(target, columns);
+                    int targetIndex = getRowsCallback.getTargetIndex(target, columns);
                     Object sum = 0;
 
                     for (Row row : filteredRows) {
                         List<Object> rowValues = row.getValues();
                         if (rowValues.size() > 0) {
-                            if (rowValues.get(targetIndexe) instanceof Integer) {
-                                sum = (Integer) sum + (Integer) rowValues.get(targetIndexe);
-                            } else if (rowValues.get(targetIndexe) instanceof Float) {
-                                sum = (Float) sum + (Float) rowValues.get(targetIndexe);
+                            if (rowValues.get(targetIndex) instanceof Integer) {
+                                sum = (Integer) sum + (Integer) rowValues.get(targetIndex);
+                            } else if (rowValues.get(targetIndex) instanceof Float) {
+                                sum = (Float) sum + (Float) rowValues.get(targetIndex);
                             }
                             else {
                                 throw new InvalidOperationException("Can sum only integer or float types");
@@ -112,8 +113,8 @@ public class StupidStorage implements Storage {
      * wherePredicate can be null
      */
     @Override
-    public HashMap<String, List<Row>> groupByFilter(Predicate<Row> wherePredicate, int[] columns, int groupby) throws InvalidGroupByException {
-        HashMap<String, List<Row>> map = new HashMap<>();
+    public Map<String, List<Row>> groupByFilter(Predicate<Row> wherePredicate, int[] columns, int groupby) throws InvalidGroupByException {
+        Map<String, List<Row>> map = new HashMap<>();
 
         if(!contains(columns, groupby)){
             throw new InvalidGroupByException("The column in the groupby must be specified in the select");

@@ -35,6 +35,9 @@ public class Table {
     }
 
     public int[] getColumnIndexes(List<String> columnNames) throws MissingColumnException {
+        if (columnNames == null)
+            return null;
+
         int[] indexes = new int[columnNames.size()];
         if (indexes.length > 0) {
             List<Column> columns = dto.getColumns();

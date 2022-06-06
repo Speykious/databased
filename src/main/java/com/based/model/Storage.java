@@ -1,7 +1,7 @@
 package com.based.model;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import com.based.exception.InvalidGroupByException;
@@ -20,7 +20,7 @@ public interface Storage {
      */
     public List<Row> filter(Predicate<Row> predicate, int[] columns, List<Aggregate> aggregates, CallBackInterface callback) throws InvalidSelectException, MissingColumnException, InvalidOperationException;
 
-    public HashMap<String, List<Row>> groupByFilter(Predicate<Row> predicate, int[] columns, int groupby) throws InvalidGroupByException;
+    public Map<String, List<Row>> groupByFilter(Predicate<Row> predicate, int[] columns, int groupby) throws InvalidGroupByException;
 
     /**
      * @return all rows contained in the storage.

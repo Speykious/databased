@@ -3,6 +3,7 @@ package com.based.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Predicate;
 import com.based.entity.dto.SelectRequestDTO;
 import com.based.entity.dto.TableDTO;
@@ -20,7 +21,6 @@ import com.based.model.Table;
 import com.based.model.WhereCondition;
 
 public class SelectService {
-
     public List<Row> selectAll(String tableName, List<String> columnNames, List<Aggregate> aggregates)
             throws MissingTableException, MissingColumnException, InvalidOperationException, InvalidSelectException {
         Table table = Database.getTable(tableName);
@@ -36,21 +36,19 @@ public class SelectService {
                     newList.add(count);
                 } else if (agg.getFunction().equals("sum")) {
                     String target = agg.getColumn_target();
-                    int targetTableIndexe = table.getColumnIndex(target);
-                    int responseIndexe = getIndexOfTableIndexes(targetTableIndexe, indexes);
+                    int targetTableIndex = table.getColumnIndex(target);
+                    int responseIndex = getIndexOfTableIndexes(targetTableIndex, indexes);
                     Object sum = 0;
 
                     for (Row row : response) {
                         List<Object> rowValues = row.getValues();
                         if (rowValues.size() > 0) {
-                            if (rowValues.get(responseIndexe) instanceof Integer) {
-                                sum = (Integer) sum + (Integer) rowValues.get(responseIndexe);
-                            } else if (rowValues.get(responseIndexe) instanceof Float) {
-                                sum = (Float) sum + (Float) rowValues.get(responseIndexe);
-                            }
-                            else {
+                            if (rowValues.get(responseIndex) instanceof Integer)
+                                sum = (int) sum + (int) rowValues.get(responseIndex);
+                            else if (rowValues.get(responseIndex) instanceof Float)
+                                sum = (float) sum + (float) rowValues.get(responseIndex);
+                            else
                                 throw new InvalidOperationException("Can sum only integer or float types");
-                            }
                         }
                     }
                     newList.add(sum);
@@ -58,9 +56,8 @@ public class SelectService {
             }
             // add only the first row to the list output
             if (count > 0) {
-                for (Object o : response.get(0).getValues()) {
+                for (Object o : response.get(0).getValues())
                     newList.add(o);
-                }
             }
             response.clear();
             response.add(new Row(newList));
@@ -68,51 +65,56 @@ public class SelectService {
         return response;
     }
 
-    public List<Row> select(String tableName, SelectRequestDTO selectRequest) throws InvalidSelectException, MissingTableException, MissingColumnException, InvalidOperationException, InvalidGroupByException {
+    public List<Row> select(String tableName, SelectRequestDTO selectRequest) throws InvalidSelectException,
+            MissingTableException, MissingColumnException, InvalidOperationException, InvalidGroupByException {
         Table table = Database.getTable(tableName);
         TableDTO tableDto = table.getDTO();
         Select select = selectRequest.getSelect();
         WhereCondition where = selectRequest.getWhere();
         String groupby = selectRequest.getGroupby();
         int[] groupbyIndexes = null;
-        
-        if(select == null) throw new InvalidSelectException("Must specified a select field in the request");
+
+        if (select == null)
+            throw new InvalidSelectException("Must specify a select field in the request");
 
         List<Aggregate> aggregates = select.getAggregates();
         List<String> columns = select.getColumns();
-        
-        if(columns == null) throw new InvalidSelectException("Must specified a 'columns' field in the select request with a list of column_name or an empty list");
+
+        if (columns == null)
+            throw new InvalidSelectException(
+                    "Must specify a 'columns' field in the select request with a list of column_name or an empty list");
         int[] indexes = table.getColumnIndexes(columns);
 
-        if (where != null) {
+        if (select != null && where != null) {
             if (groupby != null) {
-                System.err.println("Where & Groupby request");
+                System.err.println("Select Where & Groupby request");
                 groupbyIndexes = table.getColumnIndexes(List.of(groupby));
                 Map<String, List<Row>> map = Database.getTable(tableName).getStorage()
                         .groupByFilter(getWherePredicate(tableDto, where), indexes, groupbyIndexes[0]);
-                return toListOfRow(map, aggregates, table, indexes);
+                return toRows(map, aggregates, table, indexes);
             } else {
-                System.err.println("Where request");
-                return Database.getTable(tableName).getStorage().filter(getWherePredicate(tableDto, where), indexes,
-                        aggregates, (target, specIndexes) -> {
-                            int targetTableIndexe = table.getColumnIndex(target);
-                            return getIndexOfTableIndexes(targetTableIndexe, indexes);
-                        });
+                System.err.println("Select Where request");
+                return Database.getTable(tableName).getStorage()
+                        .filter(getWherePredicate(tableDto, where), indexes, aggregates,
+                                (target, specIndexes) -> {
+                                    int targetTableIndex = table.getColumnIndex(target);
+                                    return getIndexOfTableIndexes(targetTableIndex, indexes);
+                                });
             }
-        }
-        else {
-            if(groupby == null) {
-                System.err.println("Only select request");
+        } else {
+            if (groupby != null) {
+                // when only select & groupby : Select X Group by X
+                System.err.println("Select & Groupby request");
+                groupbyIndexes = table.getColumnIndexes(List.of(groupby));
+
+                Map<String, List<Row>> groups = Database.getTable(tableName).getStorage()
+                        .groupByFilter(null, indexes, groupbyIndexes[0]);
+                return toRows(groups, aggregates, table, indexes);
+            } else {
+                System.err.println("Only Select request");
                 return selectAll(tableName, columns, aggregates);
             }
         }
-        // when only select & gb : Select X Group by X
-        System.err.println("Select & Groupby request");
-        groupbyIndexes = table.getColumnIndexes(List.of(groupby));
-
-        Map<String, List<Row>> groupMap = Database.getTable(tableName).getStorage().groupByFilter(null, indexes,
-                groupbyIndexes[0]);
-        return toListOfRow(groupMap, aggregates, table, indexes);
     }
 
     private Predicate<Row> getWherePredicate(TableDTO tableDto, WhereCondition where) {
@@ -131,32 +133,32 @@ public class SelectService {
         };
     }
 
-    private List<Row> toListOfRow(Map<String, List<Row>> map, List<Aggregate> aggregates, Table table, int[] indexes) throws InvalidOperationException, MissingColumnException, InvalidSelectException{
-        ArrayList<Row> returnedCast = new ArrayList<>();
-            
-        for(Map.Entry<String,List<Row>> mEntry : map.entrySet()){
-            List<Row> entryValues = mEntry.getValue();
+    private List<Row> toRows(Map<String, List<Row>> groups, List<Aggregate> aggregates, Table table, int[] indexes)
+            throws InvalidOperationException, MissingColumnException, InvalidSelectException {
+        List<Row> rows = new ArrayList<>();
+
+        for (Entry<String, List<Row>> groupEntry : groups.entrySet()) {
+            List<Row> groupRows = groupEntry.getValue();
 
             if (aggregates != null && !aggregates.isEmpty()) {
-                List<Object> o = entryValues.get(0).getValues();
+                List<Object> o = groupRows.get(0).getValues();
                 for (Aggregate agg : aggregates) {
                     if (agg.getFunction().equals("count")) {
-                        o.add(entryValues.size());
+                        o.add(groupRows.size());
                     } else if (agg.getFunction().equals("sum")) {
                         String target = agg.getColumn_target();
-                        int targetTableIndexe = table.getColumnIndex(target);
-                        int responseIndexe = getIndexOfTableIndexes(targetTableIndexe, indexes);
+                        int targetTableIndex = table.getColumnIndex(target);
+                        int responseIndex = getIndexOfTableIndexes(targetTableIndex, indexes);
                         Object sum = 0;
 
-                        for (Row row : entryValues) {
+                        for (Row row : groupRows) {
                             List<Object> rowValues = row.getValues();
                             if (rowValues.size() > 0) {
-                                if (rowValues.get(responseIndexe) instanceof Integer) {
-                                    sum = (Integer) sum + (Integer) rowValues.get(responseIndexe);
-                                } else if (rowValues.get(responseIndexe) instanceof Float) {
-                                    sum = (Float) sum + (Float) rowValues.get(responseIndexe);
-                                }
-                                else {
+                                if (rowValues.get(responseIndex) instanceof Integer) {
+                                    sum = (Integer) sum + (Integer) rowValues.get(responseIndex);
+                                } else if (rowValues.get(responseIndex) instanceof Float) {
+                                    sum = (Float) sum + (Float) rowValues.get(responseIndex);
+                                } else {
                                     throw new InvalidOperationException("Can sum only integer or float types");
                                 }
                             }
@@ -164,23 +166,25 @@ public class SelectService {
                         o.add(sum);
                     }
                 }
-                returnedCast.add(new Row(o));
+                rows.add(new Row(o));
             } else {
-                returnedCast.add(entryValues.get(0));
+                rows.add(groupRows.get(0));
             }
         }
-        return returnedCast;
+        return rows;
     }
 
-    /*
-     * return the index of n in indexes array
-     * if n is not in indexes array, throw an error
+    /**
+     * @return the index of n if it exists in the indexes array
+     * @throws InvalidSelectException if n is not in the indexes array
      */
-    private int getIndexOfTableIndexes(int n, int[] indexes) throws InvalidSelectException{
-        for(int i = 0; i < indexes.length; i++){
-            if(n == indexes[i]) return i;
+    private int getIndexOfTableIndexes(int n, int[] indexes) throws InvalidSelectException {
+        for (int i = 0; i < indexes.length; i++) {
+            if (n == indexes[i])
+                return i;
         }
 
-        throw new InvalidSelectException("the column target of an aggregate must be mentioned in the selected columns.");
+        throw new InvalidSelectException(
+                "The column target of an aggregate must be mentioned in the selected columns.");
     }
 }
