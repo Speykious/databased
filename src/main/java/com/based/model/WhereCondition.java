@@ -32,83 +32,58 @@ public class WhereCondition implements Serializable {
         return children;
     }
 
-    public Object evaluate(TableDTO tableDto, Row row) throws InvalidOperationException, MissingChildrenException, MissingColumnException{
-        if(type.equals("operator")){
-            if(value.equals("==")){
-                if(children.size() == 2) {
-                    Object child1 = children.get(0).evaluate(tableDto,row);
-                    Object child2 = children.get(1).evaluate(tableDto,row);
-                    return child1.equals(child2);
-                }
-                else {
-                    throw new MissingChildrenException(value);
-                }
-            } else if (value.equals("!=")) {
+    public Object evaluate(TableDTO tableDto, Row row)
+            throws InvalidOperationException, MissingChildrenException, MissingColumnException {
+        switch (type) {
+            case "operator":
+                // An operator always has 2 children
+                Object child1, child2;
                 if (children.size() == 2) {
-                    Object child1 = children.get(0).evaluate(tableDto, row);
-                    Object child2 = children.get(1).evaluate(tableDto, row);
-                    return !child1.equals(child2);
-                }
-                else {
+                    child1 = children.get(0).evaluate(tableDto, row);
+                    child2 = children.get(1).evaluate(tableDto, row);
+                } else {
                     throw new MissingChildrenException(value);
                 }
-            } else if (value.equals(">")) {
-                if (children.size() == 2) {
-                    Object child1 = children.get(0).evaluate(tableDto, row);
-                    Object child2 = children.get(1).evaluate(tableDto, row);
-                    if (child1 instanceof Integer && child2 instanceof Integer) {
-                        return (int) child1 > (int) child2;
-                    } else if (child1 instanceof Float && child2 instanceof Float) {
-                        return (Float) child1 > (Float) child2;
-                    }
-                    else {
-                        throw new InvalidOperationException("Superiority comparison with a non Integer type");
-                    }
+
+                switch (value) {
+                    case "==":
+                        return child1.equals(child2);
+                    case "!=":
+                        return !child1.equals(child2);
+                    case ">":
+                        if (child1 instanceof Integer && child2 instanceof Integer)
+                            return (int) child1 > (int) child2;
+                        else if (child1 instanceof Float && child2 instanceof Float)
+                            return (Float) child1 > (Float) child2;
+                        else
+                            throw new InvalidOperationException("Superiority comparison with a non Integer type");
+                    case "<":
+                        if (child1 instanceof Integer && child2 instanceof Integer)
+                            return (int) child1 < (int) child2;
+                        else if (child1 instanceof Float && child2 instanceof Float)
+                            return (Float) child1 < (Float) child2;
+                        else
+                            throw new InvalidOperationException("Inferiority comparison with a non Integer type");
+                    case "and":
+                        if (child1 instanceof Boolean && child2 instanceof Boolean)
+                            return (Boolean) child1 && (Boolean) child2;
+                        else
+                            throw new InvalidOperationException("Require boolean children for 'and' operator");
+                    default:
+                        throw new InvalidOperationException("Unknown operator '" + value + "'");
                 }
-                else {
-                    throw new MissingChildrenException(value);
-                }
-            } else if (value.equals("<")) {
-                if (children.size() == 2) {
-                    Object child1 = children.get(0).evaluate(tableDto, row);
-                    Object child2 = children.get(1).evaluate(tableDto, row);
-                    if (child1 instanceof Integer && child2 instanceof Integer) {
-                        return (int) child1 < (int) child2;
-                    } else if (child1 instanceof Float && child2 instanceof Float) {
-                        return (Float) child1 < (Float) child2;
-                    }
-                    else {
-                        throw new InvalidOperationException("Inferiority comparison with a non Integer type");
-                    }
-                }
-                else {
-                    throw new MissingChildrenException(value);
-                }
-            } else if (value.equals("and")) {
-                if (children.size() == 2) {
-                    Object child1 = children.get(0).evaluate(tableDto, row);
-                    Object child2 = children.get(1).evaluate(tableDto, row);
-                    if (child1 instanceof Boolean && child2 instanceof Boolean) {
-                        return (Boolean) child1 && (Boolean) child2;
-                    }
-                    else {
-                        throw new InvalidOperationException("Require boolean children for 'and' operator");
-                    }
-                }
-                else {
-                    throw new MissingChildrenException(value);
-                }
-            }
-        } else if (type.equals("column")) {
-            int index = tableDto.getColumnIndex(value);
-            return row.getValue(index);
-        } else if (type.equals("int32")) {
-            int v = Integer.parseInt(value);
-            return v;
-        } else if (type.equals("float32")) {
-            Float v = Float.parseFloat(value);
-            return v;
+
+            case "column":
+                return row.getValue(tableDto.getColumnIndex(value));
+
+            // Value node types
+            case "int32":
+                return Integer.parseInt(value);
+            case "float32":
+                return Float.parseFloat(value);
+
+            default:
+                throw new InvalidOperationException("Unknown node type '" + value + "'");
         }
-        return value;
     }
 }
