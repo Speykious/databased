@@ -1,6 +1,6 @@
 _type: export
 __export_format: 4
-__export_date: 2022-05-11T12:08:03.346Z
+__export_date: 2022-06-06T19:52:29.879Z
 __export_source: insomnia.desktop.app:v2022.3.0
 resources:
   - _id: req_5f9d40da40bd4d699ee9fa24db4b4dcf
@@ -49,7 +49,7 @@ resources:
     _type: workspace
   - _id: req_edb929688a0045428bea7d66f1705707
     parentId: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
-    modified: 1652270762293
+    modified: 1652286359360
     created: 1652177992348
     url: http://localhost:8080/based/data/yellow_tripdata
     name: Based select request
@@ -282,6 +282,295 @@ resources:
     modified: 1652178222875
     created: 1652102463025
     url: http://localhost:8080/based/csv/yellow_tripdata
+    name: Based import-csv request
+    description: ""
+    method: POST
+    body:
+      mimeType: multipart/form-data
+      params:
+        - id: pair_cab04f00ff8d4c6b8374eeb3a026a4e0
+          name: file
+          value: ""
+          description: ""
+          type: file
+          fileName: /home/speykious/Downloads/yellow_trippeddata_2009-01.csv
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: multipart/form-data
+        id: pair_f64f8068f5654be283ef92b7dbc0cae9
+    authentication: {}
+    metaSortKey: -1649937513010.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_428294a59c1f4c6ebfe7f1359210b64c
+    parentId: fld_66feea5053b24dddb337f80a6dc72453
+    modified: 1654544896448
+    created: 1652286658306
+    url: http://132.227.115.115:8080/based/data/yellow_tripdata
+    name: Based select-all request
+    description: ""
+    method: GET
+    body:
+      mimeType: application/json
+      text: "[]"
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_19dea5ef109d4342bb5d4b03c580abb2
+    authentication: {}
+    metaSortKey: -1649937513110.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_66feea5053b24dddb337f80a6dc72453
+    parentId: wrk_d2bac865327b4153aa21603971f16e1d
+    modified: 1652286658302
+    created: 1652286658302
+    name: Table yellow-tripdata (distributed on PPTI)
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1650029002306.75
+    _type: request_group
+  - _id: req_3453168fcfd5439db4842030bac8c1a7
+    parentId: fld_66feea5053b24dddb337f80a6dc72453
+    modified: 1654545133532
+    created: 1652286658309
+    url: http://132.227.115.115:8080/based/data/yellow_tripdata
+    name: Based select-where request
+    description: ""
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+            "select": {
+                "aggregates": [
+                    {
+                        "function": "count"
+                    },
+                    {
+                        "function": "sum",
+                        "column_target": "Passenger_Count"
+                    }
+                ],
+                "columns": [
+                    "vendor_name",
+                    "Passenger_Count",
+                    "surcharge"
+                ]
+            },
+            "where": {
+                "type": "operator",
+                "value": "and",
+                "children": [
+                    {
+                        "type": "operator",
+                        "value": ">",
+                        "children": [
+                            {
+                                "type": "column",
+                                "value": "Passenger_Count"
+                            },
+                            {
+                                "type": "int32",
+                                "value": 0
+                            }
+                        ]
+                    },
+                    {
+                        "type": "operator",
+                        "value": "<",
+                        "children": [
+                            {
+                                "type": "column",
+                                "value": "Passenger_Count"
+                            },
+                            {
+                                "type": "int32",
+                                "value": 3
+                            }
+                        ]
+                    }
+                ]
+            },
+            "groupby": "vendor_name"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_628d7fb92d1d4f3195fed8e1113ea879
+    authentication: {}
+    metaSortKey: -1649937513097.75
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_07d28fd4f2f64a6c917646a54bdf9dc0
+    parentId: fld_66feea5053b24dddb337f80a6dc72453
+    modified: 1652287079276
+    created: 1652286658307
+    url: http://132.227.115.115:8080/based/table/yellow_tripdata
+    name: Based table info request
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1649937513085.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_9332a0f9c4094e23b0a862a9f768c253
+    parentId: fld_66feea5053b24dddb337f80a6dc72453
+    modified: 1654545098547
+    created: 1652286658304
+    url: http://132.227.115.115:8080/based/table
+    name: Based create-table request
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name": "yellow_tripdata",
+        	"columns": [
+        		{
+        			"name": "vendor_name",
+        			"type": "string",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Trip_Pickup_DateTime",
+        			"type": "string",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Trip_Dropoff_DateTime",
+        			"type": "string",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Passenger_Count",
+        			"type": "int32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Trip_Distance",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Start_Lon",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Start_Lat",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Rate_Code",
+        			"type": "string",
+        			"nullable": true
+        		},
+        		{
+        			"name": "store_and_forward",
+        			"type": "string",
+        			"nullable": true
+        		},
+        		{
+        			"name": "End_Lon",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "End_Lat",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Payment_Type",
+        			"type": "string",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Fare_Amt",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "surcharge",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "mta_tax",
+        			"type": "string",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Tip_Amt",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Tolls_Amt",
+        			"type": "float32",
+        			"nullable": true
+        		},
+        		{
+        			"name": "Total_Amt",
+        			"type": "float32",
+        			"nullable": true
+        		}
+        	]
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_f64f8068f5654be283ef92b7dbc0cae9
+    authentication: {}
+    metaSortKey: -1649937513060.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_19f4f3e00de145eaa888cff537d9a7a9
+    parentId: fld_66feea5053b24dddb337f80a6dc72453
+    modified: 1652888358921
+    created: 1652286658308
+    url: http://132.227.115.115:8080/based/csv/yellow_tripdata
     name: Based import-csv request
     description: ""
     method: POST
