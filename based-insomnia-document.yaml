@@ -1,11 +1,11 @@
 _type: export
 __export_format: 4
-__export_date: 2022-06-06T20:09:04.583Z
+__export_date: 2022-06-06T21:57:20.000Z
 __export_source: insomnia.desktop.app:v2022.3.0
 resources:
   - _id: req_fb02bdea71ba493f8172d5de177ecbd8
     parentId: fld_7038269775624a3ba9dc6d8d2efd2c02
-    modified: 1654546121619
+    modified: 1654552271953
     created: 1654546088203
     url: http://localhost:8080/based/data/yellow_tripdata
     name: Based select-all request
@@ -13,7 +13,12 @@ resources:
     method: GET
     body:
       mimeType: application/json
-      text: "[]"
+      text: |-
+        {
+        	"select": {
+        		"columns": []
+        	}
+        }
     parameters: []
     headers:
       - name: Content-Type
@@ -49,7 +54,7 @@ resources:
     _type: workspace
   - _id: req_900e2fe0995e45f08ccc2ee652e87117
     parentId: fld_7038269775624a3ba9dc6d8d2efd2c02
-    modified: 1654546122434
+    modified: 1654552622856
     created: 1654546088206
     url: http://localhost:8080/based/data/yellow_tripdata
     name: Based select-where request
@@ -66,7 +71,7 @@ resources:
         			},
         			{
         				"function": "sum",
-        				"column_target": "Passenger_Count"
+        				"columnTarget": "Passenger_Count"
         			}
         		],
         		"columns": [
@@ -149,7 +154,7 @@ resources:
     _type: request
   - _id: req_2e25f6f6af884b0e982050e20e1d0e22
     parentId: fld_7038269775624a3ba9dc6d8d2efd2c02
-    modified: 1654546124459
+    modified: 1654552394590
     created: 1654546088202
     url: http://localhost:8080/based/table
     name: Based create-table request
@@ -338,7 +343,7 @@ resources:
     _type: request_group
   - _id: req_3453168fcfd5439db4842030bac8c1a7
     parentId: fld_66feea5053b24dddb337f80a6dc72453
-    modified: 1654546055872
+    modified: 1654552628694
     created: 1652286658309
     url: http://132.227.115.115:8080/based/data/yellow_tripdata
     name: Based select-where request
@@ -355,7 +360,7 @@ resources:
         			},
         			{
         				"function": "sum",
-        				"column_target": "Passenger_Count"
+        				"columnTarget": "Passenger_Count"
         			}
         		],
         		"columns": [
