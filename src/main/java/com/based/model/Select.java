@@ -3,33 +3,34 @@ package com.based.model;
 import java.io.Serializable;
 import java.util.List;
 
-
-public class Select implements Serializable{
+public class Select implements Serializable {
     private List<Aggregate> aggregates;
     private List<String> columns;
-    
+
     public List<Aggregate> getAggregates() {
         return aggregates;
     }
+
     public void setAggregates(List<Aggregate> aggregates) {
         this.aggregates = aggregates;
     }
+
     public List<String> getColumns() {
         return columns;
     }
+
     public void setColumns(List<String> columns) {
         this.columns = columns;
     }
 
     // public Object evaluate(TableDTO tableDto, Row row) throws Exception{
-    //     for(Aggregate aggregate : aggregates){
-    //         switch(aggregate.getFunction()){
-    //             case "count" :
-    //                 break;
-    //             case "sum" :
-    //                 break;
-    //         }
-    //     }
+    // for(Aggregate aggregate : aggregates){
+    // switch(aggregate.getFunction()){
+    // case "count" :
+    // break;
+    // case "sum" :
+    // break;
     // }
-    
+    // }
+    // }
 }

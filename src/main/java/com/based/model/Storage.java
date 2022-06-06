@@ -1,7 +1,7 @@
 package com.based.model;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 /**
@@ -13,9 +13,10 @@ public interface Storage {
      *                  subset.
      * @return a filtered subset of the storage.
      */
-    public List<Row> filter(Predicate<Row> predicate, int[] columns, List<Aggregate> aggregates, CallBackInterface callback) throws Exception;
+    public List<Row> filter(Predicate<Row> predicate, int[] columns, List<Aggregate> aggregates,
+            CallBackInterface callback) throws Exception;
 
-    public HashMap<String, List<Row>> groupByFilter(Predicate<Row> predicate, int[] columns, int groupby) throws Exception;
+    public Map<String, List<Row>> groupByFilter(Predicate<Row> predicate, int[] columns, int groupby) throws Exception;
 
     /**
      * @return all rows contained in the storage.

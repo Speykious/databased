@@ -7,7 +7,7 @@ public class Row {
 
     public Row(List<Object> values) {
         this.values = values;
-    }    
+    }
 
     public int size() {
         return values.size();
