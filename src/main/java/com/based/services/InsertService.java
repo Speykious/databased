@@ -141,7 +141,12 @@ public class InsertService {
                         break;
 
                     InsertService insertService = new InsertService();
-                    nbLines += insertService.insertCsv(table, csvReader, false);
+                    int insertedLines = insertService.insertCsv(table, csvReader, false);
+
+                    if (insertedLines == 0)
+                        reachedEOF = true;
+
+                    nbLines += insertedLines;
                 }
             } catch (IndexOutOfBoundsException e) {
                 // If there are no other online machines, we continue to read the CSV
