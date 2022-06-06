@@ -129,7 +129,7 @@ public class StupidStorage implements Storage {
      */
     @Override
     public HashMap<String, List<Row>> groupByFilter(Predicate<Row> wherePredicate, int[] columns, int groupby) throws Exception {
-        HashMap<String, List<Row>> map = new HashMap<>();
+        Map<String, List<Row>> map = new HashMap<>();
 
         if(!contains(columns, groupby)){
             throw new Exception("GroupByException : The column in the groupby must be specified in the select");
