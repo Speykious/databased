@@ -73,7 +73,7 @@ public class Table {
         if (!found)
             throw new MissingColumnException(columnName);
 
-        return indexe;
+        return index;
     }
 
     public TableDTO getDTO() {
