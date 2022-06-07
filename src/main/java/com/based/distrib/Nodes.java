@@ -16,8 +16,8 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 public final class Nodes {
     private static boolean isLocal = System.getProperty("local", "false").equals("true");
     private static int[] baseIp = isLocal
-            ? new int[] { 132, 227, 115, 97 }
-            : new int[] { 127, 0, 0, 1 };
+            ? new int[] { 127, 0, 0, 1 }
+            : new int[] { 132, 227, 115, 97 };
 
     private static int count = Integer.parseInt(System.getProperty("node.count", "24"));
     private static int port = Integer.parseInt(System.getProperty("jetty.port", "8080"));
