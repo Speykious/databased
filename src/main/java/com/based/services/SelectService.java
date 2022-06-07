@@ -14,6 +14,7 @@ import com.based.exception.MissingColumnException;
 import com.based.exception.MissingTableException;
 import com.based.model.Aggregate;
 import com.based.model.Column;
+import com.based.model.DataType;
 import com.based.model.Database;
 import com.based.model.Row;
 import com.based.model.Select;
@@ -139,35 +140,29 @@ public class SelectService {
             List<Row> groupRows = groupEntry.getValue();
 
             if (aggregates != null && !aggregates.isEmpty()) {
-                List<Object> o = groupRows.get(0).getValues();
+                List<Object> aggResults = groupRows.get(0).getValues();
                 for (Aggregate agg : aggregates) {
                     if (agg.getFunction().equals("count")) {
-                        o.add(groupRows.size());
+                        aggResults.add(groupRows.size());
                     } else if (agg.getFunction().equals("sum")) {
                         String columnTarget = agg.getColumnTarget();
                         int columnIndex = table.getColumnIndex(columnTarget);
                         int responseIndex = getIndexOfTableIndexes(columnIndex, indexes);
-                        // Column column = table.getColumn(columnIndex);
+                        Column column = table.getColumn(columnIndex);
 
-                        // TODO: This won't work, do something with column datatypes instead
-                        Object sum = 0;
+                        List<Object> terms = new ArrayList<>();
 
                         for (Row row : groupRows) {
                             List<Object> rowValues = row.getValues();
-                            if (rowValues.size() > 0) {
-                                if (rowValues.get(responseIndex) instanceof Integer) {
-                                    sum = (Integer) sum + (Integer) rowValues.get(responseIndex);
-                                } else if (rowValues.get(responseIndex) instanceof Float) {
-                                    sum = (Float) sum + (Float) rowValues.get(responseIndex);
-                                } else {
-                                    throw new InvalidOperationException("Can sum only integer or float types");
-                                }
-                            }
+                            Object value = rowValues.get(responseIndex);
+                            terms.add(value);
                         }
-                        o.add(sum);
+
+                        DataType dataType = column.getType();
+                        aggResults.add(dataType.sum(terms));
                     }
                 }
-                rows.add(new Row(o));
+                rows.add(new Row(aggResults));
             } else {
                 rows.add(groupRows.get(0));
             }
