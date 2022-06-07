@@ -19,13 +19,13 @@ public class StupidStorage implements Storage {
     }
 
     @Override
-    public Row add(Row row) {
+    public synchronized Row add(Row row) {
         rows.add(row);
         return row;
     }
 
     @Override
-    public Row remove(Row row) {
+    public synchronized Row remove(Row row) {
         rows.remove(row);
         return row;
     }
