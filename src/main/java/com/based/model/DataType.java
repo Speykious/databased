@@ -3,6 +3,7 @@ package com.based.model;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class DataType {
@@ -162,6 +163,11 @@ public abstract class DataType {
     public abstract Object parse(Object value, boolean isNullable);
 
     public abstract String getName();
+
+    public abstract Object sum(List<Object> terms);
+    public abstract boolean greaterThan(Object a, Object b);
+    public abstract boolean lesserThan(Object a, Object b);
+    public abstract boolean equal(Object a, Object b);
 
     public abstract Class<?> getInternalClass();
 }
