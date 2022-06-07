@@ -70,28 +70,22 @@ public class SelectService {
             MissingTableException, MissingColumnException, InvalidOperationException, InvalidGroupByException {
         Table table = Database.getTable(tableName);
         TableDTO tableDto = table.getDTO();
+
         Select select = selectRequest.getSelect();
         WhereCondition where = selectRequest.getWhere();
         String groupby = selectRequest.getGroupby();
-        int[] groupbyIndexes = null;
 
-        if (select == null)
-            throw new InvalidSelectException("Must specify a select field in the request");
+        List<Aggregate> aggregates = select == null ? null : select.getAggregates();
+        List<String> columns = select == null ? null : select.getColumns();
 
-        List<Aggregate> aggregates = select.getAggregates();
-        List<String> columns = select.getColumns();
-
-        if (columns == null)
-            throw new InvalidSelectException(
-                    "Must specify a 'columns' field in the select request with a list of column_name or an empty list");
         int[] indexes = table.getColumnIndexes(columns);
 
-        if (select != null && where != null) {
+        if (where != null) {
             if (groupby != null) {
                 System.err.println("Select Where & Groupby request");
-                groupbyIndexes = table.getColumnIndexes(List.of(groupby));
+                int groupbyIndex = table.getColumnIndex(groupby);
                 Map<String, List<Row>> map = Database.getTable(tableName).getStorage()
-                        .groupByFilter(getWherePredicate(tableDto, where), indexes, groupbyIndexes[0]);
+                        .groupByFilter(getWherePredicate(tableDto, where), indexes, groupbyIndex);
                 return toRows(map, aggregates, table, indexes);
             } else {
                 System.err.println("Select Where request");
@@ -106,10 +100,10 @@ public class SelectService {
             if (groupby != null) {
                 // when only select & groupby : Select X Group by X
                 System.err.println("Select & Groupby request");
-                groupbyIndexes = table.getColumnIndexes(List.of(groupby));
+                int groupbyIndex = table.getColumnIndex(groupby);
 
                 Map<String, List<Row>> groups = Database.getTable(tableName).getStorage()
-                        .groupByFilter(null, indexes, groupbyIndexes[0]);
+                        .groupByFilter(null, indexes, groupbyIndex);
                 return toRows(groups, aggregates, table, indexes);
             } else {
                 System.err.println("Only Select request");
@@ -127,7 +121,10 @@ public class SelectService {
                 else
                     System.err.println("WhereCondition did not evaluate to a boolean");
             } catch (Exception e) {
-                System.err.println("An error occured while testing a row: " + e);
+                System.err.println("An error occured while testing a row: " + e.getMessage());
+                System.err.println("Stack trace:");
+                for (var ste : e.getStackTrace())
+                    System.err.println(ste);
             }
 
             return false;
