@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.based.exception.InvalidOperationException;
+
 public abstract class DataType {
     public static final DataType INT_32 = new DataType() {
         @Override
@@ -34,6 +36,29 @@ public abstract class DataType {
         @Override
         public String getName() {
             return "int32";
+        }
+
+        @Override
+        public Object sum(List<Object> terms) {
+            Integer result = 0;
+            for (Object term : terms)
+                result += (Integer) term;
+            return result;
+        }
+
+        @Override
+        public boolean greaterThan(Object a, Object b) {
+            return (Integer) a > (Integer) b;
+        }
+
+        @Override
+        public boolean lesserThan(Object a, Object b) {
+            return (Integer) a < (Integer) b;
+        }
+
+        @Override
+        public boolean equal(Object a, Object b) {
+            return (Integer) a == (Integer) b;
         }
     };
 
@@ -65,6 +90,29 @@ public abstract class DataType {
         public String getName() {
             return "int64";
         }
+
+        @Override
+        public Object sum(List<Object> terms) {
+            Long result = 0L;
+            for (Object term : terms)
+                result += (Long) term;
+            return result;
+        }
+
+        @Override
+        public boolean greaterThan(Object a, Object b) {
+            return (Long) a > (Long) b;
+        }
+
+        @Override
+        public boolean lesserThan(Object a, Object b) {
+            return (Long) a < (Long) b;
+        }
+
+        @Override
+        public boolean equal(Object a, Object b) {
+            return (Long) a == (Long) b;
+        }
     };
 
     public static final DataType FLOAT_32 = new DataType() {
@@ -95,6 +143,29 @@ public abstract class DataType {
         public String getName() {
             return "float32";
         }
+
+        @Override
+        public Object sum(List<Object> terms) {
+            Float result = 0f;
+            for (Object term : terms)
+                result += (Float) term;
+            return result;
+        }
+
+        @Override
+        public boolean greaterThan(Object a, Object b) {
+            return (Float) a > (Float) b;
+        }
+
+        @Override
+        public boolean lesserThan(Object a, Object b) {
+            return (Float) a < (Float) b;
+        }
+
+        @Override
+        public boolean equal(Object a, Object b) {
+            return (Float) a == (Float) b;
+        }
     };
 
     public static final DataType STRING = new DataType() {
@@ -118,6 +189,32 @@ public abstract class DataType {
         @Override
         public String getName() {
             return "string";
+        }
+
+        // Concatenates strings. Maybe we should just not do that?
+        @Override
+        public Object sum(List<Object> terms) {
+            StringBuilder sb = new StringBuilder();
+            for (Object term : terms)
+                sb.append((String) term);
+            return sb.toString();
+        }
+
+        // Comparison on lexicographic order
+        @Override
+        public boolean greaterThan(Object a, Object b) {
+            return ((String) a).compareToIgnoreCase(((String) b)) == 1;
+        }
+
+        // Comparison on lexicographic order
+        @Override
+        public boolean lesserThan(Object a, Object b) {
+            return ((String) a).compareToIgnoreCase(((String) b)) == -1;
+        }
+
+        @Override
+        public boolean equal(Object a, Object b) {
+            return ((String) a).equals(((String) b));
         }
     };
 
@@ -149,6 +246,29 @@ public abstract class DataType {
         public String getName() {
             return "date";
         }
+
+        // Concatenates strings. Maybe we should just not do that?
+        @Override
+        public Object sum(List<Object> terms) throws InvalidOperationException {
+            throw new InvalidOperationException("Cannot sum dates together. The fuck are you thinking? '-'");
+        }
+
+        // if date A is after date B
+        @Override
+        public boolean greaterThan(Object a, Object b) {
+            return ((LocalDateTime) a).isAfter(((LocalDateTime) b));
+        }
+
+        // if date A is before date B
+        @Override
+        public boolean lesserThan(Object a, Object b) {
+            return ((LocalDateTime) a).isBefore(((LocalDateTime) b));
+        }
+
+        @Override
+        public boolean equal(Object a, Object b) {
+            return ((LocalDateTime) a).equals(((LocalDateTime) b));
+        }
     };
 
     public static final Map<String, DataType> DATATYPE_MAP = new HashMap<>();
@@ -164,10 +284,10 @@ public abstract class DataType {
 
     public abstract String getName();
 
-    public abstract Object sum(List<Object> terms);
-    public abstract boolean greaterThan(Object a, Object b);
-    public abstract boolean lesserThan(Object a, Object b);
-    public abstract boolean equal(Object a, Object b);
+    public abstract Object sum(List<Object> terms) throws InvalidOperationException;
+    public abstract boolean greaterThan(Object a, Object b) throws InvalidOperationException;
+    public abstract boolean lesserThan(Object a, Object b) throws InvalidOperationException;
+    public abstract boolean equal(Object a, Object b) throws InvalidOperationException;
 
     public abstract Class<?> getInternalClass();
 }
