@@ -96,8 +96,8 @@ public class WhereCondition implements Serializable {
                 } catch (Exception e) {
                     // Fallback in case the operator can't evaluate
                     throw new InvalidOperationException(String.format(
-                            "Cannot evaluate expression: [%s] %s [%s] - %s",
-                            cond1.getType(), value, cond2.getType(), e.getMessage()));
+                            "Cannot evaluate expression: [%s] %s [%s] - %s: %s",
+                            cond1.getType(), value, cond2.getType(), e, e.getMessage()));
                 }
             }
             case "column": {
