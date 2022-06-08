@@ -120,7 +120,7 @@ public class InsertService {
 
                     BroadcastedRequests<InsertRequestRunnable> broadcastedRequests = RequestRunnable.broadcastRequests(
                             InsertRequestRunnable.class,
-                            Nodes.getOtherMachineTargets("/csv/" + table.getName()),
+                            Nodes.getOtherOnlineMachineTargets("/csv/" + table.getName()),
                             (machineTarget, i) -> new InsertRequestRunnable(machineTarget, byteStreams.get(i)));
 
                     for (var runnable : broadcastedRequests.getSuccessfulRequestRunnables())

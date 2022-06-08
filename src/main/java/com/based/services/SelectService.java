@@ -125,7 +125,7 @@ public class SelectService {
 
             BroadcastedRequests<SelectRequestRunnable> broadcastedRequests = RequestRunnable.broadcastRequests(
                     SelectRequestRunnable.class,
-                    Nodes.getOtherMachineTargets("/data/" + table.getName()),
+                    Nodes.getOtherOnlineMachineTargets("/data/" + table.getName()),
                     (machineTarget, i) -> new SelectRequestRunnable(machineTarget, selectRequest));
 
             for (var runnable : broadcastedRequests.getSuccessfulRequestRunnables())
