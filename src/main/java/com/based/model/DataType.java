@@ -269,7 +269,7 @@ public abstract class DataType {
     };
 
     public static final DataType DATE = new DataType() {
-        private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss UTC");
+        private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
 
         @Override
         public Object parse(Object value, boolean isNullable) throws IllegalArgumentException {
@@ -281,6 +281,8 @@ public abstract class DataType {
                     else
                         throw new IllegalArgumentException("DATE string cannot be empty as it is not nullable");
                 }
+                if (s.endsWith(" UTC"))
+                    s = s.substring(0, s.length() - 4);
                 return LocalDateTime.parse(s, formatter);
             }
 
