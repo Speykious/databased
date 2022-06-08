@@ -119,7 +119,6 @@ public class SelectService {
             }
         }
 
-        // TODO: broadcast select requests
         if (!selectRequest.isBroadcasted()) {
             selectRequest.setBroadcasted(true);
 
