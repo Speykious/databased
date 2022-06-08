@@ -92,9 +92,9 @@ public class SelectService {
             if (groupby != null) {
                 System.err.println("Select Where & Groupby request");
                 int groupbyIndex = table.getColumnIndex(groupby);
-                Map<String, List<Row>> map = Database.getTable(tableName).getStorage()
+                Map<String, List<Row>> groups = Database.getTable(tableName).getStorage()
                         .groupByFilter(getWherePredicate(tableDto, where), indexes, groupbyIndex);
-                selected = toRows(map, aggregates, table, indexes);
+                selected = toRows(groups, aggregates, table, indexes);
             } else {
                 System.err.println("Select Where request");
                 selected = Database.getTable(tableName).getStorage()
@@ -129,8 +129,28 @@ public class SelectService {
                     (machineTarget, i) -> new SelectRequestRunnable(machineTarget, selectRequest));
 
             if (broadcastedRequests != null) {
-                for (var runnable : broadcastedRequests.getSuccessfulRequestRunnables())
-                    selected.addAll(runnable.getResponseDto());
+                if (groupby != null) {
+                    // Sum aggregates on each column together
+                    int nColumns = columns == null ? tableDto.getColumns().size() : columns.size();
+                    for (var runnable : broadcastedRequests.getSuccessfulRequestRunnables()) {
+                        Row grouped = runnable.getResponseDto().get(0);
+                        Row selectedRow = selected.get(0);
+                        for (int i = nColumns; i < grouped.getValues().size(); i++) {
+                            Object aggd = selectedRow.getValue(i);
+                            Object val = grouped.getValue(i);
+                            if (aggd instanceof Float)
+                                selectedRow.setValue(i, (float) aggd + (float) val);
+                            else if (aggd instanceof Integer)
+                                selectedRow.setValue(i, (int) aggd + (int) val);
+                            else if (aggd instanceof Long)
+                                selectedRow.setValue(i, (long) aggd + (long) val);
+                        }
+                    }
+                } else {
+                    // Concatenate all row lists together
+                    for (var runnable : broadcastedRequests.getSuccessfulRequestRunnables())
+                        selected.addAll(runnable.getResponseDto());
+                }
             }
         }
 
