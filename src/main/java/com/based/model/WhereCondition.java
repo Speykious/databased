@@ -10,6 +10,7 @@ import com.based.exception.MissingColumnException;
 public class WhereCondition implements Serializable {
     private String type;
     private String value;
+    private DataType valueDataType;
     private List<WhereCondition> children;
 
     public String getType() {
@@ -26,6 +27,22 @@ public class WhereCondition implements Serializable {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    /**
+     * Warning: It is only non-null if the condition has been evaluated.
+     * 
+     * @return the datatype of the value.
+     */
+    public DataType getValueDataType() {
+        return valueDataType;
+    }
+
+    private void setValueDataType(DataType valueDataType) throws InvalidOperationException {
+        if (valueDataType == null)
+            throw new InvalidOperationException("Unknown value type '" + type + "'");
+
+        this.valueDataType = valueDataType;
     }
 
     public List<WhereCondition> getChildren() {
@@ -49,32 +66,30 @@ public class WhereCondition implements Serializable {
                     throw new MissingChildrenException(value);
                 }
 
-                if (false == cond1.getType().equals(cond2.getType())) {
+                if (false == cond1.getValueDataType().equals(cond2.getValueDataType())) {
                     throw new InvalidOperationException(String.format(
                             "Cannot evaluate expression with 2 differently typed values: [%s] %s [%s]",
-                            cond1.getType(), value, cond2.getType()));
+                            cond1.getValueDataType(), value, cond2.getValueDataType()));
                 }
 
-                final DataType dataType = DataType.DATATYPE_MAP.get(cond1.getType());
-                if (dataType == null)
-                    throw new InvalidOperationException("Unknown value type '" + type + "'");
+                setValueDataType(cond1.getValueDataType());
 
                 try {
                     switch (value) {
                         case "==":
-                            return dataType.equal(child1, child2);
+                            return valueDataType.equal(child1, child2);
                         case "!=":
-                            return !dataType.equal(child1, child2);
+                            return !valueDataType.equal(child1, child2);
                         case ">":
-                            return dataType.greaterThan(child1, child2);
+                            return valueDataType.greaterThan(child1, child2);
                         case "<":
-                            return dataType.lesserThan(child1, child2);
+                            return valueDataType.lesserThan(child1, child2);
                         case "and":
-                            if (dataType == DataType.BOOL)
+                            if (valueDataType == DataType.BOOL)
                                 return (boolean) child1 && (boolean) child2;
                             else
                                 throw new Exception(
-                                        "Expected " + DataType.BOOL.getName() + ", got " + dataType.getName());
+                                        "Expected " + DataType.BOOL.getName() + ", got " + valueDataType.getName());
                         default:
                             throw new Exception("Unknown operator '" + value + "'");
                     }
@@ -86,15 +101,15 @@ public class WhereCondition implements Serializable {
                 }
             }
             case "column": {
-                return row.getValue(tableDto.getColumnIndex(value));
+                int columnIndex = tableDto.getColumnIndex(value);
+                Column column = tableDto.getColumns().get(columnIndex);
+                setValueDataType(column.getType());
+                return row.getValue(columnIndex);
             }
             default: {
                 // Value node types
-                DataType dataType = DataType.DATATYPE_MAP.get(type);
-                if (dataType == null)
-                    throw new InvalidOperationException("Unknown node type '" + type + "'");
-
-                return dataType.parse(value, true);
+                setValueDataType(DataType.DATATYPE_MAP.get(type));
+                return valueDataType.parse(value, true);
             }
         }
     }
