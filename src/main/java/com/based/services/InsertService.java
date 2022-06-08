@@ -152,6 +152,7 @@ public class InsertService {
         nbLines += nbLinesFromRunnable;
 
         System.out.println("Total lines: " + nbLines);
+        System.out.println("Lines in storage: " + table.getStorage().getSize());
         return nbLines;
     }
 

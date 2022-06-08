@@ -134,6 +134,7 @@ public class SelectService {
             }
         }
 
+        System.out.println("Total lines: " + selected.size());
         return selected;
     }
 
