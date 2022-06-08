@@ -269,7 +269,7 @@ public abstract class DataType {
     };
 
     public static final DataType DATE = new DataType() {
-        private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
+        private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss UTC");
 
         @Override
         public Object parse(Object value, boolean isNullable) throws IllegalArgumentException {
