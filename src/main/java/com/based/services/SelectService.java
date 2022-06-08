@@ -128,8 +128,10 @@ public class SelectService {
                     Nodes.getOtherOnlineMachineTargets("/data/" + table.getName()),
                     (machineTarget, i) -> new SelectRequestRunnable(machineTarget, selectRequest));
 
-            for (var runnable : broadcastedRequests.getSuccessfulRequestRunnables())
-                selected.addAll(runnable.getResponseDto());
+            if (broadcastedRequests != null) {
+                for (var runnable : broadcastedRequests.getSuccessfulRequestRunnables())
+                    selected.addAll(runnable.getResponseDto());
+            }
         }
 
         return selected;

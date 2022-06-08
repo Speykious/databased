@@ -123,8 +123,10 @@ public class InsertService {
                             Nodes.getOtherOnlineMachineTargets("/csv/" + table.getName()),
                             (machineTarget, i) -> new InsertRequestRunnable(machineTarget, byteStreams.get(i)));
 
-                    for (var runnable : broadcastedRequests.getSuccessfulRequestRunnables())
-                        nbLines += runnable.getNbLines();
+                    if (broadcastedRequests != null) {
+                        for (var runnable : broadcastedRequests.getSuccessfulRequestRunnables())
+                            nbLines += runnable.getNbLines();
+                    }
 
                     if (reachedEOF)
                         break;
