@@ -9,6 +9,56 @@ import java.util.Map;
 import com.based.exception.InvalidOperationException;
 
 public abstract class DataType {
+    public static final DataType BOOL = new DataType() {
+        @Override
+        public Object parse(Object value, boolean isNullable) {
+            if (value instanceof String) {
+                String s = (String) value;
+                if (s.isEmpty()) {
+                    if (isNullable)
+                        return null;
+                }
+                return Boolean.parseBoolean(s);
+            }
+            if (value instanceof Boolean)
+                return (Boolean) value;
+            if (value instanceof Integer)
+                return (int) value > 0;
+
+            throw new IllegalArgumentException("Cannot parse BOOL from " + value.getClass());
+        }
+
+        @Override
+        public Class<?> getInternalClass() {
+            return boolean.class;
+        }
+
+        @Override
+        public String getName() {
+            return "bool";
+        }
+
+        @Override
+        public Object sum(List<Object> terms) throws InvalidOperationException {
+            throw new InvalidOperationException("Cannot sum booleans together. The fuck are you thinking? '-'");
+        }
+
+        @Override
+        public boolean greaterThan(Object a, Object b) throws InvalidOperationException {
+            throw new InvalidOperationException("Cannot compare booleans");
+        }
+
+        @Override
+        public boolean lesserThan(Object a, Object b) throws InvalidOperationException {
+            throw new InvalidOperationException("Cannot compare booleans");
+        }
+
+        @Override
+        public boolean equal(Object a, Object b) {
+            return (Boolean) a == (Boolean) b;
+        }
+    };
+
     public static final DataType INT_32 = new DataType() {
         @Override
         public Object parse(Object value, boolean isNullable) throws NumberFormatException {
