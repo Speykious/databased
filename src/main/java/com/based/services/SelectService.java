@@ -5,6 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
+
+import com.based.distrib.BroadcastedRequests;
+import com.based.distrib.Nodes;
+import com.based.distrib.RequestRunnable;
+import com.based.distrib.SelectRequestRunnable;
 import com.based.entity.dto.SelectRequestDTO;
 import com.based.entity.dto.TableDTO;
 import com.based.exception.InvalidGroupByException;
@@ -68,7 +73,8 @@ public class SelectService {
     }
 
     public List<Row> select(String tableName, SelectRequestDTO selectRequest) throws InvalidSelectException,
-            MissingTableException, MissingColumnException, InvalidOperationException, InvalidGroupByException {
+            MissingTableException, MissingColumnException, InvalidOperationException, InvalidGroupByException,
+            InterruptedException {
         Table table = Database.getTable(tableName);
         TableDTO tableDto = table.getDTO();
 
@@ -81,16 +87,17 @@ public class SelectService {
 
         int[] indexes = table.getColumnIndexes(columns);
 
+        List<Row> selected;
         if (where != null) {
             if (groupby != null) {
                 System.err.println("Select Where & Groupby request");
                 int groupbyIndex = table.getColumnIndex(groupby);
                 Map<String, List<Row>> map = Database.getTable(tableName).getStorage()
                         .groupByFilter(getWherePredicate(tableDto, where), indexes, groupbyIndex);
-                return toRows(map, aggregates, table, indexes);
+                selected = toRows(map, aggregates, table, indexes);
             } else {
                 System.err.println("Select Where request");
-                return Database.getTable(tableName).getStorage()
+                selected = Database.getTable(tableName).getStorage()
                         .filter(getWherePredicate(tableDto, where), indexes, aggregates,
                                 (target, specIndexes) -> {
                                     int targetTableIndex = table.getColumnIndex(target);
@@ -105,12 +112,27 @@ public class SelectService {
 
                 Map<String, List<Row>> groups = Database.getTable(tableName).getStorage()
                         .groupByFilter(null, indexes, groupbyIndex);
-                return toRows(groups, aggregates, table, indexes);
+                selected = toRows(groups, aggregates, table, indexes);
             } else {
                 System.err.println("Only Select request");
-                return selectAll(tableName, columns, aggregates);
+                selected = selectAll(tableName, columns, aggregates);
             }
         }
+
+        // TODO: broadcast select requests
+        if (!selectRequest.isBroadcasted()) {
+            selectRequest.setBroadcasted(true);
+
+            BroadcastedRequests<SelectRequestRunnable> broadcastedRequests = RequestRunnable.broadcastRequests(
+                    SelectRequestRunnable.class,
+                    Nodes.getOtherMachineTargets("/data/" + table.getName()),
+                    (machineTarget, i) -> new SelectRequestRunnable(machineTarget, selectRequest));
+
+            for (var runnable : broadcastedRequests.getSuccessfulRequestRunnables())
+                selected.addAll(runnable.getResponseDto());
+        }
+
+        return selected;
     }
 
     private Predicate<Row> getWherePredicate(TableDTO tableDto, WhereCondition where) {

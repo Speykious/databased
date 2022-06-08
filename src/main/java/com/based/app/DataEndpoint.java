@@ -24,24 +24,27 @@ import com.based.services.SelectService;
 public class DataEndpoint {
 	@POST
 	@Path("/{tableName}")
-	public NbLinesResponse insert(@PathParam("tableName") String tableName, String csvRow) throws MissingTableException, IllegalArgumentException, IOException {
+	public NbLinesResponse insert(@PathParam("tableName") String tableName, String csvRow)
+			throws MissingTableException, IllegalArgumentException, IOException {
 		System.out.println("Inserting values into a table");
 		InsertService insertService = new InsertService();
 		insertService.insert(tableName, csvRow);
 		return new NbLinesResponse(1);
 	}
 
-	@GET
+	@PUT
 	@Path("/{tableName}")
-	public List<Row> select(@PathParam("tableName") String tableName, SelectRequestDTO selectRequest) throws MissingTableException, MissingColumnException, NullRequestException, InvalidSelectException, InvalidOperationException, InvalidGroupByException {
+	public List<Row> select(@PathParam("tableName") String tableName, SelectRequestDTO selectRequest)
+			throws MissingTableException, MissingColumnException, NullRequestException, InvalidSelectException,
+			InvalidOperationException, InvalidGroupByException, InterruptedException {
 		System.out.println("Selecting some data from a table");
 		SelectService selectService = new SelectService();
-		
-		if(selectRequest != null) {
+
+		if (selectRequest != null) {
 			return selectService.select(tableName, selectRequest);
 		}
 
-		throw new NullRequestException("the request is empty");
+		throw new NullRequestException("The request is empty");
 
 	}
 }
