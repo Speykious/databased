@@ -51,7 +51,7 @@ public final class Nodes {
         BroadcastedRequests<PingRequestRunnable> broadcastedRequests = RequestRunnable.broadcastRequests(
                 PingRequestRunnable.class,
                 Nodes.getOtherMachineTargets("/node/ping"),
-                (machineTarget) -> new PingRequestRunnable(machineTarget));
+                (machineTarget, _i) -> new PingRequestRunnable(machineTarget));
 
         if (broadcastedRequests == null) {
             System.out.println("No machine targets for some reason, not pinging other nodes");
