@@ -55,6 +55,11 @@ public abstract class DataType {
 
         @Override
         public boolean equal(Object a, Object b) {
+            if (a == null && b == null)
+                return true;
+            if (a == null || b == null)
+                return false;
+
             return (Boolean) a == (Boolean) b;
         }
     };
@@ -108,6 +113,11 @@ public abstract class DataType {
 
         @Override
         public boolean equal(Object a, Object b) {
+            if (a == null && b == null)
+                return true;
+            if (a == null || b == null)
+                return false;
+
             return (Integer) a == (Integer) b;
         }
     };
@@ -161,6 +171,11 @@ public abstract class DataType {
 
         @Override
         public boolean equal(Object a, Object b) {
+            if (a == null && b == null)
+                return true;
+            if (a == null || b == null)
+                return false;
+
             return (Long) a == (Long) b;
         }
     };
@@ -214,6 +229,11 @@ public abstract class DataType {
 
         @Override
         public boolean equal(Object a, Object b) {
+            if (a == null && b == null)
+                return true;
+            if (a == null || b == null)
+                return false;
+
             return (Float) a == (Float) b;
         }
     };
@@ -264,6 +284,11 @@ public abstract class DataType {
 
         @Override
         public boolean equal(Object a, Object b) {
+            if (a == null && b == null)
+                return true;
+            if (a == null || b == null)
+                return false;
+
             return ((String) a).equals(((String) b));
         }
     };
@@ -319,6 +344,11 @@ public abstract class DataType {
 
         @Override
         public boolean equal(Object a, Object b) {
+            if (a == null && b == null)
+                return true;
+            if (a == null || b == null)
+                return false;
+
             return ((LocalDateTime) a).equals(((LocalDateTime) b));
         }
     };
