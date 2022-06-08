@@ -33,6 +33,11 @@ public interface Storage {
     public List<Row> getRows(int[] columns);
 
     /**
+     * @return the number of rows stored in the storage.
+     */
+    public long getSize();
+
+    /**
      * Adds a row to the storage.
      * 
      * @param values Row to add to the storage.

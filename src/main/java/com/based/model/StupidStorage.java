@@ -53,6 +53,11 @@ public class StupidStorage implements Storage {
     }
 
     @Override
+    public long getSize() {
+        return rows.size();
+    }
+
+    @Override
     public List<Row> filter(Predicate<Row> predicate, int[] columns, List<Aggregate> aggregates, CallBackInterface getRowsCallback) throws InvalidOperationException, InvalidSelectException, MissingColumnException {
         List<Row> filteredRows = new ArrayList<>();
         for (Row row : rows) {
