@@ -53,7 +53,26 @@ public class WhereCondition implements Serializable {
             throws InvalidOperationException, MissingChildrenException, MissingColumnException {
         switch (type) {
             case "operator": {
-                // An operator always has 2 children
+                if (value.equals("and")) {
+                    Object[] evaluateds = new Object[children.size()];
+                    for (int i = 0; i < evaluateds.length; i++)
+                        evaluateds[i] = children.get(i).evaluate(tableDto, row);
+
+                    boolean answer = true;
+                    valueDataType = DataType.BOOL;
+                    for (Object evaluated : evaluateds) {
+                        if (evaluated instanceof Boolean)
+                            answer = answer && (boolean) evaluated;
+                        else
+                            throw new InvalidOperationException(
+                                    "Cannot evaluate logical expression with 'and' operator: Expected "
+                                            + DataType.BOOL.getName() + ", got " + evaluated.getClass());
+                    }
+
+                    return answer;
+                }
+
+                // Besides 'and', an operator always has 2 children
                 WhereCondition cond1, cond2;
                 Object child1, child2;
 
@@ -84,20 +103,14 @@ public class WhereCondition implements Serializable {
                             return valueDataType.greaterThan(child1, child2);
                         case "<":
                             return valueDataType.lesserThan(child1, child2);
-                        case "and":
-                            if (valueDataType == DataType.BOOL)
-                                return (boolean) child1 && (boolean) child2;
-                            else
-                                throw new Exception(
-                                        "Expected " + DataType.BOOL.getName() + ", got " + valueDataType.getName());
                         default:
                             throw new Exception("Unknown operator '" + value + "'");
                     }
                 } catch (Exception e) {
                     // Fallback in case the operator can't evaluate
                     throw new InvalidOperationException(String.format(
-                            "Cannot evaluate expression: [%s] %s [%s] - %s: %s",
-                            cond1.getType(), value, cond2.getType(), e, e.getMessage()));
+                            "Cannot evaluate expression: [%s] %s [%s] - %s",
+                            cond1.getType(), value, cond2.getType(), e));
                 }
             }
             case "column": {
