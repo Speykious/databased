@@ -25,7 +25,7 @@ public abstract class DataType {
                     if (isNullable)
                         return null;
                     else
-                        throw new IllegalArgumentException("Expected a BOOL, got empty string");
+                        throw new IllegalArgumentException("Expected a " + getName() + ", got empty string");
                 }
                 return Boolean.parseBoolean(s);
             }
@@ -34,7 +34,7 @@ public abstract class DataType {
             if (value instanceof Integer)
                 return (int) value > 0;
 
-            throw new IllegalArgumentException("Cannot parse BOOL from " + value.getClass());
+            throw new IllegalArgumentException("Cannot parse " + getName() + " from " + value.getClass());
         }
 
         @Override
