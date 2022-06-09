@@ -12,11 +12,16 @@ public abstract class DataType {
     public static final DataType BOOL = new DataType() {
         @Override
         public Object parse(Object value, boolean isNullable) {
+            if (value == null)
+                throw new IllegalArgumentException("Expected a BOOL, got null");
+                
             if (value instanceof String) {
                 String s = (String) value;
                 if (s.isEmpty()) {
                     if (isNullable)
                         return null;
+                    else
+                        throw new IllegalArgumentException("Expected a BOOL, got empty string");
                 }
                 return Boolean.parseBoolean(s);
             }
@@ -73,7 +78,7 @@ public abstract class DataType {
                     if (isNullable)
                         return null;
                     else
-                        throw new IllegalArgumentException("INT_32 string cannot be empty as it is not nullable");
+                        return "";
                 }
                 return Integer.parseInt(s);
             }
