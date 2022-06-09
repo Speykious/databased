@@ -18,15 +18,15 @@ public class Table {
     public Table(TableDTO dto, Storage storage) throws InvalidTableFormatException, InvalidColumnFormatException {
         if (dto == null)
             throw new InvalidTableFormatException("Table info cannot be null");
-        
+
         String name = dto.getName();
         List<Column> columns = dto.getColumns();
-        
+
         if (name == null || name.equals(""))
             throw new InvalidTableFormatException("Empty table names are not allowed");
         if (columns == null || columns.size() == 0)
             throw new InvalidTableFormatException("Table needs at least one column");
-        
+
         for (Column column : columns)
             column.assertIsValid();
 
@@ -35,27 +35,61 @@ public class Table {
     }
 
     public int[] getColumnIndexes(List<String> columnNames) throws MissingColumnException {
+        if (columnNames == null)
+            return null;
+
         int[] indexes = new int[columnNames.size()];
-        
-        List<Column> columns = dto.getColumns();
-        for (int j = 0; j < columnNames.size(); j++) {
-            String columnName = columnNames.get(j);
+        if (indexes.length > 0) {
+            List<Column> columns = dto.getColumns();
+            for (int j = 0; j < columnNames.size(); j++) {
+                String columnName = columnNames.get(j);
 
-            boolean found = false;
-            for (int i = 0; i < columns.size(); i++) {
-                if (columns.get(i).getName().equals(columnName)) {
-                    indexes[j] = i;
-                    found = true;
-                    break;
+                boolean found = false;
+                for (int i = 0; i < columns.size(); i++) {
+                    if (columns.get(i).getName().equals(columnName)) {
+                        indexes[j] = i;
+                        found = true;
+                        break;
+                    }
                 }
-            }
 
-            if (!found)
-                throw new MissingColumnException(columnName);
+                if (!found)
+                    throw new MissingColumnException(columnName);
+            }
         }
 
-
         return indexes;
+    }
+
+    public int getColumnIndex(String columnName) throws MissingColumnException {
+        int index = 0;
+        List<Column> columns = dto.getColumns();
+        boolean found = false;
+        for (int i = 0; i < columns.size(); i++) {
+            if (columns.get(i).getName().equals(columnName)) {
+                index = i;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+            throw new MissingColumnException(columnName);
+
+        return index;
+    }
+
+    public Column getColumn(String columnName) throws MissingColumnException {
+        for (Column column : dto.getColumns()) {
+            if (column.getName().equals(columnName))
+                return column;
+        }
+
+        throw new MissingColumnException(columnName);
+    }
+
+    public Column getColumn(int columnIndex) {
+        return dto.getColumns().get(columnIndex);
     }
 
     public TableDTO getDTO() {

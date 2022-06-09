@@ -31,7 +31,7 @@ public class TableEndpoint {
 		RequestRunnable.broadcastRequests(
 				CreateTableRequestRunnable.class,
 				Nodes.getOtherOnlineMachineTargets("/table"),
-				(machineTarget) -> new CreateTableRequestRunnable(machineTarget, request));
+				(machineTarget, _i) -> new CreateTableRequestRunnable(machineTarget, request));
 
 		return request;
 	}

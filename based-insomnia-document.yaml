@@ -1,12 +1,12 @@
 _type: export
 __export_format: 4
-__export_date: 2022-05-11T12:08:03.346Z
+__export_date: 2022-06-08T18:24:06.830Z
 __export_source: insomnia.desktop.app:v2022.3.0
 resources:
-  - _id: req_5f9d40da40bd4d699ee9fa24db4b4dcf
-    parentId: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
-    modified: 1652270760254
-    created: 1652102463013
+  - _id: req_428294a59c1f4c6ebfe7f1359210b64c
+    parentId: fld_66feea5053b24dddb337f80a6dc72453
+    modified: 1654689525171
+    created: 1652286658306
     url: http://localhost:8080/based/data/yellow_tripdata
     name: Based select-all request
     description: ""
@@ -29,15 +29,15 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
+  - _id: fld_66feea5053b24dddb337f80a6dc72453
     parentId: wrk_d2bac865327b4153aa21603971f16e1d
-    modified: 1652102463002
-    created: 1652102463002
-    name: Table yellow-tripdata
+    modified: 1652286658302
+    created: 1652286658302
+    name: Table yellow-tripdata (distributed on PPTI)
     description: ""
     environment: {}
     environmentPropertyOrder: null
-    metaSortKey: -1650030812963.5
+    metaSortKey: -1650029002306.75
     _type: request_group
   - _id: wrk_d2bac865327b4153aa21603971f16e1d
     parentId: null
@@ -47,78 +47,69 @@ resources:
     description: ""
     scope: design
     _type: workspace
-  - _id: req_edb929688a0045428bea7d66f1705707
-    parentId: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
-    modified: 1652270762293
-    created: 1652177992348
+  - _id: req_3453168fcfd5439db4842030bac8c1a7
+    parentId: fld_66feea5053b24dddb337f80a6dc72453
+    modified: 1654702338417
+    created: 1652286658309
     url: http://localhost:8080/based/data/yellow_tripdata
-    name: Based select request
+    name: Based select-where request
     description: ""
     method: GET
     body:
       mimeType: application/json
       text: |-
         {
-        	"columns": [
-        		"vendor_name",
-        		"Passenger_Count",
-        		"surcharge",
-        		"surcharge"
-        	],
+        	"select": {
+        		"aggregates": [
+        			{
+        				"function": "count"
+        			},
+        			{
+        				"function": "sum",
+        				"columnTarget": "Passenger_Count"
+        			}
+        		],
+        		"columns": [
+        			"vendor_name",
+        			"Passenger_Count",
+        			"surcharge"
+        		]
+        	},
         	"where": {
         		"type": "operator",
         		"value": "and",
         		"children": [
         			{
         				"type": "operator",
-        				"value": "==",
+        				"value": ">",
         				"children": [
         					{
-        						"type": "ident",
-        						"value": "column_name"
+        						"type": "column",
+        						"value": "Passenger_Count"
         					},
         					{
-        						"type": "string",
-        						"value": "bonjour"
+        						"type": "int32",
+        						"value": 0
         					}
         				]
         			},
         			{
         				"type": "operator",
-        				"value": "and",
+        				"value": "<",
         				"children": [
         					{
-        						"type": "operator",
-        						"value": ">",
-        						"children": [
-        							{
-        								"type": "ident",
-        								"value": "id"
-        							},
-        							{
-        								"type": "number",
-        								"value": "3"
-        							}
-        						]
+        						"type": "column",
+        						"value": "Passenger_Count"
         					},
         					{
-        						"type": "operator",
-        						"value": "!=",
-        						"children": [
-        							{
-        								"type": "ident",
-        								"value": "desh"
-        							},
-        							{
-        								"type": "string",
-        								"value": "real"
-        							}
-        						]
+        						"type": "int32",
+        						"value": 3
         					}
         				]
         			}
         		]
-        	}
+        	},
+        	"groupby": "vendor_name"
         }
     parameters: []
     headers:
@@ -135,10 +126,10 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: req_eba693cd949e4a13b966d58714532d08
-    parentId: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
-    modified: 1652102478913
-    created: 1652102463020
+  - _id: req_07d28fd4f2f64a6c917646a54bdf9dc0
+    parentId: fld_66feea5053b24dddb337f80a6dc72453
+    modified: 1654689502648
+    created: 1652286658307
     url: http://localhost:8080/based/table/yellow_tripdata
     name: Based table info request
     description: ""
@@ -156,10 +147,10 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: req_1bc44780a03145b7b00100503eb75bd7
-    parentId: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
-    modified: 1652180276631
-    created: 1652102463007
+  - _id: req_9332a0f9c4094e23b0a862a9f768c253
+    parentId: fld_66feea5053b24dddb337f80a6dc72453
+    modified: 1654691710551
+    created: 1652286658304
     url: http://localhost:8080/based/table
     name: Based create-table request
     description: ""
@@ -277,10 +268,10 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: req_271ae068a9da4099acd729a4aaba0ae4
-    parentId: fld_60b62f1e34ea4bd2b137ba2bc8e1110a
-    modified: 1652178222875
-    created: 1652102463025
+  - _id: req_19f4f3e00de145eaa888cff537d9a7a9
+    parentId: fld_66feea5053b24dddb337f80a6dc72453
+    modified: 1654689515787
+    created: 1652286658308
     url: http://localhost:8080/based/csv/yellow_tripdata
     name: Based import-csv request
     description: ""
@@ -301,6 +292,345 @@ resources:
         id: pair_f64f8068f5654be283ef92b7dbc0cae9
     authentication: {}
     metaSortKey: -1649937513010.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_a3554dd0df744ec0a37bd5c5dd4ee269
+    parentId: fld_7788f76cc71445839e3a5d4665d85f80
+    modified: 1654710188924
+    created: 1654680946471
+    url: http://localhost:8080/based/data/ghtorrent
+    name: Based select-all request
+    description: ""
+    method: PUT
+    body:
+      mimeType: application/json
+      text: "{}"
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_19dea5ef109d4342bb5d4b03c580abb2
+    authentication: {}
+    metaSortKey: -1649937513110.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_7788f76cc71445839e3a5d4665d85f80
+    parentId: wrk_d2bac865327b4153aa21603971f16e1d
+    modified: 1654680946349
+    created: 1654680946349
+    name: Table ghtorrent (distributed on PPTI)
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1650028096978.375
+    _type: request_group
+  - _id: req_db7509566a8e4ecf8fc329d577a1facf
+    parentId: fld_7788f76cc71445839e3a5d4665d85f80
+    modified: 1654691823593
+    created: 1654691800927
+    url: http://localhost:8080/based/ppti/say-yes
+    name: Based say-yes request
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1649937513104
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_b0614b53a4554d0dbafd3442bdd8fc3e
+    parentId: fld_7788f76cc71445839e3a5d4665d85f80
+    modified: 1654692060877
+    created: 1654692055967
+    url: http://localhost:8080/based/ppti/broadcast
+    name: Based broadcast request
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1649937513100.875
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_af1435d0ddf94469b7725462163c478c
+    parentId: fld_7788f76cc71445839e3a5d4665d85f80
+    modified: 1654712585183
+    created: 1654680946474
+    url: http://localhost:8080/based/data/ghtorrent
+    name: Based select-where request
+    description: ""
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"where": {
+        		"type": "operator",
+        		"value": "and",
+        		"children": [
+        			{
+        				"type": "operator",
+        				"value": "==",
+        				"children": [
+        					{
+        						"type": "column",
+        						"value": "language"
+        					},
+        					{
+        						"type": "string",
+        						"value": "Java"
+        					}
+        				]
+        			},
+        			{
+        				"type": "operator",
+        				"value": "==",
+        				"children": [
+        					{
+        						"type": "column",
+        						"value": "repo"
+        					},
+        					{
+        						"type": "string",
+        						"value": "elasticsearch"
+        					}
+        				]
+        			},
+        			{
+        				"type": "operator",
+        				"value": ">",
+        				"children": [
+        					{
+        						"type": "column",
+        						"value": "commit_date"
+        					},
+        					{
+        						"type": "date",
+        						"value": "2019-01-07 01:02:24"
+        					}
+        				]
+        			},
+        			{
+        				"type": "operator",
+        				"value": "<",
+        				"children": [
+        					{
+        						"type": "column",
+        						"value": "commit_date"
+        					},
+        					{
+        						"type": "date",
+        						"value": "2019-01-07 01:04:00"
+        					}
+        				]
+        			}
+        		]
+        	}
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_628d7fb92d1d4f3195fed8e1113ea879
+    authentication: {}
+    metaSortKey: -1649937513097.75
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_910615baa4aa43b5b227fcf592a91fd7
+    parentId: fld_7788f76cc71445839e3a5d4665d85f80
+    modified: 1654691689801
+    created: 1654680946472
+    url: http://localhost:8080/based/table/ghtorrent
+    name: Based table info request
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1649937513085.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_6ebb9c2533f742f299f8c3b3ae8f9e8e
+    parentId: fld_7788f76cc71445839e3a5d4665d85f80
+    modified: 1654712258435
+    created: 1654680946350
+    url: http://localhost:8080/based/table
+    name: Based create-table request
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name": "ghtorrent",
+        	"columns": [
+        		{
+        			"name": "actor_login",
+        			"type": "string",
+        			"nullable": false
+        		},
+        		{
+        			"name": "actor_id",
+        			"type": "int64",
+        			"nullable": false
+        		},
+        		{
+        			"name": "comment_id",
+        			"type": "int64",
+        			"nullable": false
+        		},
+        		{
+        			"name": "comment",
+        			"type": "string",
+        			"nullable": false
+        		},
+        		{
+        			"name": "repo",
+        			"type": "string",
+        			"nullable": false
+        		},
+        		{
+        			"name": "language",
+        			"type": "string",
+        			"nullable": true
+        		},
+        		{
+        			"name": "author_login",
+        			"type": "string",
+        			"nullable": false
+        		},
+        		{
+        			"name": "author_id",
+        			"type": "int64",
+        			"nullable": false
+        		},
+        		{
+        			"name": "pr_id",
+        			"type": "int64",
+        			"nullable": false
+        		},
+        		{
+        			"name": "c_id",
+        			"type": "int64",
+        			"nullable": false
+        		},
+        		{
+        			"name": "commit_date",
+        			"type": "date",
+        			"nullable": false
+        		}
+        	]
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_f64f8068f5654be283ef92b7dbc0cae9
+    authentication: {}
+    metaSortKey: -1649937513060.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_766f9855cdb6434eb98fabb73a412602
+    parentId: fld_7788f76cc71445839e3a5d4665d85f80
+    modified: 1654709004820
+    created: 1654680946473
+    url: http://localhost:8080/based/csv/ghtorrent
+    name: Based import-csv request
+    description: ""
+    method: POST
+    body:
+      mimeType: multipart/form-data
+      params:
+        - id: pair_cab04f00ff8d4c6b8374eeb3a026a4e0
+          name: file
+          value: ""
+          description: ""
+          type: file
+          fileName: /home/speykious/Documents/University/L3/semestre-2/java-web/ghtorrent-500k.csv
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: multipart/form-data
+        id: pair_f64f8068f5654be283ef92b7dbc0cae9
+    authentication: {}
+    metaSortKey: -1649937513010.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_8f589126211d471db4c6a86851e6fff6
+    parentId: fld_7788f76cc71445839e3a5d4665d85f80
+    modified: 1654709014138
+    created: 1654709010640
+    url: http://localhost:8080/based/csv/ghtorrent
+    name: Based import-csv request (smol)
+    description: ""
+    method: POST
+    body:
+      mimeType: multipart/form-data
+      params:
+        - id: pair_cab04f00ff8d4c6b8374eeb3a026a4e0
+          name: file
+          value: ""
+          description: ""
+          type: file
+          fileName: /home/speykious/Documents/University/L3/semestre-2/java-web/ghtorrent-1000.csv
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: multipart/form-data
+        id: pair_f64f8068f5654be283ef92b7dbc0cae9
+    authentication: {}
+    metaSortKey: -1649932164542.875
     isPrivate: false
     settingStoreCookies: true
     settingSendCookies: true

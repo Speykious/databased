@@ -3,6 +3,7 @@ package com.based.entity.dto;
 import java.io.Serializable;
 import java.util.List;
 
+import com.based.exception.MissingColumnException;
 import com.based.model.Column;
 
 /** Data Transfer Object for Table */
@@ -32,6 +33,14 @@ public class TableDTO implements Serializable {
         }
         typeInfo += "]";
         return typeInfo;
+    }
+
+    public int getColumnIndex(String name) throws MissingColumnException {
+        int i;
+        for (i = 0; i < columns.size(); i++){
+            if(columns.get(i).getName().equals(name)) return i;
+        }
+        throw new MissingColumnException(name);
     }
 
     @Override

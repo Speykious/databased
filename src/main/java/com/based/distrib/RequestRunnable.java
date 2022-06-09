@@ -51,7 +51,7 @@ public abstract class RequestRunnable implements Runnable {
 		Thread[] requests = new Thread[machineTargets.length];
 
 		for (int i = 0; i < requests.length; i++) {
-			runnables[i] = constructor.construct(machineTargets[i]);
+			runnables[i] = constructor.construct(machineTargets[i], i);
 			requests[i] = new Thread(runnables[i]);
 			requests[i].start();
 		}

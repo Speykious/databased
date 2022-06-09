@@ -8,14 +8,10 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation.Builder;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import com.based.distrib.MachineTarget;
+import com.based.distrib.BroadcastedRequests;
+import com.based.distrib.InsertRequestRunnable;
 import com.based.distrib.Nodes;
-import com.based.entity.NbLinesResponse;
+import com.based.distrib.RequestRunnable;
 import com.based.exception.MissingTableException;
 import com.based.model.Column;
 import com.based.model.Database;
@@ -24,8 +20,6 @@ import com.based.model.Table;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 
 public class InsertService {
     public static CSVFormat CSV_FORMATTER = CSVFormat.Builder.create()
@@ -115,36 +109,38 @@ public class InsertService {
             try {
                 int[] nodeIndexes = Nodes.randomlyOrderedNodeIndexes();
                 while (reachedEOF == false) {
-                    for (int nodeIndex : nodeIndexes) {
+                    List<byte[]> byteStreams = new ArrayList<>();
+                    for (int i = 0; i < nodeIndexes.length; i++) {
                         StringBuilder chunkBuilder = new StringBuilder();
                         reachedEOF = readChunkOfLines(csvReader, chunkBuilder);
-
-                        MachineTarget nextMachine = Nodes.getMachineTarget(nodeIndex, "/csv/" + table.getName());
-                        ResteasyWebTarget target = nextMachine.getTarget();
-                        Builder request = target.request().accept(MediaType.APPLICATION_JSON_TYPE);
-
-                        MultipartFormDataOutput output = new MultipartFormDataOutput();
-                        output.addFormData("file", chunkBuilder.toString().getBytes(),
-                                MediaType.APPLICATION_OCTET_STREAM_TYPE);
-
-                        Response response = request.put(Entity.entity(output, MediaType.MULTIPART_FORM_DATA));
-                        int nbLinesResponse = response.readEntity(NbLinesResponse.class).getNbLines();
-                        System.out.println("Got " + nbLinesResponse + " lines from " + nextMachine);
-
-                        nbLines += nbLinesResponse;
-
+                        byteStreams.add(chunkBuilder.toString().getBytes());
                         if (reachedEOF)
                             break;
+                    }
+
+                    BroadcastedRequests<InsertRequestRunnable> broadcastedRequests = RequestRunnable.broadcastRequests(
+                            InsertRequestRunnable.class,
+                            Nodes.getOtherOnlineMachineTargets("/csv/" + table.getName()),
+                            (machineTarget, i) -> new InsertRequestRunnable(machineTarget, byteStreams.get(i)));
+
+                    if (broadcastedRequests != null) {
+                        InsertRequestRunnable[] runnables = broadcastedRequests.getSuccessfulRequestRunnables();
+                        System.out.println("  Getting number of lines from " + runnables.length + " runnables");
+                        for (InsertRequestRunnable runnable : runnables) {
+                            int runnableNbLines = runnable.getNbLines();
+                            System.out.println("    Getting " + runnableNbLines + " lines");
+                            nbLines += runnable.getNbLines();
+                        }
                     }
 
                     if (reachedEOF)
                         break;
 
+                    StringBuilder chunkBuilder = new StringBuilder();
+                    reachedEOF = readChunkOfLines(csvReader, chunkBuilder);
+                    BufferedReader chunkReader = new BufferedReader(new StringReader(chunkBuilder.toString()));
                     InsertService insertService = new InsertService();
-                    int insertedLines = insertService.insertCsv(table, csvReader, false);
-
-                    if (insertedLines == 0)
-                        reachedEOF = true;
+                    int insertedLines = insertService.insertCsv(table, chunkReader, false);
 
                     nbLines += insertedLines;
                 }
@@ -161,6 +157,7 @@ public class InsertService {
         nbLines += nbLinesFromRunnable;
 
         System.out.println("Total lines: " + nbLines);
+        System.out.println("Lines in storage: " + table.getStorage().getSize());
         return nbLines;
     }
 
