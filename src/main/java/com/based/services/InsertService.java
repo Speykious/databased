@@ -124,18 +124,23 @@ public class InsertService {
                             (machineTarget, i) -> new InsertRequestRunnable(machineTarget, byteStreams.get(i)));
 
                     if (broadcastedRequests != null) {
-                        for (var runnable : broadcastedRequests.getSuccessfulRequestRunnables())
+                        InsertRequestRunnable[] runnables = broadcastedRequests.getSuccessfulRequestRunnables();
+                        System.out.println("  Getting number of lines from " + runnables.length + " runnables");
+                        for (InsertRequestRunnable runnable : runnables) {
+                            int runnableNbLines = runnable.getNbLines();
+                            System.out.println("    Getting " + runnableNbLines + " lines");
                             nbLines += runnable.getNbLines();
+                        }
                     }
 
                     if (reachedEOF)
                         break;
 
+                    StringBuilder chunkBuilder = new StringBuilder();
+                    reachedEOF = readChunkOfLines(csvReader, chunkBuilder);
+                    BufferedReader chunkReader = new BufferedReader(new StringReader(chunkBuilder.toString()));
                     InsertService insertService = new InsertService();
-                    int insertedLines = insertService.insertCsv(table, csvReader, false);
-
-                    if (insertedLines == 0)
-                        reachedEOF = true;
+                    int insertedLines = insertService.insertCsv(table, chunkReader, false);
 
                     nbLines += insertedLines;
                 }

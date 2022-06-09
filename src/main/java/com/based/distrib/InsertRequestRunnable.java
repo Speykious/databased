@@ -10,7 +10,7 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 import com.based.entity.NbLinesResponse;
 
 public class InsertRequestRunnable extends RequestRunnable {
-	private int nbLines = -1;
+	private int nbLines = 0;
 	private byte[] byteStream;
 
 	public InsertRequestRunnable(MachineTarget machineTarget, byte[] byteStream) {
