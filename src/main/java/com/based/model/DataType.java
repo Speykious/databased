@@ -12,9 +12,13 @@ public abstract class DataType {
     public static final DataType BOOL = new DataType() {
         @Override
         public Object parse(Object value, boolean isNullable) {
-            if (value == null)
-                throw new IllegalArgumentException("Expected a BOOL, got null");
-                
+            if (value == null) {
+                if (isNullable)
+                    return null;
+                else
+                    throw new IllegalArgumentException("Expected a " + getName() + ", got null");
+            }
+
             if (value instanceof String) {
                 String s = (String) value;
                 if (s.isEmpty()) {
@@ -72,6 +76,13 @@ public abstract class DataType {
     public static final DataType INT_32 = new DataType() {
         @Override
         public Object parse(Object value, boolean isNullable) throws NumberFormatException {
+            if (value == null) {
+                if (isNullable)
+                    return null;
+                else
+                    throw new IllegalArgumentException("Expected a " + getName() + ", got null");
+            }
+
             if (value instanceof String) {
                 String s = (String) value;
                 if (s.isEmpty()) {
@@ -130,6 +141,13 @@ public abstract class DataType {
     public static final DataType INT_64 = new DataType() {
         @Override
         public Object parse(Object value, boolean isNullable) throws NumberFormatException {
+            if (value == null) {
+                if (isNullable)
+                    return null;
+                else
+                    throw new IllegalArgumentException("Expected a " + getName() + ", got null");
+            }
+
             if (value instanceof String) {
                 String s = (String) value;
                 if (s.isEmpty()) {
@@ -188,6 +206,13 @@ public abstract class DataType {
     public static final DataType FLOAT_32 = new DataType() {
         @Override
         public Object parse(Object value, boolean isNullable) throws NumberFormatException {
+            if (value == null) {
+                if (isNullable)
+                    return null;
+                else
+                    throw new IllegalArgumentException("Expected a " + getName() + ", got null");
+            }
+
             if (value instanceof String) {
                 String s = (String) value;
                 if (s.isEmpty()) {
@@ -246,6 +271,13 @@ public abstract class DataType {
     public static final DataType STRING = new DataType() {
         @Override
         public Object parse(Object value, boolean isNullable) throws IllegalArgumentException {
+            if (value == null) {
+                if (isNullable)
+                    return null;
+                else
+                    throw new IllegalArgumentException("Expected a " + getName() + ", got null");
+            }
+
             if (value instanceof String) {
                 String s = (String) value;
                 if (isNullable && s.isEmpty())
@@ -303,6 +335,13 @@ public abstract class DataType {
 
         @Override
         public Object parse(Object value, boolean isNullable) throws IllegalArgumentException {
+            if (value == null) {
+                if (isNullable)
+                    return null;
+                else
+                    throw new IllegalArgumentException("Expected a " + getName() + ", got null");
+            }
+
             if (value instanceof String) {
                 String s = (String) value;
                 if (s.isEmpty()) {
@@ -372,8 +411,11 @@ public abstract class DataType {
     public abstract String getName();
 
     public abstract Object sum(List<Object> terms) throws InvalidOperationException;
+
     public abstract boolean greaterThan(Object a, Object b) throws InvalidOperationException;
+
     public abstract boolean lesserThan(Object a, Object b) throws InvalidOperationException;
+
     public abstract boolean equal(Object a, Object b) throws InvalidOperationException;
 
     public abstract Class<?> getInternalClass();
