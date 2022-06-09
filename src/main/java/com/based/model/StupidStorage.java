@@ -12,7 +12,7 @@ import com.based.exception.InvalidSelectException;
 import com.based.exception.MissingColumnException;
 
 public class StupidStorage implements Storage {
-    private List<Row> rows;
+    private volatile List<Row> rows;
 
     public StupidStorage() {
         rows = new ArrayList<>();
